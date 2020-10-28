@@ -7,7 +7,7 @@
 #include "Rectangle.h"
 #include "Goomba.h"
 #include "Portal.h"
-
+#include "Koopas.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
 	level = MARIO_LEVEL_BIG;
@@ -44,13 +44,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		untouchable_start = 0;
 		untouchable = 0;
 	}
+	if (GetTickCount() - kicking_start > MARIO_KICK_TIME)
+	{
+		kicking_start = 0;
+		isKicking = false;
+	}
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
 	{
 		x += dx;
 		y += dy;
-		
+
 	}
 	else
 	{
@@ -75,7 +80,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		//
 		// Collision logic with other objects
-		
+
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
@@ -103,6 +108,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							if (level > MARIO_LEVEL_SMALL)
 							{
 								level = MARIO_LEVEL_SMALL;
+								DebugOut(L"[INFO] Lỗi untouch \n");
 								StartUntouchable();
 							}
 							else
@@ -110,36 +116,67 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						}
 					}
 				}
-			} // if Goomba
+
+			}
+			else if (dynamic_cast<CKoopas *>(e->obj))
+			{
+				CKoopas *koopas = dynamic_cast<CKoopas *>(e->obj);
+				if (e->ny < 0)
+				{
+					if (koopas->GetState() != KOOPAS_STATE_DIE && koopas->GetState() != KOOPAS_STATE_SHELL)
+					{
+						koopas->SetState(KOOPAS_STATE_SHELL);
+						vy = -MARIO_JUMP_DEFLECT_SPEED;
+					}
+				}
+				else if (e->nx != 0)
+				{
+					if (koopas->GetState() == KOOPAS_STATE_SHELL)
+					{
+						if (ny == 0) // kick Koo
+						{
+								isKicking = true;
+								StartKicking();
+								if (this->nx > 0)
+								{
+									koopas->nx = 1;
+										koopas->SetState(KOOPAS_STATE_SPINNING);
+								}
+								else if (this->nx <0)
+								{
+									koopas->nx = -1;
+									koopas->SetState(KOOPAS_STATE_SPINNING);
+								}
+						}
+					}
+					else if (koopas->GetState() != KOOPAS_STATE_SHELL)
+					{
+						if (untouchable == 0)
+						{	DebugOut(L"[INFO] lỗi 1\n");
+							if (koopas->GetState() != KOOPAS_STATE_DIE)
+							{
+								if (level > MARIO_LEVEL_SMALL)
+								{
+									level = MARIO_LEVEL_SMALL;
+									StartUntouchable();
+								}
+								else
+									SetState(MARIO_STATE_DIE);
+							}
+						}
+					}
+				}
+
+			}
 			else if (dynamic_cast<CPortal *>(e->obj))
 			{
 				CPortal *p = dynamic_cast<CPortal *>(e->obj);
 				CGame::GetInstance()->SwitchScene(p->GetSceneId());
 			}
-			
-			//else if (dynamic_cast<CRectangle *>(e->obj))
-			//{
-			//	if (e->ny < 0)
-			//	{
-
-			//	}
-			//	else 
-			//	{
-			//		x -= (min_tx * dx + nx * 0.4f);
-			//		y -= (min_ty * dy + ny * 0.4f);
-			//		x += dx;
-			//		y += dy;
-			//	}
-			//	/*else if (e->ny != 0)*/
-			//	
-			//}
-			//else
-			//{
-			//	
-			//}
 		}
 
 	}
+
 
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -311,7 +348,6 @@ void CMario::Render()
 			else ani = MARIO_ANI_FIRE_FLYING_LEFT;
 		}
 	}
-
 	else if (state == MARIO_STATE_BRAKING)
 	{
 		if (level == MARIO_LEVEL_BIG)
@@ -335,7 +371,6 @@ void CMario::Render()
 			else ani = MARIO_ANI_FIRE_BRAKING_LEFT;
 		}
 	}
-
 	else if (state == MARIO_STATE_HOLDING)
 	{
 		if (level == MARIO_LEVEL_BIG)
@@ -359,9 +394,9 @@ void CMario::Render()
 			else ani = MARIO_ANI_FIRE_HOLDING_LEFT;
 		}
 	}
-
-
-	else if (state == MARIO_STATE_KICKING)
+	
+	*/
+	else if (isKicking == true)
 	{
 	if (level == MARIO_LEVEL_BIG)
 	{
@@ -380,88 +415,87 @@ void CMario::Render()
 	}
 	else if (level == MARIO_LEVEL_FIRE)
 	{
-		if (nx > 0) ani = MARIO_ANI_FIRE_KICKKING_RIGHT;
+		if (nx > 0) ani = MARIO_ANI_FIRE_KICKING_RIGHT;
 		else ani = MARIO_ANI_FIRE_KICKING_LEFT;
 	}
 	}
-	*/
 	else if (state == MARIO_STATE_IDLE)
 	{
-	if (level == MARIO_LEVEL_BIG)
-	{
-		if (nx > 0) ani = MARIO_ANI_BIG_IDLE_RIGHT;
-		else ani = MARIO_ANI_BIG_IDLE_LEFT;
-	}
-	else if (level == MARIO_LEVEL_SMALL)
-	{
-		if (nx > 0) ani = MARIO_ANI_SMALL_IDLE_RIGHT;
-		else ani = MARIO_ANI_SMALL_IDLE_LEFT;
-	}
-	else if (level == MARIO_LEVEL_TAIL)
-	{
-		if (nx > 0) ani = MARIO_ANI_TAIL_IDLE_RIGHT;
-		else ani = MARIO_ANI_TAIL_IDLE_LEFT;
-	}
-	else if (level == MARIO_LEVEL_FIRE)
-	{
-		if (nx > 0) ani = MARIO_ANI_FIRE_IDLE_RIGHT;
-		else ani = MARIO_ANI_FIRE_IDLE_LEFT;
-	}
-	}
-
-	else if ( nx>0) // walking right
-	{
-	if (level == MARIO_LEVEL_BIG)
-	{
-		if (canBrake && state == MARIO_STATE_BRAKING_RIGHT)
+		if (level == MARIO_LEVEL_BIG)
 		{
-			ani = MARIO_ANI_BIG_BRAKING_LEFT;
-			canBrake = false;
+			if (nx > 0) ani = MARIO_ANI_BIG_IDLE_RIGHT;
+			else ani = MARIO_ANI_BIG_IDLE_LEFT;
 		}
-		else
-			ani = MARIO_ANI_BIG_WALKING_RIGHT;
-
+		else if (level == MARIO_LEVEL_SMALL)
+		{
+			if (nx > 0) ani = MARIO_ANI_SMALL_IDLE_RIGHT;
+			else ani = MARIO_ANI_SMALL_IDLE_LEFT;
+		}
+		else if (level == MARIO_LEVEL_TAIL)
+		{
+			if (nx > 0) ani = MARIO_ANI_TAIL_IDLE_RIGHT;
+			else ani = MARIO_ANI_TAIL_IDLE_LEFT;
+		}
+		else if (level == MARIO_LEVEL_FIRE)
+		{
+			if (nx > 0) ani = MARIO_ANI_FIRE_IDLE_RIGHT;
+			else ani = MARIO_ANI_FIRE_IDLE_LEFT;
+		}
 	}
-	else if (level == MARIO_LEVEL_SMALL)
+
+	else if (nx > 0) // walking right
 	{
-		ani = MARIO_ANI_SMALL_WALKING_RIGHT;
+		if (level == MARIO_LEVEL_BIG)
+		{
+			if (canBrake && state == MARIO_STATE_WALKING_LEFT)
+			{
+				ani = MARIO_ANI_BIG_BRAKING_LEFT;
+				canBrake = false;
+			}
+			else
+				ani = MARIO_ANI_BIG_WALKING_RIGHT;
+
+		}
+		else if (level == MARIO_LEVEL_SMALL)
+		{
+			ani = MARIO_ANI_SMALL_WALKING_RIGHT;
+
+		}
+		else if (level == MARIO_LEVEL_TAIL)
+		{
+			ani = MARIO_ANI_TAIL_WALKING_RIGHT;
+
+		}
+		else if (level == MARIO_LEVEL_FIRE)
+		{
+			ani = MARIO_ANI_FIRE_WALKING_RIGHT;
+
+		}
 
 	}
-	else if (level == MARIO_LEVEL_TAIL)
+
+	else if (nx < 0) // walking left
 	{
-		ani = MARIO_ANI_TAIL_WALKING_RIGHT;
+		if (level == MARIO_LEVEL_BIG)
+		{
+			ani = MARIO_ANI_BIG_WALKING_LEFT;
 
-	}
-	else if (level == MARIO_LEVEL_FIRE)
-	{
-		ani = MARIO_ANI_FIRE_WALKING_RIGHT;
+		}
+		else if (level == MARIO_LEVEL_SMALL)
+		{
+			ani = MARIO_ANI_SMALL_WALKING_LEFT;
 
-	}
+		}
+		else if (level == MARIO_LEVEL_TAIL)
+		{
 
-	}
+			ani = MARIO_ANI_TAIL_WALKING_LEFT;
+		}
+		else if (level == MARIO_LEVEL_FIRE)
+		{
 
-	else if ( nx<0) // walking left
-	{
-	if (level == MARIO_LEVEL_BIG)
-	{
-		ani = MARIO_ANI_BIG_WALKING_LEFT;
-
-	}
-	else if (level == MARIO_LEVEL_SMALL)
-	{
-		ani = MARIO_ANI_SMALL_WALKING_LEFT;
-
-	}
-	else if (level == MARIO_LEVEL_TAIL)
-	{
-
-		ani = MARIO_ANI_TAIL_WALKING_LEFT;
-	}
-	else if (level == MARIO_LEVEL_FIRE)
-	{
-
-		ani = MARIO_ANI_FIRE_WALKING_LEFT;
-	}
+			ani = MARIO_ANI_FIRE_WALKING_LEFT;
+		}
 	}
 	int alpha = 255;
 	if (untouchable) alpha = 128;
@@ -505,33 +539,40 @@ void CMario::SetState(int state)
 	switch (state)
 	{
 	case MARIO_STATE_WALKING_RIGHT:
-		vx = MARIO_WALKING_SPEED ;
+		vx = MARIO_WALKING_SPEED;
 		nx = 1;
 		break;
 	case MARIO_STATE_WALKING_LEFT:
-		if (vx > 0)
+		/*if (vx > 0)
 		{
-			SpeedDown();
+			SpeedInertia();
+			canBrake = true;
 		}
 		else
-		{
+		{*/
+			/*canBrake = false;*/
 			vx = -(MARIO_WALKING_SPEED);
 			nx = -1;
-		}
+		/*}*/
 		break;
 	case MARIO_STATE_RUNNING_RIGHT:
-		/*if (vx >0 )
-		{
-
-		}
-		else*/ if (vx < MARIO_MAX_SPEED)
-		vx += current_level_speed_up*SPEECH_ADDTION_PER_LEVEL;
+	 if (vx < MARIO_MAX_SPEED)
+			vx += current_level_speed_up * SPEECH_ADDTION_PER_LEVEL;
 		nx = 1;
 		break;
 	case MARIO_STATE_RUNNING_LEFT:
-		if (vx > -MARIO_MAX_SPEED)
-		vx -=  current_level_speed_up * SPEECH_ADDTION_PER_LEVEL;
-		nx = -1;
+		/*if (vx > 0)
+		{
+			SpeedInertia();
+			canBrake = true;
+		}
+		else
+		{*/
+			if (vx > -MARIO_MAX_SPEED)
+				vx -= current_level_speed_up * SPEECH_ADDTION_PER_LEVEL;
+			nx = -1;
+		/*}*/
+		
 		break;
 
 		//case MARIO_STATE_BRAKING_RIGHT:
@@ -596,5 +637,15 @@ void CMario::SpeedDown()
 	{
 		vx += MARIO_WALKING_SPEED / 40;
 	}
-	
+}
+void CMario::SpeedInertia()
+{
+	if (nx > 0)
+	{
+		vx -= MARIO_WALKING_SPEED / 20;
+	}
+	else if (nx < 0)
+	{
+		vx += MARIO_WALKING_SPEED / 20;
+	}
 }

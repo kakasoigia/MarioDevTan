@@ -10,8 +10,8 @@
 #define MARIO_DIE_DEFLECT_SPEED	 0.5f
 
 #define MARIO_STATE_IDLE			0
-#define MARIO_STATE_WALKING_RIGHT	100
-#define MARIO_STATE_WALKING_LEFT	200
+#define MARIO_STATE_WALKING_RIGHT	150
+#define MARIO_STATE_WALKING_LEFT	250
 #define MARIO_STATE_JUMP			300
 #define MARIO_STATE_DIE				400
 #define MARIO_STATE_FLYING_RIGHT	500
@@ -121,6 +121,7 @@
 #define MARIO_SMALL_BBOX_HEIGHT 15
 
 #define MARIO_UNTOUCHABLE_TIME 5000
+#define MARIO_KICK_TIME 300
 #define	MARIO_DIFFERENCE_HEIGHT	12
 
 #define MARIO_BIG_BBOX_WIDTH  15
@@ -140,6 +141,7 @@ class CMario : public CGameObject
 {
 	int level;
 	int untouchable;
+	int kicking_start;
 	DWORD untouchable_start;
 
 	float start_x;			// initial position of Mario at scene
@@ -147,6 +149,7 @@ class CMario : public CGameObject
 protected:
 	bool isJumping = false;
 	bool canBrake = false;
+	bool isKicking = false;
 public:
 	CMario(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
@@ -156,11 +159,12 @@ public:
 	void SetLevel(int l);
 	int GetLevel() { return level; };
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
+	void StartKicking() { kicking_start = GetTickCount(); }
 	bool GetJumpingState() { return isJumping; };
 	void SetJumpingState(bool state) { isJumping = state; };
 	void Reset();
 	void SpeedDown();
-
+	void SpeedInertia();
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	 int current_level_speed_up ;
 };

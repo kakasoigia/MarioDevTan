@@ -292,7 +292,7 @@ void CPlayScene::Update(DWORD dt)
 	float camX = 0.0f;
 	float camY = 0.0f;
 	if (player->x > (game->GetScreenWidth() / 2)) camX = cx;
-	if (player->y <= (game->GetScreenHeight() / 2)) camY = cy;
+	//if (player->y <= (game->GetScreenHeight() / 2)) camY = cy;
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY);
 
 

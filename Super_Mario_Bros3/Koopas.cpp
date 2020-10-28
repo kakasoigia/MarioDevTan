@@ -9,11 +9,16 @@ CKoopas::CKoopas(int type)
 
 void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
+	if (state == KOOPAS_STATE_DIE)
+		return;
 	left = x;
 	top = y;
 	right = x + KOOPAS_BBOX_WIDTH;
-
-	if (state == KOOPAS_STATE_DIE)
+	if (state == KOOPAS_STATE_SHELL || state == KOOPAS_STATE_SPINNING)
+	{
+		bottom = y + KOOPAS_BBOX_HEIGHT_SHELL;
+	}
+	else if (state == KOOPAS_STATE_DIE)
 		bottom = y + KOOPAS_BBOX_HEIGHT_DIE;
 	else
 		bottom = y + KOOPAS_BBOX_HEIGHT;
@@ -64,7 +69,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		// block 
 		x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
-		y += min_ty * dy + ny * 0.4f;
+		/*y += min_ty * dy + ny * 0.4f;*/
 
 		/*if (nx != 0) vx = -vx;*/
 		if (ny != 0) vy = 0;
@@ -74,16 +79,42 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 
-			//if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
-			//{
-			//	CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
-			//	this->vx = -this->vx;
-			//	goomba->vx = -goomba->vx;
+			if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
+			{
+				CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
+				this->vx = -this->vx;
+				goomba->vx = -goomba->vx;
+			}
+			else if (dynamic_cast<CKoopas *>(e->obj)) // if e->obj is Goomba 
+			{
+				CKoopas *koopas = dynamic_cast<CKoopas *>(e->obj);
+				if (this->state == KOOPAS_STATE_SHELL)
+				{
+					koopas->state = KOOPAS_STATE_DIE;
+				}
+				else
+				{
+					this->vx = -this->vx;
+					koopas->vx = -koopas->vx;
+				}
+			}
+			else
+			{
+				/*if (!dynamic_cast<CMario *>(e->obj)*/
+				if (e->nx != 0 && ny == 0)
+				{
+					this->vx = -this->vx;
+
+				}
+			}
 		}
 	}
 
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+	if (x <= 0)
+		if (vx < 0)
+			vx = -vx;
 }
 
 void CKoopas::Render()
@@ -117,7 +148,34 @@ void CKoopas::Render()
 		break;
 		}
 	}
-	else if (state == KOOPAS_STATE_DIE)
+	else if (state == KOOPAS_STATE_SHELL)
+	{
+		// chưa xử lý được chết úp hay ngửa
+		switch (Type)
+		{
+		case 1 /*KOOPAS_TYPE_GREEN_WALK */:
+		{
+			ani = KOOPAS_ANI_GREEN_SHELL_PRONE;
+		}
+		break;
+		case 2 /*KOOPAS_TYPE_GREEN_FLY*/:
+		{
+			ani = KOOPAS_ANI_GREEN_SHELL_PRONE;
+		}
+		break;
+		case 3 /*KOOPAS_TYPE_RED_WALK*/:
+		{
+			ani = KOOPAS_ANI_RED_FLY_SHELL_UP;
+		}
+		break;
+		case 4 /*KOOPAS_TYPE_RED_FLY*/:
+		{
+			ani = KOOPAS_ANI_RED_FLY_SHELL_UP;
+		}
+		break;
+		}
+	}
+	else if (state == KOOPAS_STATE_SPINNING)
 	{
 		// chưa xử lý được chết úp hay ngửa
 		switch (Type)
@@ -155,14 +213,31 @@ void CKoopas::SetState(int state)
 	CGameObject::SetState(state);
 	switch (state)
 	{
-	case KOOPAS_STATE_DIE:
+	case KOOPAS_STATE_SHELL:
 		/*y += KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_DIE + 1;*/
 		vx = 0;
 		vy = 0;
 		break;
 	case KOOPAS_STATE_WALKING:
-		vx = -KOOPAS_WALKING_SPEED;
-
+		if (nx > 0)
+		{
+			vx = KOOPAS_WALKING_SPEED;
+		}
+		else if (nx<0)
+		{
+			vx = -KOOPAS_WALKING_SPEED;
+		}
+		break;
+	case KOOPAS_STATE_SPINNING:
+		if (nx > 0)
+		{
+			vx = KOOPAS_SPINNING_SPEED;
+		}
+		else if(nx < 0)
+		{
+			vx = -KOOPAS_SPINNING_SPEED;
+		}
+		break;
 	}
 
 }
