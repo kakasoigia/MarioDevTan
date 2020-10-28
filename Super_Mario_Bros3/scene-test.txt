@@ -841,7 +841,7 @@
 #hold left small
 523	4007	100	4006	100
 #kick right small
-524	3015	100
+524	3014	100
 #kick right small
 525	3001	100
 #running right small

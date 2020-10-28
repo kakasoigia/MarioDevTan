@@ -98,9 +98,9 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					koopas->vx = -koopas->vx;
 				}
 			}
-			else
+			else if (!dynamic_cast<CMario *>(e->obj))
 			{
-				/*if (!dynamic_cast<CMario *>(e->obj)*/
+				
 				if (e->nx != 0 && ny == 0)
 				{
 					this->vx = -this->vx;
