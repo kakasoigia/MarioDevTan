@@ -385,49 +385,83 @@ void CMario::Render()
 	}
 	}
 	*/
-	else if (level == MARIO_LEVEL_BIG)
+	else if (state == MARIO_STATE_IDLE)
 	{
-		if (vx == 0)
-		{
-			if (nx > 0) ani = MARIO_ANI_BIG_IDLE_RIGHT;
-			else ani = MARIO_ANI_BIG_IDLE_LEFT;
-		}
-		else if (vx > 0)
-			ani = MARIO_ANI_BIG_WALKING_RIGHT;
-		else ani = MARIO_ANI_BIG_WALKING_LEFT;
+	if (level == MARIO_LEVEL_BIG)
+	{
+		if (nx > 0) ani = MARIO_ANI_BIG_IDLE_RIGHT;
+		else ani = MARIO_ANI_BIG_IDLE_LEFT;
 	}
 	else if (level == MARIO_LEVEL_SMALL)
 	{
-		if (vx == 0)
-		{
-			if (nx > 0) ani = MARIO_ANI_SMALL_IDLE_RIGHT;
-			else ani = MARIO_ANI_SMALL_IDLE_LEFT;
-		}
-		else if (vx > 0)
-			ani = MARIO_ANI_SMALL_WALKING_RIGHT;
-		else ani = MARIO_ANI_SMALL_WALKING_LEFT;
+		if (nx > 0) ani = MARIO_ANI_SMALL_IDLE_RIGHT;
+		else ani = MARIO_ANI_SMALL_IDLE_LEFT;
 	}
 	else if (level == MARIO_LEVEL_TAIL)
 	{
-		if (vx == 0)
-		{
-			if (nx > 0) ani = MARIO_ANI_TAIL_IDLE_RIGHT;
-			else ani = MARIO_ANI_TAIL_IDLE_LEFT;
-		}
-		else if (vx > 0)
-			ani = MARIO_ANI_TAIL_WALKING_RIGHT;
-		else ani = MARIO_ANI_TAIL_WALKING_LEFT;
+		if (nx > 0) ani = MARIO_ANI_TAIL_IDLE_RIGHT;
+		else ani = MARIO_ANI_TAIL_IDLE_LEFT;
 	}
 	else if (level == MARIO_LEVEL_FIRE)
 	{
-		if (vx == 0)
+		if (nx > 0) ani = MARIO_ANI_FIRE_IDLE_RIGHT;
+		else ani = MARIO_ANI_FIRE_IDLE_LEFT;
+	}
+	}
+
+	else if ( nx>0) // walking right
+	{
+	if (level == MARIO_LEVEL_BIG)
+	{
+		if (canBrake && state == MARIO_STATE_BRAKING_RIGHT)
 		{
-			if (nx > 0) ani = MARIO_ANI_FIRE_IDLE_RIGHT;
-			else ani = MARIO_ANI_FIRE_IDLE_LEFT;
+			ani = MARIO_ANI_BIG_BRAKING_LEFT;
+			canBrake = false;
 		}
-		else if (vx > 0)
-			ani = MARIO_ANI_FIRE_WALKING_RIGHT;
-		else ani = MARIO_ANI_FIRE_WALKING_LEFT;
+		else
+			ani = MARIO_ANI_BIG_WALKING_RIGHT;
+
+	}
+	else if (level == MARIO_LEVEL_SMALL)
+	{
+		ani = MARIO_ANI_SMALL_WALKING_RIGHT;
+
+	}
+	else if (level == MARIO_LEVEL_TAIL)
+	{
+		ani = MARIO_ANI_TAIL_WALKING_RIGHT;
+
+	}
+	else if (level == MARIO_LEVEL_FIRE)
+	{
+		ani = MARIO_ANI_FIRE_WALKING_RIGHT;
+
+	}
+
+	}
+
+	else if ( nx<0) // walking left
+	{
+	if (level == MARIO_LEVEL_BIG)
+	{
+		ani = MARIO_ANI_BIG_WALKING_LEFT;
+
+	}
+	else if (level == MARIO_LEVEL_SMALL)
+	{
+		ani = MARIO_ANI_SMALL_WALKING_LEFT;
+
+	}
+	else if (level == MARIO_LEVEL_TAIL)
+	{
+
+		ani = MARIO_ANI_TAIL_WALKING_LEFT;
+	}
+	else if (level == MARIO_LEVEL_FIRE)
+	{
+
+		ani = MARIO_ANI_FIRE_WALKING_LEFT;
+	}
 	}
 	int alpha = 255;
 	if (untouchable) alpha = 128;
@@ -471,19 +505,25 @@ void CMario::SetState(int state)
 	switch (state)
 	{
 	case MARIO_STATE_WALKING_RIGHT:
-		vx = MARIO_WALKING_SPEED + current_level_speed_up * SPEECH_ADDTION_PER_LEVEL;
+		vx = MARIO_WALKING_SPEED ;
 		nx = 1;
 		break;
 	case MARIO_STATE_WALKING_LEFT:
-		vx = -(MARIO_WALKING_SPEED + current_level_speed_up * SPEECH_ADDTION_PER_LEVEL);
+		vx = -(MARIO_WALKING_SPEED);
 		nx = -1;
 		break;
 	case MARIO_STATE_RUNNING_RIGHT:
-		vx = MARIO_WALKING_SPEED + current_level_speed_up*SPEECH_ADDTION_PER_LEVEL;
+		/*if (vx >0 )
+		{
+
+		}
+		else*/ if (vx < MARIO_MAX_SPEED)
+		vx += current_level_speed_up*SPEECH_ADDTION_PER_LEVEL;
 		nx = 1;
 		break;
 	case MARIO_STATE_RUNNING_LEFT:
-		vx = -( MARIO_WALKING_SPEED + current_level_speed_up * SPEECH_ADDTION_PER_LEVEL);
+		if (vx > -MARIO_MAX_SPEED)
+		vx -=  current_level_speed_up * SPEECH_ADDTION_PER_LEVEL;
 		nx = -1;
 		break;
 
@@ -543,11 +583,11 @@ void CMario::SpeedDown()
 {
 	if (nx > 0)
 	{
-		vx -= MARIO_WALKING_SPEED / 50;
+		vx -= MARIO_WALKING_SPEED / 40;
 	}
 	else if (nx < 0)
 	{
-		vx += MARIO_WALKING_SPEED / 50;
+		vx += MARIO_WALKING_SPEED / 40;
 	}
 	
 }

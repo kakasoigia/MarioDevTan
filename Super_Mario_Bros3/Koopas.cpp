@@ -22,68 +22,68 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	CGameObject::Update(dt, coObjects);
-	//vy += KOOPAS_GRAVITY * dt;
+	vy += KOOPAS_GRAVITY * dt;
 
-	//vector<LPCOLLISIONEVENT> coEvents;
-	//vector<LPCOLLISIONEVENT> coEventsResult;
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
 
-	//coEvents.clear();
+	coEvents.clear();
 
-	////// turn off collision when die 
-	////if (state == GOOMBA_STATE_DIE)
-	////{
-	////	if ((GetTickCount() - dying_start) > GOOMBA_DYING_TIME)
-	////	{
-	////		dying_start = 0;
-	////		state = GOOMBA_STATE_DISAPPEAR;
-	////	}
-	////}
-	//if (state != KOOPAS_STATE_DISAPPEAR)
+	//// turn off collision when die 
+	//if (state == GOOMBA_STATE_DIE)
 	//{
-
-	//	CalcPotentialCollisions(coObjects, coEvents);
-	//}
-
-
-
-	//// reset untouchable timer if untouchable time has passed
-
-	//// No collision occured, proceed normally
-	//if (coEvents.size() == 0)
-	//{
-	//	x += dx;
-	//	y += dy;
-
-	//}
-	//else
-	//{
-	//	float min_tx, min_ty, nx = 0, ny;
-	//	float rdx = 0;
-	//	float rdy = 0;
-	//	FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-
-	//	// block 
-	//	x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
-	//	y += min_ty * dy + ny * 0.4f;
-
-	//	/*if (nx != 0) vx = -vx;*/
-	//	if (ny != 0) vy = 0;
-
-	//	// Collision logic with Goombas
-	//	for (UINT i = 0; i < coEventsResult.size(); i++)
+	//	if ((GetTickCount() - dying_start) > GOOMBA_DYING_TIME)
 	//	{
-	//		LPCOLLISIONEVENT e = coEventsResult[i];
-
-	//		//if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
-	//		//{
-	//		//	CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
-	//		//	this->vx = -this->vx;
-	//		//	goomba->vx = -goomba->vx;
+	//		dying_start = 0;
+	//		state = GOOMBA_STATE_DISAPPEAR;
 	//	}
 	//}
+	if (state != KOOPAS_STATE_DISAPPEAR)
+	{
 
-	//// clean up collision events
-	//for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+		CalcPotentialCollisions(coObjects, coEvents);
+	}
+
+
+
+	// reset untouchable timer if untouchable time has passed
+
+	// No collision occured, proceed normally
+	if (coEvents.size() == 0)
+	{
+		x += dx;
+		y += dy;
+
+	}
+	else
+	{
+		float min_tx, min_ty, nx = 0, ny;
+		float rdx = 0;
+		float rdy = 0;
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+		// block 
+		x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
+		y += min_ty * dy + ny * 0.4f;
+
+		/*if (nx != 0) vx = -vx;*/
+		if (ny != 0) vy = 0;
+
+		// Collision logic with Goombas
+		for (UINT i = 0; i < coEventsResult.size(); i++)
+		{
+			LPCOLLISIONEVENT e = coEventsResult[i];
+
+			//if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
+			//{
+			//	CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
+			//	this->vx = -this->vx;
+			//	goomba->vx = -goomba->vx;
+		}
+	}
+
+	// clean up collision events
+	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
 void CKoopas::Render()

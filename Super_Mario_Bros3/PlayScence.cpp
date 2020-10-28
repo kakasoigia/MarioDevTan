@@ -376,8 +376,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 		}
 		else
 		{
-			if (mario->current_level_speed_up > 0) // count down the lv speed
-				mario->current_level_speed_up--;
+			
 			mario->SetState(MARIO_STATE_WALKING_RIGHT);
 		}
 	}
@@ -392,14 +391,13 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 		}
 		else
 		{
-			if (mario->current_level_speed_up > 0)
-				mario->current_level_speed_up --;
 			mario->SetState(MARIO_STATE_WALKING_LEFT);
 		}
 			
 	}
 	else if (game->IsKeyDown(DIK_DOWN))
 	{
+		
 		mario->SetState(MARIO_STATE_SITDOWN);
 	}
 	else if (game->IsKeyDown(DIK_X))

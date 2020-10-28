@@ -132,7 +132,9 @@
 #define MARIO_FIRE_BBOX_WIDTH  14
 #define MARIO_FIRE_BBOX_HEIGHT 27
 
-#define SPEECH_ADDTION_PER_LEVEL	0.04f
+#define SPEECH_ADDTION_PER_LEVEL	0.002f
+#define MARIO_MAX_SPEED	0.3f
+#define MARIO_INERTIA 0.0025f
 
 class CMario : public CGameObject
 {
@@ -144,6 +146,7 @@ class CMario : public CGameObject
 	float start_y;
 protected:
 	bool isJumping = false;
+	bool canBrake = false;
 public:
 	CMario(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
