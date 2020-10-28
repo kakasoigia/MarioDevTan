@@ -134,7 +134,7 @@
 
 #define SPEECH_ADDTION_PER_LEVEL	0.002f
 #define MARIO_MAX_SPEED	0.3f
-#define MARIO_INERTIA 0.0025f
+#define MARIO_INERTIA 0.03f
 
 class CMario : public CGameObject
 {

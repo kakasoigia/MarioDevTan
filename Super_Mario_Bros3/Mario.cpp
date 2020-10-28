@@ -509,8 +509,15 @@ void CMario::SetState(int state)
 		nx = 1;
 		break;
 	case MARIO_STATE_WALKING_LEFT:
-		vx = -(MARIO_WALKING_SPEED);
-		nx = -1;
+		if (vx > 0)
+		{
+			SpeedDown();
+		}
+		else
+		{
+			vx = -(MARIO_WALKING_SPEED);
+			nx = -1;
+		}
 		break;
 	case MARIO_STATE_RUNNING_RIGHT:
 		/*if (vx >0 )

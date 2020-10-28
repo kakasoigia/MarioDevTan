@@ -43,7 +43,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		CalcPotentialCollisions(coObjects, coEvents);
 	}
-
+	
 
 
 	// reset untouchable timer if untouchable time has passed
