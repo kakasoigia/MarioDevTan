@@ -42,6 +42,14 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	// Simple fall down
 	vy += GOOMBA_GRAVITY * dt;
+	if (this->state == GOOMBA_STATE_WALKING && this->Type == GOOMBA_TYPE_RED_FLY)
+	{
+		if (GetTickCount() - jumping_start > GOOMBA_PERIODIC_TIME_JUMPING)
+		{
+			vy = -GOOMBA_JUMP_DEFLECT_SPEED;
+				jumping_start = GetTickCount();
+		}
+	}
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;

@@ -92,7 +92,17 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				// jump on top >> kill Goomba and deflect a bit 
 				if (e->ny < 0)
 				{
-					if (goomba->GetState() != GOOMBA_STATE_DIE)
+					/*if (goomba->GetState() != GOOMBA_STATE_DIE)
+					{
+						goomba->SetState(GOOMBA_STATE_DIE);
+						goomba->StartDyingTime();
+						vy = -MARIO_JUMP_DEFLECT_SPEED;
+					}*/
+					if (goomba->GetState() == GOOMBA_TYPE_RED_FLY)
+					{
+						goomba->SetState(GOOMBA_TYPE_RED_WALK);
+					}
+					else
 					{
 						goomba->SetState(GOOMBA_STATE_DIE);
 						goomba->StartDyingTime();

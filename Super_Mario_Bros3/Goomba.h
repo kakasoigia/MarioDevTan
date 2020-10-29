@@ -29,6 +29,8 @@
 #define	GOOMBA_TYPE_RED_FLY 2
 #define	GOOMBA_TYPE_RED_WALK 3
 #define GOOMBA_DIE_DEFLECT_SPEED 0.75f
+#define GOOMBA_PERIODIC_TIME_JUMPING 1000
+#define GOOMBA_JUMP_DEFLECT_SPEED 0.35f
 class CGoomba : public CGameObject
 {
 
@@ -38,8 +40,10 @@ class CGoomba : public CGameObject
 	int dying;
 	DWORD dying_start;
 	int Type;
+	int jumping_start = 0;
 public:
 	CGoomba(int type);
 	virtual void SetState(int state);
 	void StartDyingTime() { dying_start = GetTickCount(); }
+	int GetType() { return Type; };
 };
