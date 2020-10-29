@@ -99,7 +99,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
-				else if (e->nx != 0)
+				else if (e->nx != 0 || e->ny > 0)
 				{
 					if (untouchable == 0)
 					{
@@ -125,8 +125,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					if (koopas->GetState() != KOOPAS_STATE_DIE && koopas->GetState() != KOOPAS_STATE_SHELL)
 					{
-						koopas->SetState(KOOPAS_STATE_SHELL);
-						vy = -MARIO_JUMP_DEFLECT_SPEED;
+						if (koopas->GetType() == KOOPAS_TYPE_GREEN_FLY || koopas->GetType() == KOOPAS_TYPE_RED_FLY)
+						{
+							koopas->SetType(koopas->GetType()-1); //subtract 1 type from fly to walk
+						}
+						else
+							koopas->SetState(KOOPAS_STATE_SHELL);
+						vy = -2*MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
 				else if (e->nx != 0)
@@ -149,7 +154,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 								}
 						}
 					}
-					else if (koopas->GetState() != KOOPAS_STATE_SHELL)
+					else if (koopas->GetState() != KOOPAS_STATE_SHELL && isKicking == false)
 					{
 						if (untouchable == 0)
 						{	DebugOut(L"[INFO] lỗi 1\n");
@@ -502,7 +507,7 @@ void CMario::Render()
 
 	animation_set->at(ani)->Render(x, y, alpha);
 
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {

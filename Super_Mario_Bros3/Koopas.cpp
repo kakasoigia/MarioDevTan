@@ -3,8 +3,9 @@
 CKoopas::CKoopas(int type)
 {
 	Type = type;
-
+	nx = -1;
 	SetState(KOOPAS_STATE_WALKING);
+	flying_start = 0;
 }
 
 void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -28,6 +29,31 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	CGameObject::Update(dt, coObjects);
 	vy += KOOPAS_GRAVITY * dt;
+	if (this->state == KOOPAS_STATE_WALKING && (this->Type == KOOPAS_TYPE_GREEN_FLY || this->Type == KOOPAS_TYPE_RED_FLY))
+	{
+		if (GetTickCount() - flying_start > KOOPAS_PERIODIC_TIME_FLY)
+		{
+			vy = -KOOPAS_FLY_DEFLECT_SPEED;
+				flying_start = GetTickCount();
+		}
+	}
+	//if (this->state == KOOPAS_STATE_WALKING && (this->Type == KOOPAS_TYPE_GREEN_FLY || this->Type == KOOPAS_TYPE_RED_FLY))
+	//{
+	//	if (GetTickCount() - flying_start > KOOPAS_PERIODIC_TIME_FLY)
+	//	{
+	//		flying_start = GetTickCount();
+	//	}
+	//	else
+	//	{
+	//		vy -= 5*KOOPAS_GRAVITY ;
+	//	}
+	//}
+	//
+	
+
+		
+	/*if (Type == KOOPAS_TYPE_GREEN_FLY || Type == KOOPAS_TYPE_RED_FLY)
+		vy -= KOOPAS_FLY_DEFLECT_SPEED;*/
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -43,7 +69,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	//		state = GOOMBA_STATE_DISAPPEAR;
 	//	}
 	//}
-	if (state != KOOPAS_STATE_DISAPPEAR)
+	if (state != KOOPAS_STATE_DIE)
 	{
 
 		CalcPotentialCollisions(coObjects, coEvents);
@@ -62,6 +88,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	else
 	{
+		 // land ...fly
 		float min_tx, min_ty, nx = 0, ny;
 		float rdx = 0;
 		float rdy = 0;
@@ -82,29 +109,34 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
 			{
 				CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
-				this->vx = -this->vx;
-				goomba->vx = -goomba->vx;
+				if (this->state == KOOPAS_STATE_WALKING || this->state == KOOPAS_STATE_SHELL)
+				{
+					this->vx = -this->vx;
+					goomba->vx = -goomba->vx;
+				}
+				else if (this->state == KOOPAS_STATE_SPINNING && e->nx != 0)
+				{
+					goomba->SetState(GOOMBA_STATE_DIE);
+				}
+				
 			}
 			else if (dynamic_cast<CKoopas *>(e->obj)) // if e->obj is Goomba 
 			{
 				CKoopas *koopas = dynamic_cast<CKoopas *>(e->obj);
-				if (this->state == KOOPAS_STATE_SHELL)
+				if (e->nx !=0 && this->state == KOOPAS_STATE_SPINNING)
 				{
-					koopas->state = KOOPAS_STATE_DIE;
+					koopas->SetState(KOOPAS_STATE_DIE);
 				}
-				else
+				else if (this->state == KOOPAS_STATE_WALKING)
 				{
 					this->vx = -this->vx;
-					koopas->vx = -koopas->vx;
 				}
 			}
 			else if (!dynamic_cast<CMario *>(e->obj))
 			{
-				
 				if (e->nx != 0 && ny == 0)
 				{
 					this->vx = -this->vx;
-
 				}
 			}
 		}
@@ -119,7 +151,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 void CKoopas::Render()
 {
-	int ani = KOOPAS_ANI_GREEN_WALK_WALKING_LEFT;
+	int ani = KOOPAS_ANI_GREEN_WALKING_LEFT;
 	// xét trạng thái WALKING hay MAI RÙA
 	if (state == KOOPAS_STATE_WALKING)
 	{
@@ -127,23 +159,23 @@ void CKoopas::Render()
 		{
 		case 1 /*KOOPAS_TYPE_GREEN_WALK */:
 		{
-			if (vx > 0) ani = KOOPAS_ANI_GREEN_WALK_WALKING_RIGHT;
-			else if (vx <= 0) ani = KOOPAS_ANI_GREEN_WALK_WALKING_LEFT;
+			if (vx > 0) ani = KOOPAS_ANI_GREEN_WALKING_RIGHT;
+			else if (vx <= 0) ani = KOOPAS_ANI_GREEN_WALKING_LEFT;
 		}
 		break;
 		case 2 /*KOOPAS_TYPE_GREEN_FLY*/:
 		{
-			ani = KOOPAS_ANI_GREEN_FLY_WALKING_LEFT;
+			ani = KOOPAS_ANI_GREEN_FLYING_LEFT;
 		}
 		break;
 		case 3 /*KOOPAS_TYPE_RED_WALK*/:
 		{
-			ani = KOOPAS_ANI_RED_WALK_WALKING_LEFT;
+			ani = KOOPAS_ANI_RED_WALKING_LEFT;
 		}
 		break;
 		case 4 /*KOOPAS_TYPE_RED_FLY*/:
 		{
-			ani = KOOPAS_ANI_RED_FLY_WALKING_LEFT;
+			ani = KOOPAS_ANI_RED_FLYING_LEFT;
 		}
 		break;
 		}
@@ -165,12 +197,12 @@ void CKoopas::Render()
 		break;
 		case 3 /*KOOPAS_TYPE_RED_WALK*/:
 		{
-			ani = KOOPAS_ANI_RED_FLY_SHELL_UP;
+			ani = KOOPAS_ANI_RED_SHELL_PRONE;
 		}
 		break;
 		case 4 /*KOOPAS_TYPE_RED_FLY*/:
 		{
-			ani = KOOPAS_ANI_RED_FLY_SHELL_UP;
+			ani = KOOPAS_ANI_RED_SHELL_PRONE;
 		}
 		break;
 		}
@@ -182,22 +214,49 @@ void CKoopas::Render()
 		{
 		case 1 /*KOOPAS_TYPE_GREEN_WALK */:
 		{
-			ani = KOOPAS_ANI_GREEN_SHELL_PRONE;
+			ani = KOOPAS_ANI_GREEN_SPINNING;
 		}
 		break;
 		case 2 /*KOOPAS_TYPE_GREEN_FLY*/:
 		{
-			ani = KOOPAS_ANI_GREEN_SHELL_PRONE;
+			ani = KOOPAS_ANI_GREEN_SPINNING;
 		}
 		break;
 		case 3 /*KOOPAS_TYPE_RED_WALK*/:
 		{
-			ani = KOOPAS_ANI_RED_FLY_SHELL_UP;
+			ani = KOOPAS_ANI_RED_ANI_SPINNING;
 		}
 		break;
 		case 4 /*KOOPAS_TYPE_RED_FLY*/:
 		{
-			ani = KOOPAS_ANI_RED_FLY_SHELL_UP;
+			ani = KOOPAS_ANI_RED_ANI_SPINNING;
+		}
+		break;
+		}
+	}
+	else if (state == KOOPAS_STATE_DIE)
+	{
+		// chưa xử lý được chết úp hay ngửa
+		switch (Type)
+		{
+		case 1 /*KOOPAS_TYPE_GREEN_WALK */:
+		{
+			ani = KOOPAS_ANI_GREEN_SHELL_UPWARD;
+		}
+		break;
+		case 2 /*KOOPAS_TYPE_GREEN_FLY*/:
+		{
+			ani = KOOPAS_ANI_GREEN_SHELL_UPWARD;
+		}
+		break;
+		case 3 /*KOOPAS_TYPE_RED_WALK*/:
+		{
+			ani = KOOPAS_ANI_RED_SHELL_PRONE;
+		}
+		break;
+		case 4 /*KOOPAS_TYPE_RED_FLY*/:
+		{
+			ani = KOOPAS_ANI_RED_SHELL_PRONE;
 		}
 		break;
 		}
@@ -237,6 +296,10 @@ void CKoopas::SetState(int state)
 		{
 			vx = -KOOPAS_SPINNING_SPEED;
 		}
+		break;
+	case KOOPAS_STATE_DIE:
+		vx = -vx;
+		vy -= KOOPAS_DIE_DEFLECT_SPEED;
 		break;
 	}
 

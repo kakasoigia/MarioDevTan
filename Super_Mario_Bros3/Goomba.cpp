@@ -12,12 +12,21 @@ void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &botto
 {
 	left = x;
 	top = y;
-	right = x + GOOMBA_BBOX_WIDTH;
-
-	if (state == GOOMBA_STATE_DIE)
-		bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
-	else
+	if (Type == GOOMBA_TYPE_ORANGE)
+	{
+		right = x + GOOMBA_BBOX_WIDTH;
 		bottom = y + GOOMBA_BBOX_HEIGHT;
+	}
+	else if (Type == GOOMBA_TYPE_RED_FLY)
+	{
+
+	}
+	
+
+	//if (state == GOOMBA_STATE_DIE)
+	//	bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
+	//else
+	//	bottom = y + GOOMBA_BBOX_HEIGHT;
 }
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
@@ -164,7 +173,7 @@ void CGoomba::Render()
 		break;
 		case 2 /*GOOMBA_TYPE_RED_FLY*/:
 		{
-			ani = GOOMBA_ANI_RED_FLY_DIE;
+			ani = GOOMBA_ANI_RED_DIE;
 		}
 		break;
 
@@ -189,7 +198,7 @@ void CGoomba::SetState(int state)
 	case GOOMBA_STATE_DIE:
 		y += GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE + 1;
 		vx = 0;
-		vy = 0;
+		vy = -GOOMBA_DIE_DEFLECT_SPEED;
 		break;
 	case GOOMBA_STATE_WALKING:
 		vx = -GOOMBA_WALKING_SPEED;
