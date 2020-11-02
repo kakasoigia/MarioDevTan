@@ -134,7 +134,7 @@
 #define MARIO_FIRE_BBOX_HEIGHT 27
 
 #define SPEECH_ADDTION_PER_LEVEL	0.002f
-#define MARIO_MAX_SPEED	0.3f
+#define MARIO_MAX_SPEED	0.2f
 #define MARIO_INERTIA 0.03f
 
 class CMario : public CGameObject
@@ -148,8 +148,11 @@ class CMario : public CGameObject
 	float start_y;
 protected:
 	bool isJumping = false;
-	bool canBrake = false;
+	bool isBraking = false;
 	bool isKicking = false;
+	bool isHolding = false;
+	bool isTurning = false;
+	int current_level_speed_up;
 public:
 	CMario(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
@@ -164,7 +167,34 @@ public:
 	void SetJumpingState(bool state) { isJumping = state; };
 	void Reset();
 	void SpeedDown();
-	void SpeedInertia();
+	bool SpeedInertia();
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
-	 int current_level_speed_up ;
+	 bool GetIsHolding()
+	 {
+		 return isHolding;
+	 }
+	 void SetIsHolding(bool isHoldingBool)
+	 {
+		 this->isHolding = isHoldingBool;
+	 }
+	 void IncreaseCurrentLevelSpeed()
+	 {
+		 current_level_speed_up++;
+	 }
+	 void DecreaseCurrentLevelSpeed()
+	 {
+		 current_level_speed_up--;
+	 }
+	 int GetLevelSpeedUp()
+	 {
+		 return current_level_speed_up;
+	 }
+	 bool GetIsKicking()
+	 {
+		 return isKicking;
+	 }
+	 void SetIsKicking(bool isKickingBool)
+	 {
+		 this->isKicking = isKickingBool;
+	 }
 };

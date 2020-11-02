@@ -3,7 +3,7 @@
 #include "GameObject.h"
 #include "Goomba.h"
 #include "Mario.h"
-
+#include "PlayScence.h"
 #define KOOPAS_WALKING_SPEED 0.03f
 #define KOOPAS_SPINNING_SPEED 0.3f
 
@@ -54,6 +54,8 @@
 #define KOOPAS_FLY_DEFLECT_SPEED 0.4f
 #define KOOPAS_PERIODIC_TIME_FLY 1000
 
+#define KOOPAS_HOLDING 1
+#define	KOOPAS_NOT_HOLDING 0
 class CKoopas : public CGameObject
 {
 
@@ -61,7 +63,7 @@ class CKoopas : public CGameObject
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
 	virtual void Render();
 	int Type;
-	
+	int isHolding = -1;
 	int flying_start;
 
 public:
@@ -70,4 +72,12 @@ public:
 	virtual void SetState(int state);
 	int GetType() { return Type; };
 	void SetType(int type) { Type = type; };
+	int GetIsHolding()
+	{
+		return isHolding;
+	}
+	void SetIsHolding(int isHolding)
+	{
+		this->isHolding = isHolding;
+	}
 };

@@ -358,6 +358,19 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	}
 }
+void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
+{
+	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
+	CGame *game = CGame::GetInstance();
+	CMario *mario = ((CPlayScene*)scence)->GetPlayer();
+	if (mario->GetState() == MARIO_STATE_DIE) return;
+	switch (KeyCode)
+	{
+	case DIK_SPACE:
+		mario->SetIsHolding(false);
+		break;
+	}
+}
 
 void CPlayScenceKeyHandler::KeyState(BYTE *states)
 {
@@ -409,7 +422,13 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 			mario->SetJumpingState(true);
 		}
 	}
-	
+	else if (game->IsKeyDown(DIK_SPACE))
+	{
+		
+			mario->SetIsHolding(true);
+			
+		
+	}
 	else // no keystate
 	{
 		/*SetLevelSpeedDown(mario);*/
@@ -458,11 +477,11 @@ void CPlayScenceKeyHandler::SetLevelSpeedUp(CMario *mario)
 	}
 	else // have run for a time
 	{
-		if (current_time - start_time_speed_up > TIME_PER_LEVEL_SPEED_UP && mario->current_level_speed_up < MAX_POWER_SPEED_UP)
+		if (current_time - start_time_speed_up > TIME_PER_LEVEL_SPEED_UP && mario->GetLevelSpeedUp() < MAX_POWER_SPEED_UP)
 		{
 			//reset start_time_speed_up
 			start_time_speed_up = 0;
-			mario->current_level_speed_up++;
+			mario->IncreaseCurrentLevelSpeed();
 		}
 	}
 }
@@ -476,12 +495,12 @@ void CPlayScenceKeyHandler::SetLevelSpeedDown(CMario *mario)
 	}
 	else // have run for a time
 	{
-		if (current_time - start_time_speed_down > TIME_PER_LEVEL_SPEED_UP && mario->current_level_speed_up < MAX_POWER_SPEED_UP)
+		if (current_time - start_time_speed_down > TIME_PER_LEVEL_SPEED_UP && mario->GetLevelSpeedUp() < MAX_POWER_SPEED_UP)
 		{
 			//reset start_time_speed_up
 			start_time_speed_down = 0;
-			if (mario->current_level_speed_up > 0) // count down the lv speed
-				mario->current_level_speed_up--;
+			if (mario->GetLevelSpeedUp() > 0) // count down the lv speed
+				mario->DecreaseCurrentLevelSpeed();
 		}
 	}
 }
