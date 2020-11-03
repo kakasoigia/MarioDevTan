@@ -10,10 +10,11 @@ CGoomba::CGoomba(int type)
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
-	/*if (state == GOOMBA_STATE_DIE_BY_KICK || state == GOOMBA_STATE_DIE)
+	if (state == GOOMBA_STATE_DIE_BY_KICK || state == GOOMBA_STATE_DIE)
 	{
 		left = top = right = bottom = 0;
-	}*/
+		return;
+	}
 	left = x;
 	top = y;
 	right = x + GOOMBA_NORMAL_BBOX_WIDTH;
@@ -21,12 +22,6 @@ void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &botto
 		bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
 	else
 		bottom = y + GOOMBA_NORMAL_BBOX_HEIGHT;
-	
-
-	//if (state == GOOMBA_STATE_DIE)
-	//	bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
-	//else
-	//	bottom = y + GOOMBA_BBOX_HEIGHT;
 }
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
@@ -36,7 +31,13 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	//
 	// TO-DO: make sure Goomba can interact with the world and to each of them too!
 	// 
+	if (GetTickCount() - jumping_start >= GOOMBA_TIME_JUMPING && Type == GOOMBA_TYPE_RED_FLY) // GOOMBA RED FLY JUMP
+	{
 
+		vy = -GOOMBA_JUMP_SPEED;
+		jumping_start = GetTickCount();
+
+	}
 
 
 
@@ -57,19 +58,17 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	coEvents.clear();
 
 	// turn off collision when die 
-	if (state == GOOMBA_STATE_DIE)
+	if (state == GOOMBA_STATE_DIE || GOOMBA_STATE_DIE_BY_KICK)
 	{
 		if ((GetTickCount() - dying_start) > GOOMBA_DYING_TIME)
 		{
 			dying_start = 0;
-			state = GOOMBA_STATE_DISAPPEAR;
+			
 		}
 	}
-	if (state != GOOMBA_STATE_DISAPPEAR)
-	{
 
+	if (state != GOOMBA_STATE_DIE_BY_KICK && state != GOOMBA_STATE_DIE)
 		CalcPotentialCollisions(coObjects, coEvents);
-	}
 
 
 
@@ -132,7 +131,11 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			//{
 			//	
 			//}
-
+			if (vx < 0 && x < 0) \
+			{
+				x = 0;
+				vx = -vx;
+			}
 		}
 	}
 
@@ -152,7 +155,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 void CGoomba::Render()
 {
 	int ani = -1;
-	if (state == GOOMBA_STATE_WALKING)
+	if (state == GOOMBA_STATE_WALKING || state == GOOMBA_STATE_DIE_BY_KICK)
 	{
 		// chưa xử lý được chết úp hay ngửa
 		switch (Type)
@@ -170,7 +173,7 @@ void CGoomba::Render()
 
 		}
 	}
-	else if (state == GOOMBA_STATE_DIE)
+	else if (state == GOOMBA_STATE_DIE )
 	{
 		switch (Type)
 		{
@@ -187,6 +190,7 @@ void CGoomba::Render()
 
 		}
 	}
+	
 	else if (state == GOOMBA_STATE_DISAPPEAR)
 	{
 
@@ -199,16 +203,21 @@ void CGoomba::Render()
 
 void CGoomba::SetState(int state)
 {
-
 	CGameObject::SetState(state);
 	switch (state)
 	{
 	case GOOMBA_STATE_DIE:
-		y += GOOMBA_NORMAL_BBOX_WIDTH - GOOMBA_BBOX_HEIGHT_DIE + 1;
+		y += GOOMBA_NORMAL_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE + 1;
 		vx = 0;
 		vy = 0;
 		break;
+	case GOOMBA_STATE_DIE_BY_KICK:
+		vy = -GOOMBA_DIE_DEFLECT_SPEED;
+		vx = -vx;
+		break;
+
 	case GOOMBA_STATE_WALKING:
 		vx = -GOOMBA_WALKING_SPEED;
+		break;
 	}
 }

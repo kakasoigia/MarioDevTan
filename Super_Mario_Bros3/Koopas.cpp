@@ -61,55 +61,55 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		CalcPotentialCollisions(coObjects, coEvents);
 	}
-	if (mario->GetIsHolding() ==false)
+	if (mario->GetIsHolding() == 0) // throw and kick Koo when drop Koo
 	{
 		isHolding = KOOPAS_NOT_HOLDING;
 		/*mario->StartKicking();
 		mario->SetIsKicking(true);
 		nx = mario->nx;
-		state = KOOPAS_STATE_SPINNING;*/
+		SetState(KOOPAS_STATE_SPINNING);*/
 	}
-	if (isHolding == KOOPAS_HOLDING)
+	else if (isHolding == KOOPAS_HOLDING)
 	{
 		y = mario->y + 8;
 		if (mario->nx > 0)
 		{
 			if (mario->GetLevel() == MARIO_LEVEL_BIG)
 			{
-				x = mario->x + MARIO_BIG_BBOX_WIDTH;
+				x = mario->x + MARIO_BIG_BBOX_WIDTH ;
 			}
 			else if (mario->GetLevel() == MARIO_LEVEL_SMALL)
 			{
-				x = mario->x + MARIO_SMALL_BBOX_WIDTH;
+				x = mario->x + MARIO_SMALL_BBOX_WIDTH - 1;
 				y = y - 10;
 			}
 			else if (mario->GetLevel() == MARIO_LEVEL_TAIL)
 			{
-				x = mario->x + MARIO_TAIL_BBOX_WIDTH;
+				x = mario->x + MARIO_TAIL_BBOX_WIDTH ;
 			}
 			else
 			{
-				x = mario->x + MARIO_FIRE_BBOX_WIDTH;
+				x = mario->x + MARIO_FIRE_BBOX_WIDTH ;
 			}
 		}
 		else
 		{
 			if (mario->GetLevel() == MARIO_LEVEL_BIG)
 			{
-				x = mario->x - MARIO_BIG_BBOX_WIDTH;
+				x = mario->x - MARIO_BIG_BBOX_WIDTH ;
 			}
 			else if (mario->GetLevel() == MARIO_LEVEL_SMALL)
 			{
-				x = mario->x - MARIO_SMALL_BBOX_WIDTH;
+				x = mario->x - MARIO_SMALL_BBOX_WIDTH + 1;
 				y = y - 10;
 			}
 			else if (mario->GetLevel() == MARIO_LEVEL_TAIL)
 			{
-				x = mario->x - MARIO_TAIL_BBOX_WIDTH;
+				x = mario->x - MARIO_TAIL_BBOX_WIDTH ;
 			}
 			else
 			{
-				x = mario->x - MARIO_FIRE_BBOX_WIDTH;
+				x = mario->x - MARIO_FIRE_BBOX_WIDTH ;
 			}
 		}
 	}
@@ -134,8 +134,8 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
 		// block 
-		if (!isHolding)
-			x += min_tx * dx + nx * 0.4f;			// nx*0.4f : need to push out a bit to avoid overlapping next frame
+		/*if (!isHolding)
+			x += min_tx * dx + nx * 0.4f;*/			// nx*0.4f : need to push out a bit to avoid overlapping next frame
 		/*y += min_ty * dy + ny * 0.4f;*/
 
 		/*if (nx != 0) vx = -vx;*/

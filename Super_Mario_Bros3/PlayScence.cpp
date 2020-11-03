@@ -39,6 +39,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_KOOPAS_RED_FLY	9
 #define OBJECT_TYPE_COIN	10
 #define OBJECT_TYPE_GOOMBA_RED_FLY	11
+#define OBJECT_TYPE_FIRE_BULLET	12
 #define OBJECT_TYPE_PORTAL	50
 
 #define MAX_SCENE_LINE 1024
@@ -172,6 +173,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_RECTANGLE: obj = new CRectangle(); break;
 	case OBJECT_TYPE_NO_COLLISION_OBJECTS:obj = new CNoCollisionObjects(); break;
 	case OBJECT_TYPE_PIPE:obj = new CPipe(); break;
+	case OBJECT_TYPE_FIRE_BULLET:obj = new CFireBullet(); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
@@ -191,8 +193,15 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 
 	obj->SetAnimationSet(ani_set);
-
+	
+	
 	objects.push_back(obj);
+	//// add 1 cartridge_clip
+	if (dynamic_cast<CFireBullet *>(obj))
+	{
+		cartridge_clip.push_back(obj);
+	}
+		
 }
 
 void CPlayScene::Load()
@@ -255,7 +264,7 @@ void CPlayScene::Update(DWORD dt)
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
 	{
-
+		if (!dynamic_cast<CNoCollisionObjects *>(objects[i]))
 		coObjects.push_back(objects[i]);
 	}
 
@@ -356,6 +365,18 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_T:
 		mario->SetLevel(MARIO_LEVEL_TAIL);
 		break;
+	case DIK_SPACE:
+		if(mario->GetLevel()== MARIO_LEVEL_FIRE)
+		mario->Fire();
+		break;
+	case DIK_Z:
+		if (mario->GetLevel() == MARIO_LEVEL_TAIL || mario->GetIsTurning() == MARIO_LEVEL_TAIL)
+		{
+			mario->SetIsTurning(true);
+			mario->StartTurning();
+		}
+			
+		break;
 	}
 }
 void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
@@ -366,8 +387,8 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	if (mario->GetState() == MARIO_STATE_DIE) return;
 	switch (KeyCode)
 	{
-	case DIK_SPACE:
-		mario->SetIsHolding(false);
+	case DIK_V:
+		mario->SetIsHolding(0);
 		break;
 	}
 }
@@ -379,7 +400,10 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 	
 	// disable control key when Mario die 
 	if (mario->GetState() == MARIO_STATE_DIE) return;
-
+	if (game->IsKeyDown(DIK_V))
+	{
+		mario->SetIsHolding(1);
+	}
 	if (game->IsKeyDown(DIK_RIGHT))
 	{
 		int current_time = GetTickCount();
@@ -390,7 +414,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 		}
 		else
 		{
-			
+			SetLevelSpeedDown(mario);
 			mario->SetState(MARIO_STATE_WALKING_RIGHT);
 		}
 	}
@@ -405,6 +429,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 		}
 		else
 		{
+			SetLevelSpeedDown(mario);
 			mario->SetState(MARIO_STATE_WALKING_LEFT);
 		}
 			
@@ -422,22 +447,18 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 			mario->SetJumpingState(true);
 		}
 	}
-	else if (game->IsKeyDown(DIK_SPACE))
-	{
-		
-			mario->SetIsHolding(true);
-			
-		
-	}
+	
+
 	else // no keystate
 	{
-		/*SetLevelSpeedDown(mario);*/
+		
 		 if ((mario->vx <= 0 && mario->nx >0) || (mario->vx >= 0 && mario->nx < 0))
 		{
 			mario->SetState(MARIO_STATE_IDLE);
 		}
 		else if (mario->vx != 0)
 		{
+			 SetLevelSpeedDown(mario);
 			mario->SetState(MARIO_STATE_SPEEDING_DOWN);
 		}
 

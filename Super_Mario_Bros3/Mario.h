@@ -26,6 +26,7 @@
 #define MARIO_STATE_RUNNING_LEFT	1400
 #define MARIO_STATE_SITDOWN			1500
 #define MARIO_STATE_SPEEDING_DOWN	1600
+#define MARIO_STATE_TURNING_TAIL	1700
 
 
 
@@ -85,6 +86,8 @@
 #define MARIO_ANI_TAIL_RUNNING_LEFT		55
 #define MARIO_ANI_TAIL_SITDOWN_RIGHT	56
 #define MARIO_ANI_TAIL_SITDOWN_LEFT		57
+#define MARIO_ANI_TAIL_TURNING_RIGHT	58	
+#define MARIO_ANI_TAIL_TURNING_LEFT		59
 
 
 #define MARIO_ANI_FIRE_IDLE_RIGHT		60
@@ -122,6 +125,7 @@
 
 #define MARIO_UNTOUCHABLE_TIME 5000
 #define MARIO_KICK_TIME 300
+#define MARIO_TURNING_TIME		 300
 #define	MARIO_DIFFERENCE_HEIGHT	12
 
 #define MARIO_BIG_BBOX_WIDTH  15
@@ -150,9 +154,11 @@ protected:
 	bool isJumping = false;
 	bool isBraking = false;
 	bool isKicking = false;
-	bool isHolding = false;
+	int isHolding = -1;
 	bool isTurning = false;
+	bool isFiring = false;
 	int current_level_speed_up;
+	DWORD turning_start = 0;
 public:
 	CMario(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
@@ -163,19 +169,21 @@ public:
 	int GetLevel() { return level; };
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
 	void StartKicking() { kicking_start = GetTickCount(); }
+	void StartTurning() { turning_start = GetTickCount(); }
 	bool GetJumpingState() { return isJumping; };
 	void SetJumpingState(bool state) { isJumping = state; };
 	void Reset();
 	void SpeedDown();
+	void Fire();
 	bool SpeedInertia();
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
-	 bool GetIsHolding()
+	 int GetIsHolding()
 	 {
 		 return isHolding;
 	 }
-	 void SetIsHolding(bool isHoldingBool)
+	 void SetIsHolding(int isHolding)
 	 {
-		 this->isHolding = isHoldingBool;
+		 this->isHolding = isHolding;
 	 }
 	 void IncreaseCurrentLevelSpeed()
 	 {
@@ -196,5 +204,21 @@ public:
 	 void SetIsKicking(bool isKickingBool)
 	 {
 		 this->isKicking = isKickingBool;
+	 }
+	 bool GetIsFiring()
+	 {
+		 return isFiring;
+	 }
+	 void SetIsFiring(bool isFiring)
+	 {
+		 this->isFiring = isFiring;
+	 }
+	 void SetIsTurning(bool isTurningBool)
+	 {
+		 this->isTurning = isTurningBool;
+	 }
+	 bool GetIsTurning()
+	 {
+		 return  isTurning;
 	 }
 };

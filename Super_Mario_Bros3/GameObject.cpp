@@ -75,7 +75,7 @@ void CGameObject::CalcPotentialCollisions(
 		if (dynamic_cast<CRectangle *>(coObjects->at(i)))
 		{
 			CMario *mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-			if (mario->vy < 0)
+			if (vy < 0)
 				/*CGame::GetInstance()->GetCurrentScene()->*/
 				continue;
 		}

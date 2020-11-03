@@ -49,6 +49,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		kicking_start = 0;
 		isKicking = false;
 	}
+	if (GetTickCount() - turning_start > MARIO_TURNING_TIME)
+	{
+		isTurning = false;
+	}
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
@@ -125,6 +129,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 								SetState(MARIO_STATE_DIE);
 						}
 					}
+					else if (level == MARIO_LEVEL_TAIL && isTurning)
+					{
+						if (goomba->GetState() != GOOMBA_STATE_DIE_BY_KICK)
+							goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
+					}
 				}
 
 			}
@@ -150,14 +159,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					{
 						if (ny == 0) // kick Koo || hold Koo
 						{
-							if (isHolding == true/*; state == MARIO_STATE_RUNNING_LEFT || state == MARIO_STATE_RUNNING_RIGHT*/)
+							if (isHolding == 1/*; state == MARIO_STATE_RUNNING_LEFT || state == MARIO_STATE_RUNNING_RIGHT*/)
 							{
 								
 								koopas->SetIsHolding(KOOPAS_HOLDING);
 							}
 							else
 							{
-								isHolding == false;
+								isHolding == -1;
 								isKicking = true;
 								StartKicking();
 								koopas->nx = this->nx;
@@ -214,7 +223,59 @@ void CMario::Render()
 	int ani = -1;
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
-	else if (isHolding)
+	else if (isTurning)
+	{
+		if (nx < 0) ani = MARIO_ANI_TAIL_TURNING_RIGHT;
+		else ani = MARIO_ANI_TAIL_TURNING_LEFT;
+	}
+	else if (isJumping == true) // đang trên kh ?
+	{
+		if (level == MARIO_LEVEL_BIG)
+		{
+			if (nx > 0)
+			{
+				ani = MARIO_ANI_BIG_JUMPING_RIGHT;
+			}
+			else
+			{
+				ani = MARIO_ANI_BIG_JUMPING_LEFT;
+			}
+		}
+		else if (level == MARIO_LEVEL_SMALL)
+		{
+			if (nx > 0)
+			{
+				ani = MARIO_ANI_SMALL_JUMPING_RIGHT;
+			}
+			else
+			{
+				ani = MARIO_ANI_SMALL_JUMPING_LEFT;
+			}
+		}
+		else if (level == MARIO_LEVEL_TAIL)
+		{
+			if (nx > 0)
+			{
+				ani = MARIO_ANI_TAIL_JUMPING_RIGHT;
+			}
+			else
+			{
+				ani = MARIO_ANI_TAIL_JUMPING_LEFT;
+			}
+		}
+		else if (level == MARIO_LEVEL_FIRE)
+		{
+			if (nx > 0)
+			{
+				ani = MARIO_ANI_FIRE_JUMPING_RIGHT;
+			}
+			else
+			{
+				ani = MARIO_ANI_FIRE_JUMPING_LEFT;
+			}
+		}
+	}
+	else if (isHolding ==1)
 	{
 		if (level == MARIO_LEVEL_BIG)
 		{
@@ -237,6 +298,8 @@ void CMario::Render()
 			else ani = MARIO_ANI_FIRE_HOLDING_LEFT;
 		}
 	}
+	
+
 	else if (state == MARIO_STATE_IDLE)
 	{
 		if (level == MARIO_LEVEL_BIG)
@@ -348,53 +411,7 @@ void CMario::Render()
 			ani = MARIO_ANI_FIRE_RUNNING_LEFT;
 		}
 	}
-	else if (isJumping == true) // đang trên kh ?
-	{
-		if (level == MARIO_LEVEL_BIG)
-		{
-			if (nx > 0)
-			{
-				ani = MARIO_ANI_BIG_JUMPING_RIGHT;
-			}
-			else
-			{
-				ani = MARIO_ANI_BIG_JUMPING_LEFT;
-			}
-		}
-		else if (level == MARIO_LEVEL_SMALL)
-		{
-			if (nx > 0)
-			{
-				ani = MARIO_ANI_SMALL_JUMPING_RIGHT;
-			}
-			else
-			{
-				ani = MARIO_ANI_SMALL_JUMPING_LEFT;
-			}
-		}
-		else if (level == MARIO_LEVEL_TAIL)
-		{
-			if (nx > 0)
-			{
-				ani = MARIO_ANI_TAIL_JUMPING_RIGHT;
-			}
-			else
-			{
-				ani = MARIO_ANI_TAIL_JUMPING_LEFT;
-			}
-		}
-		else if (level == MARIO_LEVEL_FIRE)
-		{
-			if (nx > 0)
-			{
-				ani = MARIO_ANI_FIRE_JUMPING_RIGHT;
-			}
-			else
-			{
-				ani = MARIO_ANI_FIRE_JUMPING_LEFT;
-			}
-		}
-	}
+
 	/*
 	else if (state == MARIO_STATE_FLYING)
 	{
@@ -670,4 +687,18 @@ bool CMario::SpeedInertia()
 		return false;
 	}
 	
+}
+void CMario::Fire()
+{
+	vector<LPGAMEOBJECT> cartridge_clip = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->Get_cartridge_clip();
+	for (UINT i = 0; i < cartridge_clip.size(); i++)
+	{
+		CFireBullet *bullet = dynamic_cast<CFireBullet *>(cartridge_clip[i]);
+		if (bullet->GetIsUsed() == false)
+		{
+			// get fired
+			bullet->SetState(BULLET_STATE_FLYING);
+			return;
+		}
+	}
 }

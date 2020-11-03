@@ -10,6 +10,7 @@
 #include "Rectangle.h"
 #include "NoCollisionObjects.h"
 #include "Pipe.h"
+#include "FireBullet.h"
 
 class CPlayScene : public CScene
 {
@@ -17,6 +18,7 @@ protected:
 	CMario *player;					// A play scene has to have player, right? 
 
 	vector<LPGAMEOBJECT> objects;
+	vector<LPGAMEOBJECT> cartridge_clip;
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -34,7 +36,7 @@ public:
 	virtual void Unload();
 	
 	CMario * GetPlayer() { return player; }
-
+	vector<LPGAMEOBJECT> Get_cartridge_clip() { return cartridge_clip; };
 	//friend class CPlayScenceKeyHandler;
 };
 
