@@ -35,10 +35,10 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		if (GetTickCount() - flying_start > KOOPAS_PERIODIC_TIME_FLY)
 		{
 			vy = -KOOPAS_FLY_DEFLECT_SPEED;
-				flying_start = GetTickCount();
+			flying_start = GetTickCount();
 		}
 	}
-	
+
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -76,7 +76,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			if (mario->GetLevel() == MARIO_LEVEL_BIG)
 			{
-				x = mario->x + MARIO_BIG_BBOX_WIDTH ;
+				x = mario->x + MARIO_BIG_BBOX_WIDTH;
 			}
 			else if (mario->GetLevel() == MARIO_LEVEL_SMALL)
 			{
@@ -85,18 +85,18 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else if (mario->GetLevel() == MARIO_LEVEL_TAIL)
 			{
-				x = mario->x + MARIO_TAIL_BBOX_WIDTH ;
+				x = mario->x + MARIO_TAIL_BBOX_WIDTH;
 			}
 			else
 			{
-				x = mario->x + MARIO_FIRE_BBOX_WIDTH ;
+				x = mario->x + MARIO_FIRE_BBOX_WIDTH;
 			}
 		}
 		else
 		{
 			if (mario->GetLevel() == MARIO_LEVEL_BIG)
 			{
-				x = mario->x - MARIO_BIG_BBOX_WIDTH ;
+				x = mario->x - MARIO_BIG_BBOX_WIDTH;
 			}
 			else if (mario->GetLevel() == MARIO_LEVEL_SMALL)
 			{
@@ -105,11 +105,11 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else if (mario->GetLevel() == MARIO_LEVEL_TAIL)
 			{
-				x = mario->x - MARIO_TAIL_BBOX_WIDTH ;
+				x = mario->x - MARIO_TAIL_BBOX_WIDTH;
 			}
 			else
 			{
-				x = mario->x - MARIO_FIRE_BBOX_WIDTH ;
+				x = mario->x - MARIO_FIRE_BBOX_WIDTH;
 			}
 		}
 	}
@@ -127,7 +127,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	else
 	{
-		 // land ...fly
+		// land ...fly
 		float min_tx, min_ty, nx = 0, ny;
 		float rdx = 0;
 		float rdy = 0;
@@ -136,9 +136,9 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		// block 
 		/*if (!isHolding)
 			x += min_tx * dx + nx * 0.4f;*/			// nx*0.4f : need to push out a bit to avoid overlapping next frame
-		/*y += min_ty * dy + ny * 0.4f;*/
+			/*y += min_ty * dy + ny * 0.4f;*/
 
-		/*if (nx != 0) vx = -vx;*/
+			/*if (nx != 0) vx = -vx;*/
 		if (ny != 0) vy = 0;
 
 		// Collision logic with Goombas
@@ -158,12 +158,12 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					goomba->SetState(GOOMBA_STATE_DIE);
 				}
-				
+
 			}
 			else if (dynamic_cast<CKoopas *>(e->obj)) // if e->obj is Goomba 
 			{
 				CKoopas *koopas = dynamic_cast<CKoopas *>(e->obj);
-				if (nx !=0 && (this->state == KOOPAS_STATE_SPINNING ||isHolding == KOOPAS_HOLDING))
+				if (nx != 0 && (this->state == KOOPAS_STATE_SPINNING || isHolding == KOOPAS_HOLDING))
 				{
 					koopas->SetState(KOOPAS_STATE_DIE);
 				}
@@ -322,7 +322,7 @@ void CKoopas::SetState(int state)
 		{
 			vx = KOOPAS_WALKING_SPEED;
 		}
-		else if (nx<0)
+		else if (nx < 0)
 		{
 			vx = -KOOPAS_WALKING_SPEED;
 		}
@@ -332,7 +332,7 @@ void CKoopas::SetState(int state)
 		{
 			vx = KOOPAS_SPINNING_SPEED;
 		}
-		else if(nx < 0)
+		else if (nx < 0)
 		{
 			vx = -KOOPAS_SPINNING_SPEED;
 		}

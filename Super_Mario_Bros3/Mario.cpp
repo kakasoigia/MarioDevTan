@@ -228,6 +228,11 @@ void CMario::Render()
 		if (nx < 0) ani = MARIO_ANI_TAIL_TURNING_RIGHT;
 		else ani = MARIO_ANI_TAIL_TURNING_LEFT;
 	}
+	else if (isFiring)
+	{
+		if (nx < 0) ani = MARIO_ANI_TAIL_FIRING_BULLET_LEFT;
+		else ani = MARIO_ANI_TAIL_FIRING_BULLET_RIGHT;
+	}
 	else if (isJumping == true) // đang trên kh ?
 	{
 		if (level == MARIO_LEVEL_BIG)

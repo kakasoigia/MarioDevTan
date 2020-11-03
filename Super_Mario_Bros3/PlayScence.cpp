@@ -366,8 +366,13 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		mario->SetLevel(MARIO_LEVEL_TAIL);
 		break;
 	case DIK_SPACE:
-		if(mario->GetLevel()== MARIO_LEVEL_FIRE)
-		mario->Fire();
+		if (mario->GetLevel() == MARIO_LEVEL_FIRE)
+		{
+			mario->Fire();
+			mario->SetIsFiring(true);
+			/*mario->StartFiring();*/
+		}
+		
 		break;
 	case DIK_Z:
 		if (mario->GetLevel() == MARIO_LEVEL_TAIL || mario->GetIsTurning() == MARIO_LEVEL_TAIL)
@@ -389,6 +394,15 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	{
 	case DIK_V:
 		mario->SetIsHolding(0);
+		break;
+	case DIK_SPACE:
+		if (mario->GetLevel() == MARIO_LEVEL_FIRE)
+		{
+			
+			mario->SetIsFiring(false);
+			/*mario->StartFiring();*/
+		}
+
 		break;
 	}
 }
