@@ -27,6 +27,8 @@
 #define MARIO_STATE_SITDOWN			1500
 #define MARIO_STATE_SPEEDING_DOWN	1600
 #define MARIO_STATE_TURNING_TAIL	1700
+#define MARIO_STATE_FALL_DOWN	1800
+
 
 
 
@@ -127,7 +129,7 @@
 #define MARIO_UNTOUCHABLE_TIME 5000
 #define MARIO_KICK_TIME 300
 #define MARIO_TURNING_TIME		 300
-#define MARIO_FLYING_TIME		 700
+#define MARIO_FLYING_TIME		 3000
 #define	MARIO_DIFFERENCE_HEIGHT	12
 
 #define MARIO_BIG_BBOX_WIDTH  15
@@ -142,7 +144,8 @@
 #define SPEECH_ADDTION_PER_LEVEL	0.002f
 #define MARIO_MAX_SPEED	0.2f
 #define MARIO_INERTIA 0.03f
-#define MARIO_FLYING_SPEED 0.04f
+#define MARIO_FLYING_SPEED 0.05f
+#define MARIO_TAIL_FALL_SPEED 0.05f
 class CMario : public CGameObject
 {
 	int level;
@@ -161,6 +164,7 @@ protected:
 	bool isTurning = false;
 	bool isFiring = false;
 	bool isFlying = false;
+	bool canFly = false;
 	bool isLanding = false;
 	int current_level_speed_up;
 	DWORD turning_start = 0;
@@ -227,13 +231,13 @@ public:
 	 {
 		 return  isTurning;
 	 }
-	 void SetIsFlying(bool isFlying)
+	 void SetCanFly(bool canFly)
 	 {
-		 this->isFlying = isFlying;
+		 this->canFly = canFly;
 	 }
-	 bool GetIsFlying()
+	 bool GetCanFly()
 	 {
-		 return  isFlying;
+		 return  canFly;
 	 }
 	 void SetIsLanding(bool isLanding)
 	 {

@@ -28,8 +28,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	CGameObject::Update(dt);
 
 	// Simple fall down
-	if (isFlying ==false)
-	vy += MARIO_GRAVITY * dt;
+	if (state != MARIO_STATE_FLY && state != MARIO_STATE_FALL_DOWN)
+		vy += MARIO_GRAVITY * dt;
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -55,7 +55,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		isTurning = false;
 	}
-
+	
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
 	{
@@ -80,7 +80,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		y += min_ty * dy + ny * 0.4f;
 		/*if (nx != 0) vx = 0;*/
 		if (ny != 0) vy = 0;
-
+		// check if can fly again?
+		if (ny < 0)
+		{
+			isJumping = false;
+			isLanding = false;
+			canFly = true;
+		}
 
 		/*if (coEventsResult.size() == 0) isJumping = true;*/
 
@@ -90,7 +96,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (e->ny < 0) isJumping = false; // chạm vật có thể nhảy tiếp
+			//if (e->ny < 0) isJumping = false; // chạm vật có thể nhảy tiếp
 			if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
 			{
 				CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
@@ -225,28 +231,15 @@ void CMario::Render()
 	int ani = -1;
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
-	else if (isFlying)
+	else if (state == MARIO_STATE_FLY)
 	{
-		if (level == MARIO_LEVEL_BIG)
-		{
-			if (nx > 0) ani = MARIO_ANI_BIG_FLYING_RIGHT;
-			else ani = MARIO_ANI_BIG_FLYING_LEFT;
-		}
-		else if (level == MARIO_LEVEL_SMALL)
-		{
-			if (nx > 0) ani = MARIO_ANI_SMALL_FLYING_RIGHT;
-			else ani = MARIO_ANI_SMALL_FLYING_LEFT;
-		}
-		else if (level == MARIO_LEVEL_TAIL)
+		
+		 if (level == MARIO_LEVEL_TAIL)
 		{
 			if (nx > 0) ani = MARIO_ANI_TAIL_FLYING_RIGHT;
-			else ani = MARIO_ANI_TAIL_JUMPING_LEFT;
+			else ani = MARIO_ANI_TAIL_FLYING_LEFT;
 		}
-		else if (level == MARIO_LEVEL_FIRE)
-		{
-			if (nx > 0) ani = MARIO_ANI_FIRE_FLYING_RIGHT;
-			else ani = MARIO_ANI_FIRE_FLYING_LEFT;
-		}
+		
 	}
 	else if (isTurning)
 	{
@@ -603,6 +596,12 @@ void CMario::SetState(int state)
 	case MARIO_STATE_SPEEDING_DOWN:
 		SpeedDown();
 		break;
+	case MARIO_STATE_FLY:
+		vy = -MARIO_FLYING_SPEED;
+		break;
+	case MARIO_STATE_FALL_DOWN:
+		vy = MARIO_FLYING_SPEED;
+		break;
 	
 	}
 	// count down level
@@ -697,7 +696,7 @@ void CMario::StartFlying()
 		{
 			flying_start = 0;
 			isLanding = true;
-			isFlying = false;
+			canFly = false;
 		}
 	}
 }

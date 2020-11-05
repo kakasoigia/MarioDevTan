@@ -301,7 +301,7 @@ void CPlayScene::Update(DWORD dt)
 	float camX = 0.0f;
 	float camY = 0.0f;
 	if (player->x > (game->GetScreenWidth() / 2)) camX = cx;
-	if (player->GetIsFlying() || player->GetIsLanding())
+	if (player->GetState()== MARIO_STATE_FLY || player->GetState() == MARIO_STATE_FALL_DOWN || player->x > game->GetScreenWidth() )
 		if (player->y <= (game->GetScreenHeight() / 2)) camY = cy;
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY);
 
@@ -494,10 +494,18 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 	}
 	if (game->IsKeyDown(DIK_X))
 	{
-		if (mario->GetLevelSpeedUp() == MAX_POWER_SPEED_UP) // fly
+		if (mario->GetLevelSpeedUp() == MAX_POWER_SPEED_UP && mario->GetLevel() == MARIO_LEVEL_TAIL) // fly
 		{
-			mario->StartFlying();
-			mario->SetIsFlying(true);
+			if (mario->GetCanFly() == true)
+			{
+				mario->StartFlying();
+				mario->SetState(MARIO_STATE_FLY);
+				
+			}
+			else
+			{
+				mario->SetState(MARIO_STATE_FALL_DOWN);
+			}
 			
 				
 		}
