@@ -131,7 +131,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			//{
 			//	
 			//}
-			if (vx < 0 && x < 0) \
+			if (vx < 0 && x <= 0) 
 			{
 				x = 0;
 				vx = -vx;

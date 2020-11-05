@@ -193,15 +193,15 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 
 	obj->SetAnimationSet(ani_set);
-	
-	
+
+
 	objects.push_back(obj);
 	//// add 1 cartridge_clip
 	if (dynamic_cast<CFireBullet *>(obj))
 	{
 		cartridge_clip.push_back(obj);
 	}
-		
+
 }
 
 void CPlayScene::Load()
@@ -265,7 +265,7 @@ void CPlayScene::Update(DWORD dt)
 	for (size_t i = 1; i < objects.size(); i++)
 	{
 		if (!dynamic_cast<CNoCollisionObjects *>(objects[i]))
-		coObjects.push_back(objects[i]);
+			coObjects.push_back(objects[i]);
 	}
 
 	for (size_t i = 0; i < objects.size(); i++)
@@ -301,7 +301,8 @@ void CPlayScene::Update(DWORD dt)
 	float camX = 0.0f;
 	float camY = 0.0f;
 	if (player->x > (game->GetScreenWidth() / 2)) camX = cx;
-	//if (player->y <= (game->GetScreenHeight() / 2)) camY = cy;
+	if (player->GetIsFlying() || player->GetIsLanding())
+		if (player->y <= (game->GetScreenHeight() / 2)) camY = cy;
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY);
 
 
@@ -337,28 +338,28 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	{
 	case DIK_S:
 	{
-		if (mario->GetJumpingState() == false)
+		 if (mario->GetJumpingState() == false) // normal
 		{
 			mario->SetState(MARIO_STATE_JUMP);
 			mario->SetJumpingState(true);
 		}
-		
+
 	}
-		
-		break;
+
+	break;
 	case DIK_Q:
 		mario->Reset();
 		break;
-	/*case DIK_A:
-		if (game->IsKeyDown(DIK_RIGHT))
-		{
-			mario->SetState(MARIO_STATE_RUNNING_RIGHT);
-		}
-		else if (game->IsKeyDown(DIK_LEFT))
-		{
-			mario->SetState(MARIO_STATE_RUNNING_LEFT);
-		}
-		break;*/
+		/*case DIK_A:
+			if (game->IsKeyDown(DIK_RIGHT))
+			{
+				mario->SetState(MARIO_STATE_RUNNING_RIGHT);
+			}
+			else if (game->IsKeyDown(DIK_LEFT))
+			{
+				mario->SetState(MARIO_STATE_RUNNING_LEFT);
+			}
+			break;*/
 	case DIK_F:
 		mario->SetLevel(MARIO_LEVEL_FIRE);
 		break;
@@ -372,7 +373,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetIsFiring(true);
 			/*mario->StartFiring();*/
 		}
-		
+
 		break;
 	case DIK_Z:
 		if (mario->GetLevel() == MARIO_LEVEL_TAIL || mario->GetIsTurning() == MARIO_LEVEL_TAIL)
@@ -380,7 +381,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetIsTurning(true);
 			mario->StartTurning();
 		}
-			
+
 		break;
 	}
 }
@@ -398,7 +399,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_SPACE:
 		if (mario->GetLevel() == MARIO_LEVEL_FIRE)
 		{
-			
+
 			mario->SetIsFiring(false);
 			/*mario->StartFiring();*/
 		}
@@ -411,7 +412,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 {
 	CGame *game = CGame::GetInstance();
 	CMario *mario = ((CPlayScene*)scence)->GetPlayer();
-	
+
 	// disable control key when Mario die 
 	if (mario->GetState() == MARIO_STATE_DIE) return;
 	if (game->IsKeyDown(DIK_V))
@@ -435,7 +436,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 
 	else if (game->IsKeyDown(DIK_LEFT))
 	{
-		
+
 		if (game->IsKeyDown(DIK_A))
 		{
 			mario->SetState(MARIO_STATE_RUNNING_LEFT);
@@ -446,33 +447,24 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 			SetLevelSpeedDown(mario);
 			mario->SetState(MARIO_STATE_WALKING_LEFT);
 		}
-			
+
 	}
 	else if (game->IsKeyDown(DIK_DOWN))
 	{
-		
+
 		mario->SetState(MARIO_STATE_SITDOWN);
 	}
-	else if (game->IsKeyDown(DIK_X))
-	{
-		if (mario->GetJumpingState() == false)
-		{
-			mario->SetState(MARIO_STATE_JUMP);
-			mario->SetJumpingState(true);
-		}
-	}
 	
-
 	else // no keystate
 	{
-		
-		 if ((mario->vx <= 0 && mario->nx >0) || (mario->vx >= 0 && mario->nx < 0))
+
+		if ((mario->vx <= 0 && mario->nx > 0) || (mario->vx >= 0 && mario->nx < 0))
 		{
 			mario->SetState(MARIO_STATE_IDLE);
 		}
 		else if (mario->vx != 0)
 		{
-			 SetLevelSpeedDown(mario);
+			SetLevelSpeedDown(mario);
 			mario->SetState(MARIO_STATE_SPEEDING_DOWN);
 		}
 
@@ -497,10 +489,21 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 		//		else if (mario->vx >= 0)
 		//			mario->SetState(MARIO_STATE_IDLE);
 		//}
-		
-			
+
+
 	}
-		
+	if (game->IsKeyDown(DIK_X))
+	{
+		if (mario->GetLevelSpeedUp() == MAX_POWER_SPEED_UP) // fly
+		{
+			mario->StartFlying();
+			mario->SetIsFlying(true);
+			
+				
+		}
+
+	}
+
 }
 void CPlayScenceKeyHandler::SetLevelSpeedUp(CMario *mario)
 {

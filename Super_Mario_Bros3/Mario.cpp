@@ -8,6 +8,7 @@
 #include "Goomba.h"
 #include "Portal.h"
 #include "Koopas.h"
+
 CMario::CMario(float x, float y) : CGameObject()
 {
 	level = MARIO_LEVEL_BIG;
@@ -27,6 +28,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	CGameObject::Update(dt);
 
 	// Simple fall down
+	if (isFlying ==false)
 	vy += MARIO_GRAVITY * dt;
 
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -223,6 +225,29 @@ void CMario::Render()
 	int ani = -1;
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
+	else if (isFlying)
+	{
+		if (level == MARIO_LEVEL_BIG)
+		{
+			if (nx > 0) ani = MARIO_ANI_BIG_FLYING_RIGHT;
+			else ani = MARIO_ANI_BIG_FLYING_LEFT;
+		}
+		else if (level == MARIO_LEVEL_SMALL)
+		{
+			if (nx > 0) ani = MARIO_ANI_SMALL_FLYING_RIGHT;
+			else ani = MARIO_ANI_SMALL_FLYING_LEFT;
+		}
+		else if (level == MARIO_LEVEL_TAIL)
+		{
+			if (nx > 0) ani = MARIO_ANI_TAIL_FLYING_RIGHT;
+			else ani = MARIO_ANI_TAIL_JUMPING_LEFT;
+		}
+		else if (level == MARIO_LEVEL_FIRE)
+		{
+			if (nx > 0) ani = MARIO_ANI_FIRE_FLYING_RIGHT;
+			else ani = MARIO_ANI_FIRE_FLYING_LEFT;
+		}
+	}
 	else if (isTurning)
 	{
 		if (nx < 0) ani = MARIO_ANI_TAIL_TURNING_RIGHT;
@@ -416,57 +441,8 @@ void CMario::Render()
 			ani = MARIO_ANI_FIRE_RUNNING_LEFT;
 		}
 	}
-
-	/*
-	else if (state == MARIO_STATE_FLYING)
-	{
-		if (level == MARIO_LEVEL_BIG)
-		{
-			if (nx > 0) ani = MARIO_ANI_BIG_FLYING_RIGHT;
-			else ani = MARIO_ANI_BIG_FLYING_LEFT;
-		}
-		else if (level == MARIO_LEVEL_SMALL)
-		{
-			if (nx > 0) ani = MARIO_ANI_SMALL_FLYING_RIGHT;
-			else ani = MARIO_ANI_SMALL_FLYING_LEFT;
-		}
-		else if (level == MARIO_LEVEL_TAIL)
-		{
-			if (nx > 0) ani = MARIO_ANI_TAIL_FLYING_RIGHT;
-			else ani = MARIO_ANI_TAIL_JUMPING_LEFT;
-		}
-		else if (level == MARIO_LEVEL_FIRE)
-		{
-			if (nx > 0) ani = MARIO_ANI_FIRE_FLYING_RIGHT;
-			else ani = MARIO_ANI_FIRE_FLYING_LEFT;
-		}
-	}
-	else if (state == MARIO_STATE_BRAKING)
-	{
-		if (level == MARIO_LEVEL_BIG)
-		{
-			if (nx > 0) ani = MARIO_ANI_BIG_BRAKING_RIGHT;
-			else ani = MARIO_ANI_BIG_BRAKING_LEFT;
-		}
-		else if (level == MARIO_LEVEL_SMALL)
-		{
-			if (nx > 0) ani = MARIO_ANI_SMALL_BRAKING_RIGHT;
-			else ani = MARIO_ANI_SMALL_BRAKING_LEFT;
-		}
-		else if (level == MARIO_LEVEL_TAIL)
-		{
-			if (nx > 0) ani = MARIO_ANI_TAIL_BRAKING_RIGHT;
-			else ani = MARIO_ANI_TAIL_BRAKING_LEFT;
-		}
-		else if (level == MARIO_LEVEL_FIRE)
-		{
-			if (nx > 0) ani = MARIO_ANI_FIRE_BRAKING_RIGHT;
-			else ani = MARIO_ANI_FIRE_BRAKING_LEFT;
-		}
-	}
 	
 	
-	*/
 	
 	else if (isKicking == true)
 	{
@@ -627,6 +603,7 @@ void CMario::SetState(int state)
 	case MARIO_STATE_SPEEDING_DOWN:
 		SpeedDown();
 		break;
+	
 	}
 	// count down level
 
@@ -704,6 +681,23 @@ void CMario::Fire()
 			// get fired
 			bullet->SetState(BULLET_STATE_FLYING);
 			return;
+		}
+	}
+}
+void CMario::StartFlying()
+{
+	if (flying_start == 0 && isLanding ==false)
+	{
+		flying_start = GetTickCount();
+		vy = -MARIO_FLYING_SPEED;
+	}
+	else
+	{
+		if (GetTickCount() - flying_start > MARIO_FLYING_TIME)
+		{
+			flying_start = 0;
+			isLanding = true;
+			isFlying = false;
 		}
 	}
 }

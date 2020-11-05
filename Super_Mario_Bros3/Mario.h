@@ -14,8 +14,8 @@
 #define MARIO_STATE_WALKING_LEFT	250
 #define MARIO_STATE_JUMP			300
 #define MARIO_STATE_DIE				400
-#define MARIO_STATE_FLYING_RIGHT	500
-#define MARIO_STATE_FLYING_LEFT		600
+#define MARIO_STATE_FLY	500
+//#define MARIO_STATE_FLYING_LEFT		600
 #define MARIO_STATE_BRAKING_RIGHT	700	
 #define MARIO_STATE_BRAKING_LEFT	800
 #define MARIO_STATE_HOLDING_RIGHT	900
@@ -127,6 +127,7 @@
 #define MARIO_UNTOUCHABLE_TIME 5000
 #define MARIO_KICK_TIME 300
 #define MARIO_TURNING_TIME		 300
+#define MARIO_FLYING_TIME		 700
 #define	MARIO_DIFFERENCE_HEIGHT	12
 
 #define MARIO_BIG_BBOX_WIDTH  15
@@ -141,12 +142,13 @@
 #define SPEECH_ADDTION_PER_LEVEL	0.002f
 #define MARIO_MAX_SPEED	0.2f
 #define MARIO_INERTIA 0.03f
-
+#define MARIO_FLYING_SPEED 0.04f
 class CMario : public CGameObject
 {
 	int level;
 	int untouchable;
 	int kicking_start;
+	int flying_start;
 	DWORD untouchable_start;
 
 	float start_x;			// initial position of Mario at scene
@@ -158,6 +160,8 @@ protected:
 	int isHolding = -1;
 	bool isTurning = false;
 	bool isFiring = false;
+	bool isFlying = false;
+	bool isLanding = false;
 	int current_level_speed_up;
 	DWORD turning_start = 0;
 public:
@@ -170,6 +174,7 @@ public:
 	int GetLevel() { return level; };
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
 	void StartKicking() { kicking_start = GetTickCount(); }
+	void StartFlying();
 	void StartTurning() { turning_start = GetTickCount(); }
 	bool GetJumpingState() { return isJumping; };
 	void SetJumpingState(bool state) { isJumping = state; };
@@ -221,5 +226,21 @@ public:
 	 bool GetIsTurning()
 	 {
 		 return  isTurning;
+	 }
+	 void SetIsFlying(bool isFlying)
+	 {
+		 this->isFlying = isFlying;
+	 }
+	 bool GetIsFlying()
+	 {
+		 return  isFlying;
+	 }
+	 void SetIsLanding(bool isLanding)
+	 {
+		 this->isLanding = isLanding;
+	 }
+	 bool GetIsLanding()
+	 {
+		 return  isLanding;
 	 }
 };
