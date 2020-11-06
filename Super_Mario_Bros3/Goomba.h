@@ -49,4 +49,5 @@ public:
 	virtual void SetState(int state);
 	void StartDyingTime() { dying_start = GetTickCount(); }
 	int GetType() { return Type; };
+	void SetType(int type) { this->Type= type; };
 };

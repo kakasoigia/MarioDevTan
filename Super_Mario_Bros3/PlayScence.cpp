@@ -301,7 +301,7 @@ void CPlayScene::Update(DWORD dt)
 	float camX = 0.0f;
 	float camY = 0.0f;
 	if (player->x > (game->GetScreenWidth() / 2)) camX = cx;
-	if (player->GetState()== MARIO_STATE_FLY || player->GetState() == MARIO_STATE_FALL_DOWN || player->x > game->GetScreenWidth() )
+	if (player->GetState()== MARIO_STATE_FLY || player->GetState() == MARIO_STATE_FALL_DOWN || player->y<75 )
 		if (player->y <= (game->GetScreenHeight() / 2)) camY = cy;
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY);
 
@@ -310,8 +310,20 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
+	
 	for (int i = 1; i < objects.size(); i++)
-		objects[i]->Render();
+	{
+		/*float x, y;
+		objects[i]->GetPosition(x,y);
+		CGame *game = CGame::GetInstance();
+		float rangeXleft = player->x - game->GetScreenHeight() ;
+		float rangeXright = player->x + game->GetScreenHeight() ;
+		float rangeYup = player->y - game->GetScreenHeight() ;
+		float rangeYdown = player->y + game->GetScreenHeight() ;
+		if( x> rangeXleft && x<rangeXright && y > rangeYup && y<rangeYdown)*/
+			objects[i]->Render();
+	}
+		
 }
 
 /*
@@ -522,8 +534,7 @@ void CPlayScenceKeyHandler::SetLevelSpeedUp(CMario *mario)
 }
 void CPlayScenceKeyHandler::SetLevelSpeedDown(CMario *mario)
 {
-	CGame *game = CGame::GetInstance();
-	if (game->IsKeyDown(DIK_X)) return;
+	if (mario->GetState() == MARIO_STATE_FLY) return;
 	int current_time = GetTickCount();
 	// if starttime =0 ..begin to speedup....after 1s...speed up one level and set back starttime..max 7 level ..
 	if (start_time_speed_down == 0) // begin to run 

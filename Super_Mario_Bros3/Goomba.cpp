@@ -170,7 +170,11 @@ void CGoomba::Render()
 			ani = GOOMBA_ANI_RED_FLY_WALKING;
 		}
 		break;
-
+		case 3: //GOOMBA_TYPE_RED_WALK
+		{
+			ani = GOOMBA_ANI_RED_WALKING;
+		}
+		break;
 		}
 	}
 	else if (state == GOOMBA_STATE_DIE )
@@ -182,7 +186,7 @@ void CGoomba::Render()
 			ani = GOOMBA_ANI_ORANGE_DIE;
 		}
 		break;
-		case 2 /*GOOMBA_TYPE_RED_FLY*/:
+		case 2 /*GOOMBA_TYPE_RED_FLY*/: case 3:
 		{
 			ani = GOOMBA_ANI_RED_DIE;
 		}
