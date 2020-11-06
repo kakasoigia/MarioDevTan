@@ -41,7 +41,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_GOOMBA_RED_FLY	11
 #define OBJECT_TYPE_FIRE_BULLET	12
 #define OBJECT_TYPE_PORTAL	50
-
+ 
 #define MAX_SCENE_LINE 1024
 #define MAX_POWER_SPEED_UP 7
 #define	TIME_PER_LEVEL_SPEED_UP 200
