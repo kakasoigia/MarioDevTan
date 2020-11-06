@@ -451,7 +451,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 	}
 	else if (game->IsKeyDown(DIK_DOWN))
 	{
-
+		SetLevelSpeedDown(mario);
 		mario->SetState(MARIO_STATE_SITDOWN);
 	}
 	
@@ -460,6 +460,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 
 		if ((mario->vx <= 0 && mario->nx > 0) || (mario->vx >= 0 && mario->nx < 0))
 		{
+			SetLevelSpeedDown(mario);
 			mario->SetState(MARIO_STATE_IDLE);
 		}
 		else if (mario->vx != 0)
@@ -467,40 +468,20 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 			SetLevelSpeedDown(mario);
 			mario->SetState(MARIO_STATE_SPEEDING_DOWN);
 		}
-
-		//if (mario->nx >0)
-		//{//inertia
-		//	if (mario->vx > 0)
-		//	{
-		//		mario->SetState(MARIO_STATE_SPEEDING_DOWN);
-		//		mario->vx -= MARIO_WALKING_SPEED / 50;
-		//	}
-		//	else if ( mario->vx <=0)
-		//		mario->SetState(MARIO_STATE_IDLE);
-		//}
-		//else if (mario->nx <0)
-		//{
-		//	// inertia
-		//		if (mario->vx < 0)
-		//		{
-		//			mario->SetState(MARIO_STATE_SPEEDING_DOWN);
-		//			mario->vx += MARIO_WALKING_SPEED / 50;
-		//		}
-		//		else if (mario->vx >= 0)
-		//			mario->SetState(MARIO_STATE_IDLE);
-		//}
-
-
 	}
+
 	if (game->IsKeyDown(DIK_X))
 	{
-		if (mario->GetLevelSpeedUp() == MAX_POWER_SPEED_UP && mario->GetLevel() == MARIO_LEVEL_TAIL) // fly
+		if ( mario->GetLevel() == MARIO_LEVEL_TAIL) // fly
 		{
-			if (mario->GetCanFly() == true)
+			if (mario->GetLevelSpeedUp() == MAX_POWER_SPEED_UP )
 			{
-				mario->StartFlying();
-				mario->SetState(MARIO_STATE_FLY);
-				
+				if (mario->GetCanFly() == true)
+				{
+					mario->StartFlying();
+					mario->SetState(MARIO_STATE_FLY);
+
+				}
 			}
 			else
 			{
@@ -509,6 +490,14 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 			
 				
 		}
+		//else
+		//{
+		//	if (mario->GetJumpingState() == false) // normal
+		//	{
+		//		mario->SetState(MARIO_STATE_JUMP);
+		//		mario->SetJumpingState(true);
+		//	}
+		//}
 
 	}
 
@@ -533,6 +522,8 @@ void CPlayScenceKeyHandler::SetLevelSpeedUp(CMario *mario)
 }
 void CPlayScenceKeyHandler::SetLevelSpeedDown(CMario *mario)
 {
+	CGame *game = CGame::GetInstance();
+	if (game->IsKeyDown(DIK_X)) return;
 	int current_time = GetTickCount();
 	// if starttime =0 ..begin to speedup....after 1s...speed up one level and set back starttime..max 7 level ..
 	if (start_time_speed_down == 0) // begin to run 
@@ -541,7 +532,7 @@ void CPlayScenceKeyHandler::SetLevelSpeedDown(CMario *mario)
 	}
 	else // have run for a time
 	{
-		if (current_time - start_time_speed_down > TIME_PER_LEVEL_SPEED_UP && mario->GetLevelSpeedUp() < MAX_POWER_SPEED_UP)
+		if (current_time - start_time_speed_down > TIME_PER_LEVEL_SPEED_UP)
 		{
 			//reset start_time_speed_up
 			start_time_speed_down = 0;

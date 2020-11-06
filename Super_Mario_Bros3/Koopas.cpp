@@ -210,7 +210,9 @@ void CKoopas::Render()
 		break;
 		case 3 /*KOOPAS_TYPE_RED_WALK*/:
 		{
-			ani = KOOPAS_ANI_RED_WALKING_LEFT;
+			if (vx > 0) ani = KOOPAS_ANI_RED_WALKING_RIGHT;
+			else if (vx <= 0) ani = KOOPAS_ANI_RED_WALKING_LEFT;
+			
 		}
 		break;
 		case 4 /*KOOPAS_TYPE_RED_FLY*/:
