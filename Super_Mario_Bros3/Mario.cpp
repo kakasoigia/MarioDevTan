@@ -243,6 +243,16 @@ void CMario::Render()
 		}
 
 	}
+	else if (state == MARIO_STATE_FALL_DOWN)
+	{
+
+		if (level == MARIO_LEVEL_TAIL)
+		{
+			if (nx > 0) ani = MARIO_ANI_FALLING_RIGHT;
+			else ani = MARIO_ANI_FALLING_LEFT;
+		}
+
+	}
 	else if (isTurning)
 	{
 		if (nx < 0) ani = MARIO_ANI_TAIL_TURNING_RIGHT;
@@ -250,8 +260,8 @@ void CMario::Render()
 	}
 	else if (isFiring)
 	{
-		if (nx < 0) ani = MARIO_ANI_TAIL_FIRING_BULLET_LEFT;
-		else ani = MARIO_ANI_TAIL_FIRING_BULLET_RIGHT;
+		if (nx < 0) ani = MARIO_ANI_FIRE_FIRING_BULLET_LEFT;
+		else ani = MARIO_ANI_FIRE_FIRING_BULLET_RIGHT;
 	}
 	else if (isHolding == 1)
 	{
@@ -434,7 +444,7 @@ void CMario::Render()
 			}
 			else if (level == MARIO_LEVEL_TAIL)
 			{
-				ani = MARIO_ANI_TAIL_RUNNING_RIGHT;
+				ani = MARIO_ANI_TAIL_MAX_SPEED_RIGHT;
 
 			}
 			else if (level == MARIO_LEVEL_FIRE)
@@ -480,7 +490,7 @@ void CMario::Render()
 			}
 			else if (level == MARIO_LEVEL_TAIL)
 			{
-				ani = MARIO_ANI_TAIL_RUNNING_LEFT;
+				ani = MARIO_ANI_TAIL_MAX_SPEED_LEFT;
 
 			}
 			else if (level == MARIO_LEVEL_FIRE)
@@ -490,8 +500,6 @@ void CMario::Render()
 			}
 		}
 	}
-
-
 
 	else if (isKicking == true)
 	{

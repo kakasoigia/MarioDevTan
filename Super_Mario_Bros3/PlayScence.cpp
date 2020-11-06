@@ -44,7 +44,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 
 #define MAX_SCENE_LINE 1024
 #define MAX_POWER_SPEED_UP 7
-#define	TIME_PER_LEVEL_SPEED_UP 500
+#define	TIME_PER_LEVEL_SPEED_UP 200
 
 
 void CPlayScene::_ParseSection_TEXTURES(string line)
@@ -495,7 +495,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 
 				}
 			}
-			else
+			else if (mario->GetIsJumping() || mario->GetIsLanding()) // on air
 			{
 				mario->SetState(MARIO_STATE_FALL_DOWN);
 			}
