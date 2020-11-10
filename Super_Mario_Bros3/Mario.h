@@ -175,6 +175,7 @@ protected:
 	bool isTurning = false;
 	bool isFiring = false;
 	bool isFlying = false;
+	bool isHitted = false;
 	bool canFly = false;
 	bool isLanding = false;
 	int current_level_speed_up;
@@ -265,5 +266,13 @@ public:
 	 bool GetIsJumping()
 	 {
 		 return  isJumping;
+	 }
+	 bool GetIsHitted()
+	 {
+		 return isHitted;
+	 }
+	 void SetIsHitted(bool isHittedBool)
+	 {
+		 isHitted = isHittedBool;
 	 }
 };

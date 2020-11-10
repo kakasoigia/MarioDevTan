@@ -27,9 +27,11 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	
 	CGameObject::Update(dt, coObjects);
 	if (isHolding != KOOPAS_HOLDING)
 		vy += KOOPAS_GRAVITY * dt;
+	
 	if (this->state == KOOPAS_STATE_WALKING && (this->Type == KOOPAS_TYPE_GREEN_FLY || this->Type == KOOPAS_TYPE_RED_FLY))
 	{
 		if (GetTickCount() - flying_start > KOOPAS_PERIODIC_TIME_FLY)
@@ -39,7 +41,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		}
 	}
 
-
+	
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -181,7 +183,15 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 		}
 	}
+	/*if (Type == KOOPAS_TYPE_RED_WALK)
+	{
+		if (((this->x <= 490 || this->x >= 595) && (this->x <= 660 && this->x >= 480)) || ((this->x <= 2078 || this->x >= 2099) && (this->x <= 2212 && this->x >= 1960)))
+		{
+			if (state == KOOPAS_STATE_WALKING)
+				vx = -vx;
+		}
 
+	}*/
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 	if (x <= 0)

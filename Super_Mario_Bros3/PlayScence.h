@@ -10,8 +10,10 @@
 #include "Rectangle.h"
 #include "NoCollisionObjects.h"
 #include "Pipe.h"
+#include "QuestionBrick.h"
 #include "FireBullet.h"
-
+#include "Flower.h"
+#include "FlowerBullet.h"
 class CPlayScene : public CScene
 {
 protected:

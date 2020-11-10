@@ -8,6 +8,7 @@
 #include "Goomba.h"
 #include "Portal.h"
 #include "Koopas.h"
+#include "Coin.h"
 
 CMario::CMario(float x, float y) : CGameObject()
 {
@@ -53,6 +54,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	if (GetTickCount() - turning_start > MARIO_TURNING_TIME)
 	{
+		turning_start = 0;
 		isTurning = false;
 	}
 
@@ -85,6 +87,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			isJumping = false;
 			isLanding = false;
+			isHitted = false;
 			canFly = true;
 		}
 
@@ -106,17 +109,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					if (goomba->GetState() != GOOMBA_STATE_DIE)
 					{
-						if (goomba->GetType() != GOOMBA_TYPE_RED_FLY)
+						if (goomba->GetType() != GOOMBA_TYPE_RED_FLY) // not red flhy
 						{
+
 							goomba->SetState(GOOMBA_STATE_DIE);
 							vy = -MARIO_JUMP_DEFLECT_SPEED;
 						}
-						else
+						else// redfly
 						{
-								goomba->SetType(GOOMBA_TYPE_RED_WALK);
-								goomba->SetState(GOOMBA_STATE_WALKING);
-								vy = -MARIO_JUMP_DEFLECT_SPEED;
-							
+							goomba->SetType(GOOMBA_TYPE_RED_WALK);
+							goomba->SetState(GOOMBA_STATE_WALKING);
+							vy = -MARIO_JUMP_DEFLECT_SPEED;
+
 
 
 						}
@@ -124,13 +128,19 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				}
 				else if (e->nx != 0 || e->ny > 0)
 				{
-					if (untouchable == 0)
+					if (level == MARIO_LEVEL_TAIL && isTurning)
+					{
+						if (goomba->GetState() != GOOMBA_STATE_DIE_BY_KICK)
+							goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
+					}
+					else if (untouchable == 0)
 					{
 						if (goomba->GetState() != GOOMBA_STATE_DIE)
 						{
 							if (level > MARIO_LEVEL_SMALL)
 							{
 								level = MARIO_LEVEL_SMALL;
+								isFiring = false; // when being touched... stop fire 
 								DebugOut(L"[INFO] Lỗi untouch \n");
 								StartUntouchable();
 							}
@@ -138,11 +148,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 								SetState(MARIO_STATE_DIE);
 						}
 					}
-					else if (level == MARIO_LEVEL_TAIL && isTurning)
-					{
-						if (goomba->GetState() != GOOMBA_STATE_DIE_BY_KICK)
-							goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
-					}
+
 				}
 
 			}
@@ -164,7 +170,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				}
 				else if (e->nx != 0)
 				{
-					if (koopas->GetState() == KOOPAS_STATE_SHELL)
+					if (level == MARIO_LEVEL_TAIL && isTurning)
+					{
+						if (koopas->GetState() != KOOPAS_STATE_DIE && koopas->GetState() != KOOPAS_STATE_SHELL && koopas->GetState() != KOOPAS_STATE_SPINNING)
+							koopas->SetState(KOOPAS_STATE_SHELL);
+						else
+						{
+							koopas->SetState(KOOPAS_STATE_DIE);
+						}
+					}
+					else if (koopas->GetState() == KOOPAS_STATE_SHELL)
 					{
 						if (ny == 0) // kick Koo || hold Koo
 						{
@@ -193,7 +208,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							}
 						}
 					}
-					else if (koopas->GetState() != KOOPAS_STATE_SHELL && isKicking == false)
+					else if (koopas->GetState() != KOOPAS_STATE_SHELL && isKicking == false && isTurning == false)
 					{
 						if (untouchable == 0)
 						{
@@ -202,6 +217,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							{
 								if (level > MARIO_LEVEL_SMALL)
 								{
+									isFiring = false; // when being touched... stop fire 
 									level = MARIO_LEVEL_SMALL;
 									StartUntouchable();
 								}
@@ -217,6 +233,41 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				CPortal *p = dynamic_cast<CPortal *>(e->obj);
 				CGame::GetInstance()->SwitchScene(p->GetSceneId());
+			}
+			else if (dynamic_cast<CCoin *>(e->obj)) // if e->obj is Coin
+			{
+				CCoin *coin = dynamic_cast<CCoin *>(e->obj);
+				coin->SetDisappear(true);
+			}
+			else if (dynamic_cast<CFlower *>(e->obj))
+			{
+				if (untouchable == 0)
+				{
+					if (level > MARIO_LEVEL_SMALL)
+					{
+						level = MARIO_LEVEL_SMALL;
+						isFiring = false;
+						StartUntouchable();
+					}
+					else
+						SetState(MARIO_STATE_DIE);
+
+				}
+			}
+			else if (dynamic_cast<CFlowerBullet *>(e->obj))
+			{
+				if (untouchable == 0)
+				{
+					if (level > MARIO_LEVEL_SMALL)
+					{
+						level = MARIO_LEVEL_SMALL;
+						isFiring = false;
+						StartUntouchable();
+					}
+					else
+						SetState(MARIO_STATE_DIE);
+
+				}
 			}
 		}
 
@@ -333,7 +384,7 @@ void CMario::Render()
 			}
 		}
 	}
-	
+
 
 
 	else if (state == MARIO_STATE_IDLE)
@@ -457,7 +508,7 @@ void CMario::Render()
 	}
 	else if (state == MARIO_STATE_RUNNING_LEFT)
 	{
-		if (( nx<0 && vx > -MARIO_MAX_SPEED) || (nx > 0 && vx < MARIO_MAX_SPEED)) // normal run
+		if ((nx<0 && vx > -MARIO_MAX_SPEED) || (nx > 0 && vx < MARIO_MAX_SPEED)) // normal run
 		{
 			if (level == MARIO_LEVEL_BIG)
 			{

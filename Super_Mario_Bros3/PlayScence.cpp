@@ -6,7 +6,7 @@
 #include "Textures.h"
 #include "Sprites.h"
 #include "Portal.h"
-
+#include "Coin.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
@@ -40,6 +40,9 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_COIN	10
 #define OBJECT_TYPE_GOOMBA_RED_FLY	11
 #define OBJECT_TYPE_FIRE_BULLET	12
+#define OBJECT_TYPE_FLOWER			13
+#define OBJECT_TYPE_FLOWER_BULLET	14
+#define OBJECT_TYPE_QUESTION_BRICK	15
 #define OBJECT_TYPE_PORTAL	50
  
 #define MAX_SCENE_LINE 1024
@@ -174,6 +177,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_NO_COLLISION_OBJECTS:obj = new CNoCollisionObjects(); break;
 	case OBJECT_TYPE_PIPE:obj = new CPipe(); break;
 	case OBJECT_TYPE_FIRE_BULLET:obj = new CFireBullet(); break;
+	case OBJECT_TYPE_QUESTION_BRICK: obj = new CQuestionBrick(); break;
+	case OBJECT_TYPE_FLOWER:	   obj = new CFlower(); break;
+	case OBJECT_TYPE_FLOWER_BULLET:	   obj = new CFlowerBullet(); break;
+	case OBJECT_TYPE_COIN: obj = new CCoin(); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
@@ -262,7 +269,7 @@ void CPlayScene::Update(DWORD dt)
 	// TO-DO: This is a "dirty" way, need a more organized way 
 
 	vector<LPGAMEOBJECT> coObjects;
-	for (size_t i = 1; i < objects.size(); i++)
+	for (size_t i = 0; i < objects.size(); i++)
 	{
 		if (!dynamic_cast<CNoCollisionObjects *>(objects[i]))
 			coObjects.push_back(objects[i]);
@@ -301,7 +308,7 @@ void CPlayScene::Update(DWORD dt)
 	float camX = 0.0f;
 	float camY = 0.0f;
 	if (player->x > (game->GetScreenWidth() / 2)) camX = cx;
-	if (player->GetState()== MARIO_STATE_FLY || player->GetState() == MARIO_STATE_FALL_DOWN || player->y<75 )
+	if (player->GetState()== MARIO_STATE_FLY || player->GetState() == MARIO_STATE_FALL_DOWN || player-> GetIsLanding()==true || player->y<10)
 		if (player->y <= (game->GetScreenHeight() / 2)) camY = cy;
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY);
 
@@ -313,14 +320,14 @@ void CPlayScene::Render()
 	
 	for (int i = 1; i < objects.size(); i++)
 	{
-		/*float x, y;
+		float x, y;
 		objects[i]->GetPosition(x,y);
 		CGame *game = CGame::GetInstance();
-		float rangeXleft = player->x - game->GetScreenHeight() ;
-		float rangeXright = player->x + game->GetScreenHeight() ;
-		float rangeYup = player->y - game->GetScreenHeight() ;
-		float rangeYdown = player->y + game->GetScreenHeight() ;
-		if( x> rangeXleft && x<rangeXright && y > rangeYup && y<rangeYdown)*/
+		float rangeXleft = player->x - game->GetScreenHeight() -100 ;
+		float rangeXright = player->x + game->GetScreenHeight() + 100;
+		float rangeYup = player->y - game->GetScreenHeight() - 100;
+		float rangeYdown = player->y + game->GetScreenHeight() + 100;
+		if( x> rangeXleft && x<rangeXright && y > rangeYup && y<rangeYdown)
 			objects[i]->Render();
 	}
 		

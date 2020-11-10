@@ -10,6 +10,7 @@
 #include "Rectangle.h"
 #include "PlayScence.h"
 #include "Mario.h"
+#include "Coin.h"
 CGameObject::CGameObject()
 {
 	x = y = 0;
@@ -116,6 +117,11 @@ void CGameObject::FilterCollision(
 
 		if (c->t < min_ty  && c->ny != 0) {
 			min_ty = c->t; ny = c->ny; min_iy = i; rdy = c->dy;
+		}
+		if (dynamic_cast<CCoin *>(c->obj))
+		{
+			nx = 0;
+			ny = 0;
 		}
 	}
 

@@ -136,7 +136,7 @@ void  CFireBullet::SetState(int state)
 	else if (state == BULLET_STATE_DISAPPEARING)
 	{
 		isUsed = false;
-		SetPosition(-1, -1); // hidden bullet
+		SetPosition(-1000, -1000); // hidden bullet
 	}
 		
 }
