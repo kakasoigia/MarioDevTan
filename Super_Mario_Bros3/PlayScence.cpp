@@ -7,6 +7,8 @@
 #include "Sprites.h"
 #include "Portal.h"
 #include "Coin.h"
+#include "BreakableBrick.h"
+#include "Bell.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
@@ -43,6 +45,9 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_FLOWER			13
 #define OBJECT_TYPE_FLOWER_BULLET	14
 #define OBJECT_TYPE_QUESTION_BRICK	15
+#define OBJECT_TYPE_BREAKABLE_BRICK_NORMAL	19
+#define OBJECT_TYPE_BREAKABLE_BRICK_BELL	20
+#define OBJECT_TYPE_BREAKABLE_BELL	21
 #define OBJECT_TYPE_PORTAL	50
  
 #define MAX_SCENE_LINE 1024
@@ -180,7 +185,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_QUESTION_BRICK: obj = new CQuestionBrick(); break;
 	case OBJECT_TYPE_FLOWER:	   obj = new CFlower(); break;
 	case OBJECT_TYPE_FLOWER_BULLET:	   obj = new CFlowerBullet(); break;
-	case OBJECT_TYPE_COIN: obj = new CCoin(); break;
+	case OBJECT_TYPE_COIN: obj = new CCoin(); break; 
+	case OBJECT_TYPE_BREAKABLE_BRICK_NORMAL: obj = new CBreakableBrick(BREAKABLE_BRICK_NORMAL); break;
+	case OBJECT_TYPE_BREAKABLE_BRICK_BELL: obj = new CBreakableBrick(BREAKABLE_BRICK_BELL); break;
+	case OBJECT_TYPE_BREAKABLE_BELL: obj = new CBell(); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
@@ -277,6 +285,10 @@ void CPlayScene::Update(DWORD dt)
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
+		CGame *game = CGame::GetInstance();
+		float rangeXleft = player->x - game->GetScreenHeight() - 100;
+		float rangeXright = player->x + game->GetScreenHeight() + 100;
+		if (objects[i]-> x>rangeXleft && objects[i]->x< rangeXright)
 		objects[i]->Update(dt, &coObjects);
 	}
 
@@ -320,14 +332,14 @@ void CPlayScene::Render()
 	
 	for (int i = 1; i < objects.size(); i++)
 	{
-		float x, y;
+		/*float x, y;
 		objects[i]->GetPosition(x,y);
 		CGame *game = CGame::GetInstance();
 		float rangeXleft = player->x - game->GetScreenHeight() -100 ;
 		float rangeXright = player->x + game->GetScreenHeight() + 100;
 		float rangeYup = player->y - game->GetScreenHeight() - 100;
 		float rangeYdown = player->y + game->GetScreenHeight() + 100;
-		if( x> rangeXleft && x<rangeXright && y > rangeYup && y<rangeYdown)
+		if( x> rangeXleft && x<rangeXright && y > rangeYup && y<rangeYdown)*/
 			objects[i]->Render();
 	}
 		

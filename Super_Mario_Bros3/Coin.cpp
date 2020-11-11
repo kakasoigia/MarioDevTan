@@ -12,9 +12,15 @@ void CCoin::Render()
 void CCoin::GetBoundingBox(float &l, float &t, float &r, float &b)
 {
 	if (disappear)
-		return;
-	l = x;
-	t = y;
-	r = x + COIN_BBOX_WIDTH;
-	b = y + COIN_BBOX_HEIGHT;
+	{
+		l = t = r = b = 0;
+	}
+	else
+	{
+		l = x;
+		t = y;
+		r = x + COIN_BBOX_WIDTH;
+		b = y + COIN_BBOX_HEIGHT;
+	}
+	
 }

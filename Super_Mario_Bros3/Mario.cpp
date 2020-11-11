@@ -9,6 +9,8 @@
 #include "Portal.h"
 #include "Koopas.h"
 #include "Coin.h"
+#include "BreakableBrick.h"
+#include "Bell.h"
 
 CMario::CMario(float x, float y) : CGameObject()
 {
@@ -267,6 +269,66 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					else
 						SetState(MARIO_STATE_DIE);
 
+				}
+			}
+			else if (dynamic_cast<CBreakableBrick *>(e->obj))
+			{
+				
+				CBreakableBrick *brick = dynamic_cast<CBreakableBrick *>(e->obj);
+				if (brick->GetState() == BREAKABLE_STATE_COIN) // if COIN ..
+				{
+					brick->SetState(BREAKABLE_STATE_BROKEN);
+				}
+				else // another situattion
+				{
+					if (e->ny > 0)
+					{
+						if (dynamic_cast<CBreakableBrick *>(e->obj))
+						{
+
+							if (brick->GetType() == BREAKABLE_BRICK_NORMAL)
+								brick->SetState(BREAKABLE_STATE_BROKEN);
+							else
+							{
+								brick->SetState(BREAKABLE_STATE_EMPTY_BOX);
+								//find Bell available at same place
+								for (UINT i = 0; i < coObjects->size(); i++)
+								{
+									LPGAMEOBJECT obj = coObjects->at(i);
+									if (dynamic_cast<CBell *>(obj))
+									{
+										////check position
+										if (brick->x == obj->x && brick->y == obj->y)
+										{
+											CBell *bell = dynamic_cast<CBell *>(obj);
+											bell->SetIsUp(true);
+											bell->y = brick->y - 16;
+										}
+									}
+								}
+							}
+						}
+					}
+					if (e->nx != 0)
+					{
+						if (isTurning == true)
+						{
+							if (brick->GetType() == BREAKABLE_BRICK_NORMAL)
+								brick->SetState(BREAKABLE_STATE_BROKEN);
+							else if (brick->GetState() == BREAKABLE_BRICK_BELL)
+								brick->SetState(BREAKABLE_STATE_EMPTY_BOX);
+						}
+
+					}
+				}
+					
+			}
+			else if (dynamic_cast<CBell *>(e->obj))
+			{
+				CBell *bell = dynamic_cast<CBell *>(e->obj);
+				if (e->ny < 0)
+				{
+					bell->SetActive(true);
 				}
 			}
 		}
