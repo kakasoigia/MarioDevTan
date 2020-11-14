@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "PlayScence.h"
 #include "Mario.h"
-
+#include "BreakableBrick.h"
 #define BULLET_BBOX_WIDTH	9
 #define BULLET_BBOX_HEIGHT 9
 

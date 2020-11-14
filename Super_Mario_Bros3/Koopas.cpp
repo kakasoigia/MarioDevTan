@@ -1,5 +1,6 @@
 ﻿#include "Koopas.h"
 #include "Brick.h"
+#include "BreakableBrick.h"
 CKoopas::CKoopas(int type)
 {
 	Type = type;
@@ -29,8 +30,9 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	
 	CGameObject::Update(dt, coObjects);
-	if (isHolding != KOOPAS_HOLDING)
+	if (!isHolding)
 		vy += KOOPAS_GRAVITY * dt;
+
 	
 	if (this->state == KOOPAS_STATE_WALKING && (this->Type == KOOPAS_TYPE_GREEN_FLY || this->Type == KOOPAS_TYPE_RED_FLY))
 	{
@@ -63,15 +65,18 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		CalcPotentialCollisions(coObjects, coEvents);
 	}
-	if (mario->GetIsHolding() == 0) // throw and kick Koo when drop Koo
+	if (isHolding == true)
 	{
-		isHolding = KOOPAS_NOT_HOLDING;
-		/*mario->StartKicking();
-		mario->SetIsKicking(true);
-		nx = mario->nx;
-		SetState(KOOPAS_STATE_SPINNING);*/
+		if (!mario->GetIsHolding())
+		{
+			isHolding = false;
+			mario->StartKicking();
+			mario->SetIsKicking(true);
+			nx = mario->nx;
+			SetState(KOOPAS_STATE_SPINNING);
+		}
 	}
-	else if (isHolding == KOOPAS_HOLDING)
+	 if (isHolding )
 	{
 		y = mario->y + 8;
 		if (mario->nx > 0)
@@ -162,6 +167,22 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				}
 
 			}
+			else if (dynamic_cast<CQuestionBrick *>(e->obj))
+			{
+				//if (e->nx != 0/* && ny == 0*/)
+				//{
+
+				CQuestionBrick *question_brick = dynamic_cast<CQuestionBrick *>(e->obj);
+				if (state == KOOPAS_STATE_SPINNING)
+				{
+					if (question_brick->GetIsAlive())
+						question_brick->SetState(QUESTION_BRICK_STATE_USED, coObjects);
+					vx = -vx;
+				}
+
+				/*}*/
+
+			}
 			else if (dynamic_cast<CKoopas *>(e->obj)) // if e->obj is Goomba 
 			{
 				CKoopas *koopas = dynamic_cast<CKoopas *>(e->obj);
@@ -174,6 +195,16 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					this->vx = -this->vx;
 				}
 			}
+			else if (dynamic_cast<CBreakableBrick *>(e->obj))
+			{
+				if (e->nx != 0 && ny == 0 && this->state == KOOPAS_STATE_SPINNING)
+				{
+					CBreakableBrick *brick = dynamic_cast<CBreakableBrick *>(e->obj);
+					this->vx = -this->vx;
+					brick->SetState(BREAKABLE_STATE_BROKEN);
+
+				}
+			}
 			else if (!dynamic_cast<CMario *>(e->obj))
 			{
 				if (e->nx != 0 && ny == 0)
@@ -181,6 +212,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					this->vx = -this->vx;
 				}
 			}
+			
 		}
 	}
 	/*if (Type == KOOPAS_TYPE_RED_WALK)

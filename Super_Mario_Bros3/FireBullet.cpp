@@ -81,7 +81,7 @@ void CFireBullet::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				}
 
 			}
-			else if (dynamic_cast<CPipe *>(e->obj) || dynamic_cast<CBrick *>(e->obj) || x<0 || y<100 )// hit other things
+			else if (dynamic_cast<CPipe *>(e->obj) || dynamic_cast<CBrick *>(e->obj) || dynamic_cast<CBreakableBrick *>(e->obj) )// hit other things
 			{
 				if (e->nx != 0 && ny == 0)
 				{
@@ -90,12 +90,17 @@ void CFireBullet::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else 
 			{
-
+				
+					SetState(BULLET_STATE_DISAPPEARING);
 			}
+			
 		}
 
 	}
-
+	if (this->x < 0 || this->y >170)
+	{
+		SetState(BULLET_STATE_DISAPPEARING);
+	}
 
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -136,7 +141,7 @@ void  CFireBullet::SetState(int state)
 	else if (state == BULLET_STATE_DISAPPEARING)
 	{
 		isUsed = false;
-		SetPosition(-1000, -1000); // hidden bullet
+		SetPosition(1000, 1000); // hidden bullet
 	}
 		
 }

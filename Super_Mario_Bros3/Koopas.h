@@ -64,7 +64,7 @@ class CKoopas : public CGameObject
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
 	virtual void Render();
 	int Type;
-	int isHolding = -1;
+	bool isHolding = false;
 	int flying_start;
 
 public:
@@ -73,7 +73,7 @@ public:
 	virtual void SetState(int state);
 	int GetType() { return Type; };
 	void SetType(int type) { Type = type; };
-	int GetIsHolding()
+	bool GetIsHolding()
 	{
 		return isHolding;
 	}

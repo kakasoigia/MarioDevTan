@@ -1,9 +1,8 @@
 #include "QuestionBrick.h"
 
-CQuestionBrick::CQuestionBrick()
+CQuestionBrick::CQuestionBrick(int ctype)
 {
-
-
+	type = ctype;
 }
 
 void CQuestionBrick::CalcPotentialCollisions(vector<LPGAMEOBJECT> *coObjects, vector<LPCOLLISIONEVENT> &coEvents)
@@ -72,20 +71,7 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (e->ny < 0)
-			{
-				if (dynamic_cast<CMario *>(e->obj))
-				{
-					CMario *mario = dynamic_cast<CMario *>(e->obj);
-					if (!mario->GetIsHitted())
-					{
-						isAlive = false;
-						mario->SetIsHitted(true);
-					}
 
-
-				}
-			}
 
 		}
 
@@ -93,6 +79,7 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 
 	}
+
 
 
 
@@ -107,7 +94,10 @@ void CQuestionBrick::Render()
 
 	if (isAlive)
 	{
-		ani = QUESTION_BRICK_ANI_ALIVE;
+		if (type == QUESTION_BRICK_JUST_HAVE_MUSHROOM)
+			ani = QUESTION_BRICK_ANI_NEW_TYPE;
+		else
+			ani = QUESTION_BRICK_ANI_ALIVE;
 	}
 	else
 		ani = QUESTION_BRICK_ANI_DEAD;
@@ -116,7 +106,61 @@ void CQuestionBrick::Render()
 	//RenderBoundingBox();
 }
 
-void CQuestionBrick::SetState(int state)
+void CQuestionBrick::SetState(int state, vector<LPGAMEOBJECT> *coObjects)
 {
-	/*CGameObject::SetState(state);*/
+	if (state == QUESTION_BRICK_STATE_USED)
+	{
+		isAlive = false;
+		CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+		// if just have mushroom 
+		if (type == QUESTION_BRICK_JUST_HAVE_MUSHROOM) // call green mushroom.
+		{
+			for (UINT i = 0; i < coObjects->size(); i++)
+			{
+				LPGAMEOBJECT obj = coObjects->at(i);
+				if (dynamic_cast<CMushRoom *>(obj))
+				{
+					CMushRoom *mushroom = dynamic_cast<CMushRoom *>(obj);
+					if (!mushroom->GetIsAppear() && mushroom->GetType() == MUSHROOM_GREEN && this->x == mushroom->x && this->y == mushroom->y) // unUsed and is Green and same position
+					{
+						mushroom->SetState(MUSHROOM_STATE_UP);
+						return;
+					}
+				}
+			}
+		}
+		else if (mario->GetLevel() == MARIO_LEVEL_SMALL) // call mushroom red
+		{
+			for (UINT i = 0; i < coObjects->size(); i++)
+			{
+				LPGAMEOBJECT obj = coObjects->at(i);
+				if (dynamic_cast<CMushRoom *>(obj))
+				{
+					CMushRoom *mushroom = dynamic_cast<CMushRoom *>(obj);
+					if (!mushroom->GetIsAppear() && mushroom->GetType() == MUSHROOM_RED && this->x == mushroom->x && this->y == mushroom->y) // unUsed and is Green
+					{
+						mushroom->SetState(MUSHROOM_STATE_UP);
+						return;
+					}
+				}
+			}
+		}
+		else //call leaf
+		{
+			for (UINT i = 0; i < coObjects->size(); i++)
+			{
+				LPGAMEOBJECT obj = coObjects->at(i);
+				if (dynamic_cast<CLeaf *>(obj))
+				{
+					CLeaf *leaf = dynamic_cast<CLeaf *>(obj);
+					if (!leaf->GetIsAppear()  && this->x == leaf->x && this->y == leaf->y) // unUsed and is Green
+					{
+						leaf->SetState(LEAF_STATE_UP);
+						return;
+					}
+				}
+			}
+		}
+		
+	}
 }

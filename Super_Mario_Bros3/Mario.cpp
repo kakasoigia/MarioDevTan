@@ -11,6 +11,7 @@
 #include "Coin.h"
 #include "BreakableBrick.h"
 #include "Bell.h"
+#include "QuestionBrick.h"
 
 CMario::CMario(float x, float y) : CGameObject()
 {
@@ -185,14 +186,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					{
 						if (ny == 0) // kick Koo || hold Koo
 						{
-							if (isHolding == 1/*; state == MARIO_STATE_RUNNING_LEFT || state == MARIO_STATE_RUNNING_RIGHT*/)
+							if (isHolding /*; state == MARIO_STATE_RUNNING_LEFT || state == MARIO_STATE_RUNNING_RIGHT*/)
 							{
 
-								koopas->SetIsHolding(KOOPAS_HOLDING);
+								koopas->SetIsHolding(true);
 							}
 							else
 							{
-								isHolding == -1;
+								isHolding ==false;
 								isKicking = true;
 								StartKicking();
 								koopas->nx = this->nx;
@@ -271,9 +272,20 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 				}
 			}
+			else if (dynamic_cast<CQuestionBrick *>(e->obj))
+			{
+				if (e->ny > 0)
+				{
+					CQuestionBrick *question_brick = dynamic_cast<CQuestionBrick *>(e->obj);
+					if (question_brick->GetIsAlive())
+						question_brick->SetState(QUESTION_BRICK_STATE_USED,coObjects);
+
+				}
+
+			}
 			else if (dynamic_cast<CBreakableBrick *>(e->obj))
 			{
-				
+
 				CBreakableBrick *brick = dynamic_cast<CBreakableBrick *>(e->obj);
 				if (brick->GetState() == BREAKABLE_STATE_COIN) // if COIN ..
 				{
@@ -321,7 +333,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 					}
 				}
-					
+
 			}
 			else if (dynamic_cast<CBell *>(e->obj))
 			{
@@ -376,7 +388,7 @@ void CMario::Render()
 		if (nx < 0) ani = MARIO_ANI_FIRE_FIRING_BULLET_LEFT;
 		else ani = MARIO_ANI_FIRE_FIRING_BULLET_RIGHT;
 	}
-	else if (isHolding == 1)
+	else if (isHolding )
 	{
 		if (level == MARIO_LEVEL_BIG)
 		{

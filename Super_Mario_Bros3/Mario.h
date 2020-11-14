@@ -171,7 +171,7 @@ protected:
 	bool isJumping = false;
 	bool isBraking = false;
 	bool isKicking = false;
-	int isHolding = -1;
+	bool isHolding = false;
 	bool isTurning = false;
 	bool isFiring = false;
 	bool isFlying = false;

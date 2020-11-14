@@ -9,6 +9,8 @@
 #include "Coin.h"
 #include "BreakableBrick.h"
 #include "Bell.h"
+#include "Leaf.h"
+#include "MushRoom.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
@@ -42,12 +44,20 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_COIN	10
 #define OBJECT_TYPE_GOOMBA_RED_FLY	11
 #define OBJECT_TYPE_FIRE_BULLET	12
-#define OBJECT_TYPE_FLOWER			13
+#define OBJECT_TYPE_FLOWER_RED		13
 #define OBJECT_TYPE_FLOWER_BULLET	14
-#define OBJECT_TYPE_QUESTION_BRICK	15
-#define OBJECT_TYPE_BREAKABLE_BRICK_NORMAL	19
-#define OBJECT_TYPE_BREAKABLE_BRICK_BELL	20
-#define OBJECT_TYPE_BREAKABLE_BELL	21
+#define OBJECT_TYPE_QUESTION_BRICK_NORMAL	15
+#define OBJECT_TYPE_LEAF			16
+#define OBJECT_TYPE_MUSHROOM_RED		17
+#define OBJECT_TYPE_QUESTION_BRICK_HAVE_LEAF	18
+#define OBJECT_TYPE_MUSHROOM_GREEN		19
+#define OBJECT_TYPE_QUESTION_BRICK_JUST_HAVE_MUSHROOM	20
+#define OBJECT_TYPE_FLOWER_GREEN				21
+#define OBJECT_TYPE_FLOWER_GREEN_CAN_SHOOT		22
+#define OBJECT_TYPE_BREAKABLE_BRICK_NORMAL	23
+#define OBJECT_TYPE_BREAKABLE_BRICK_BELL	25
+#define OBJECT_TYPE_BELL	24
+
 #define OBJECT_TYPE_PORTAL	50
  
 #define MAX_SCENE_LINE 1024
@@ -182,13 +192,19 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_NO_COLLISION_OBJECTS:obj = new CNoCollisionObjects(); break;
 	case OBJECT_TYPE_PIPE:obj = new CPipe(); break;
 	case OBJECT_TYPE_FIRE_BULLET:obj = new CFireBullet(); break;
-	case OBJECT_TYPE_QUESTION_BRICK: obj = new CQuestionBrick(); break;
-	case OBJECT_TYPE_FLOWER:	   obj = new CFlower(); break;
+	case OBJECT_TYPE_FLOWER_RED:	  obj = new CFlower(100); break;
+	case OBJECT_TYPE_FLOWER_GREEN:	  obj = new CFlower(200); break;
+	case OBJECT_TYPE_FLOWER_GREEN_CAN_SHOOT:   obj = new CFlower(300); break;
 	case OBJECT_TYPE_FLOWER_BULLET:	   obj = new CFlowerBullet(); break;
-	case OBJECT_TYPE_COIN: obj = new CCoin(); break; 
+	case OBJECT_TYPE_QUESTION_BRICK_NORMAL: obj = new CQuestionBrick(666); break;
+	case OBJECT_TYPE_QUESTION_BRICK_HAVE_LEAF: obj = new CQuestionBrick(777); break;
+	case OBJECT_TYPE_QUESTION_BRICK_JUST_HAVE_MUSHROOM: obj = new CQuestionBrick(888); break;
+	case OBJECT_TYPE_LEAF:	           obj = new CLeaf(); break;
+	case OBJECT_TYPE_MUSHROOM_RED:	   obj = new CMushRoom(567); break;
+	case OBJECT_TYPE_MUSHROOM_GREEN:   obj = new CMushRoom(678); break;
 	case OBJECT_TYPE_BREAKABLE_BRICK_NORMAL: obj = new CBreakableBrick(BREAKABLE_BRICK_NORMAL); break;
 	case OBJECT_TYPE_BREAKABLE_BRICK_BELL: obj = new CBreakableBrick(BREAKABLE_BRICK_BELL); break;
-	case OBJECT_TYPE_BREAKABLE_BELL: obj = new CBell(); break;
+	case OBJECT_TYPE_BELL: obj = new CBell(); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
