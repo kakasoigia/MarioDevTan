@@ -129,7 +129,7 @@ void CQuestionBrick::SetState(int state, vector<LPGAMEOBJECT> *coObjects)
 				}
 			}
 		}
-		else if (mario->GetLevel() == MARIO_LEVEL_SMALL) // call mushroom red
+		else if (type == QUESTION_BRICK_HAVE_LEAF && mario->GetLevel() == MARIO_LEVEL_SMALL) // call mushroom red
 		{
 			for (UINT i = 0; i < coObjects->size(); i++)
 			{
@@ -145,7 +145,7 @@ void CQuestionBrick::SetState(int state, vector<LPGAMEOBJECT> *coObjects)
 				}
 			}
 		}
-		else //call leaf
+		else if(type == QUESTION_BRICK_HAVE_LEAF && mario->GetLevel() != MARIO_LEVEL_SMALL)  //call leaf
 		{
 			for (UINT i = 0; i < coObjects->size(); i++)
 			{
@@ -156,6 +156,22 @@ void CQuestionBrick::SetState(int state, vector<LPGAMEOBJECT> *coObjects)
 					if (!leaf->GetIsAppear()  && this->x == leaf->x && this->y == leaf->y) // unUsed and is Green
 					{
 						leaf->SetState(LEAF_STATE_UP);
+						return;
+					}
+				}
+			}
+		}
+		else if (type == QUESTION_BRICK_NORMAL) // toss coin
+		{
+			for (UINT i = 0; i < coObjects->size(); i++)
+			{
+				LPGAMEOBJECT obj = coObjects->at(i);
+				if (dynamic_cast<CCoin *>(obj))
+				{
+					CCoin *coin = dynamic_cast<CCoin *>(obj);
+					if (!coin->GetIsAppear() && this->x == coin->x && this->y == coin->y) // unUsed and is Green
+					{
+						coin->SetState(COIN_STATE_UP);
 						return;
 					}
 				}

@@ -5,6 +5,7 @@
 #include "PlayScence.h"
 #include "Leaf.h"
 #include "MushRoom.h"
+#include "Coin.h"
 
 #define QUESTION_BRICK_BBOX_WIDTH  16
 #define QUESTION_BRICK_BBOX_HEIGHT 16

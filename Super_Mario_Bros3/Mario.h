@@ -184,6 +184,11 @@ public:
 	CMario(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
 	virtual void Render();
+	virtual void FilterCollision(
+		vector<LPCOLLISIONEVENT> &coEvents,
+		vector<LPCOLLISIONEVENT> &coEventsResult,
+		float &min_tx, float &min_ty,
+		float &nx, float &ny, float &rdx, float &rdy);
 
 	void SetState(int state);
 	void SetLevel(int l);

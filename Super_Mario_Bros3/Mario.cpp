@@ -25,7 +25,56 @@ CMario::CMario(float x, float y) : CGameObject()
 	this->y = y;
 	current_level_speed_up = 0;
 }
+void CMario::FilterCollision(
+	vector<LPCOLLISIONEVENT> &coEvents,
+	vector<LPCOLLISIONEVENT> &coEventsResult,
+	float &min_tx, float &min_ty,
+	float &nx, float &ny, float &rdx, float &rdy)
+{
+	{
+		min_tx = 1.0f;
+		min_ty = 1.0f;
+		int min_ix = -1;
+		int min_iy = -1;
 
+		nx = 0.0f;
+		ny = 0.0f;
+
+		coEventsResult.clear();
+
+		for (UINT i = 0; i < coEvents.size(); i++)
+		{
+			LPCOLLISIONEVENT c = coEvents[i];
+
+			if (c->t < min_tx && c->nx != 0) {
+				min_tx = c->t; nx = c->nx; min_ix = i; rdx = c->dx;
+			}
+
+			if (c->t < min_ty  && c->ny != 0) {
+				min_ty = c->t; ny = c->ny; min_iy = i; rdy = c->dy;
+			}
+			if (dynamic_cast<CCoin *>(c->obj))
+			{
+				nx = 0;
+				ny = 0;
+			}
+			if (dynamic_cast<CBreakableBrick *>(c->obj))
+			{
+				CBreakableBrick* breakableBrick = dynamic_cast<CBreakableBrick*>(c->obj);
+				if (breakableBrick->GetState() == BREAKABLE_STATE_COIN)
+				{
+					nx = 0;
+					ny = 0;
+				}
+
+			}
+		}
+
+		if (min_ix >= 0) coEventsResult.push_back(coEvents[min_ix]);
+		if (min_iy >= 0) coEventsResult.push_back(coEvents[min_iy]);
+	}
+
+}
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	// Calculate dx, dy 

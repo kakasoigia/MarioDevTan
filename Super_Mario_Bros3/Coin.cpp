@@ -2,7 +2,7 @@
 #include "Mario.h"
 void CCoin::Render()
 {
-	if (disappear)
+	if (!isAppear)
 		return;
 	animation_set->at(0)->Render(x, y);
 
@@ -11,7 +11,7 @@ void CCoin::Render()
 
 void CCoin::GetBoundingBox(float &l, float &t, float &r, float &b)
 {
-	if (disappear)
+	if (isAppear == false)
 	{
 		l = t = r = b = 0;
 	}
@@ -23,4 +23,36 @@ void CCoin::GetBoundingBox(float &l, float &t, float &r, float &b)
 		b = y + COIN_BBOX_HEIGHT;
 	}
 	
+}
+void CCoin::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
+{
+
+
+	if (state == COIN_STATE_UP)
+	{
+		if (GetTickCount() - timing_start >= 300)
+		{
+			SetState(COIN_STATE_DOWN);
+			StartTiming();
+		}
+	}
+
+	if (state == COIN_STATE_DOWN)
+	{
+		if (GetTickCount() - timing_start >= 300)
+		{
+			isAppear = false;
+		}
+
+	}
+
+
+}
+void CCoin::SetState(int state)
+{
+	if (state == COIN_STATE_UP)
+	{
+		StartTiming();
+		isAppear = true;
+	}
 }

@@ -190,6 +190,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_KOOPAS_RED_FLY: obj = new CKoopas(4); break;
 	case OBJECT_TYPE_RECTANGLE: obj = new CRectangle(); break;
 	case OBJECT_TYPE_NO_COLLISION_OBJECTS:obj = new CNoCollisionObjects(); break;
+	case OBJECT_TYPE_COIN:obj = new CCoin(); break;
 	case OBJECT_TYPE_PIPE:obj = new CPipe(); break;
 	case OBJECT_TYPE_FIRE_BULLET:obj = new CFireBullet(); break;
 	case OBJECT_TYPE_FLOWER_RED:	  obj = new CFlower(100); break;
