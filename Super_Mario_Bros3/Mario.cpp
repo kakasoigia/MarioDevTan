@@ -289,7 +289,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			else if (dynamic_cast<CCoin *>(e->obj)) // if e->obj is Coin
 			{
 				CCoin *coin = dynamic_cast<CCoin *>(e->obj);
-				coin->SetDisappear(true);
+				coin->SetIsAppear(false);
 			}
 			else if (dynamic_cast<CFlower *>(e->obj))
 			{

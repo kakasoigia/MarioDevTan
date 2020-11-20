@@ -12,7 +12,9 @@
 #define COIN_STATE_DOWN		200
 
 #define COIN_NORMAL			222
-#define COIN_CAN_MOVE		333
+#define COIN_CAN_TOSS		333
+
+#define TIME_COIN_ON_AIR 250
 
 class CCoin : public CGameObject
 {
@@ -21,10 +23,7 @@ class CCoin : public CGameObject
 	int type;
 	DWORD timing_start;
 public:
-	void SetDisappear(bool disappearBool)
-	{
-		disappear = disappearBool;
-	}
+	CCoin(int type);
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
 	virtual void Render();

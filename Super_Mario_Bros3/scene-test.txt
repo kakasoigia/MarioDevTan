@@ -1478,7 +1478,8 @@
 
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = NoCollisionObjects, 5= RECT, 6=PIPE, 7= koopas xanh_bay, 8= koopas đỏ_bộ, 9= koopas đỏ_bay, 10=Coin, 11=Goomba red bay, 12= Fire Bullet,13= FLOWER RED,14=Flower Bullet, 15=Question Brick Normal, 16=Leaf ,17=Mushroom Red,18=Question Brick Have Leaf, 19=Mushroom Green ,20=Question Brick Just Have Mushroom , 21= FLOWER GREEN , 22= FLOWER GREEN CAN SHOOT , 23= BREAKABLE BRICK_ , 24=BELL,25 = BRICK _BELL
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = NoCollisionObjects, 5= RECT, 6=PIPE, 7= koopas xanh_bay, 8= koopas đỏ_bộ, 9= koopas đỏ_bay, 10=Coin,
+# 11=Goomba red bay, 12= Fire Bullet,13= FLOWER RED,14=Flower Bullet, 15=Question Brick Normal, 16=Leaf ,17=Mushroom Red,18=Question Brick Have Leaf, 19=Mushroom Green ,20=Question Brick Just Have Mushroom , 21= FLOWER GREEN , 22= FLOWER GREEN CAN SHOOT , 23= BREAKABLE BRICK_ , 24=BELL,25 = BRICK _BELL,26= COIN_CAN_TOSS
 
 #SECTION 1
 
@@ -1615,12 +1616,12 @@
 15	176	87	218
 15	192	87	218
 15	224	39	218
-15	240	39	218
+18	240	39	218
 15	416	55	218
-15	656	121	218
+18	656	121	218
 15	704	87	218
-15	1440	-137	218
-15	1472	103	218
+20	1440	-137	218
+18	1472	103	218
 
 # --- HÀNG GẠCH NHỎ LOẠI 1 ----
 1	0	150	30
@@ -2499,11 +2500,11 @@
 #====== MUSHROOM GREEN
 19	1440	-137	220
 # --- COIN CAN MOVE ----
-10	176	87	209
-10	192	87	209
-10	224	39	209
-10	416	55	209
-10	704	87	209
+26	176	87	209
+26	192	87	209
+26	224	39	209
+26	416	55	209
+26	704	87	209
 # MARIO ALWAY THE LAST TO BE DRAW
 0	17	117	1
 #0	392	117	1
