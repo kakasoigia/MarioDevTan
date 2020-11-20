@@ -242,7 +242,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							}
 							else
 							{
-								isHolding ==false;
+								isHolding = false;
 								isKicking = true;
 								StartKicking();
 								koopas->nx = this->nx;

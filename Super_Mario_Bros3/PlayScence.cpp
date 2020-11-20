@@ -115,7 +115,7 @@ void CPlayScene::_ParseSection_ANIMATIONS(string line)
 	LPANIMATION ani = new CAnimation();
 
 	int ani_id = atoi(tokens[0].c_str());
-	for (int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
+	for (unsigned int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
 	{
 		int sprite_id = atoi(tokens[i].c_str());
 		int frame_time = atoi(tokens[i + 1].c_str());
@@ -137,7 +137,7 @@ void CPlayScene::_ParseSection_ANIMATION_SETS(string line)
 
 	CAnimations *animations = CAnimations::GetInstance();
 
-	for (int i = 1; i < tokens.size(); i++)
+	for (unsigned int i = 1; i < tokens.size(); i++)
 	{
 		int ani_id = atoi(tokens[i].c_str());
 
@@ -160,8 +160,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 
 	int object_type = atoi(tokens[0].c_str());
-	float x = atof(tokens[1].c_str());
-	float y = atof(tokens[2].c_str());
+	double x = atof(tokens[1].c_str());
+	double y = atof(tokens[2].c_str());
 
 	int ani_set_id = atoi(tokens[3].c_str());
 
@@ -210,8 +210,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BELL: obj = new CBell(); break;
 	case OBJECT_TYPE_PORTAL:
 	{
-		float r = atof(tokens[4].c_str());
-		float b = atof(tokens[5].c_str());
+		double r = atof(tokens[4].c_str());
+		double b = atof(tokens[5].c_str());
 		int scene_id = atoi(tokens[6].c_str());
 		obj = new CPortal(x, y, r, b, scene_id);
 	}
@@ -336,11 +336,11 @@ void CPlayScene::Update(DWORD dt)
 		CGame::GetInstance()->SetCamPos(0, cy);
 	}*/
 
-	float camX = 0.0f;
-	float camY = 0.0f;
-	if (player->x > (game->GetScreenWidth() / 2)) camX = cx;
+	int camX = 0;
+	int camY = 0;
+	if (player->x > (game->GetScreenWidth() / 2)) camX = (int)cx;
 	if (player->GetState()== MARIO_STATE_FLY || player->GetState() == MARIO_STATE_FALL_DOWN || player-> GetIsLanding()==true || player->y<10)
-		if (player->y <= (game->GetScreenHeight() / 2)) camY = cy;
+		if (player->y <= (game->GetScreenHeight() / 2)) camY =(int) cy;
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY);
 
 
@@ -349,7 +349,7 @@ void CPlayScene::Update(DWORD dt)
 void CPlayScene::Render()
 {
 	
-	for (int i = 1; i < objects.size(); i++)
+	for (unsigned int i = 1; i < objects.size(); i++)
 	{
 		/*float x, y;
 		objects[i]->GetPosition(x,y);
@@ -369,7 +369,7 @@ void CPlayScene::Render()
 */
 void CPlayScene::Unload()
 {
-	for (int i = 0; i < objects.size(); i++)
+	for (unsigned int i = 0; i < objects.size(); i++)
 		delete objects[i];
 
 	objects.clear();
@@ -426,7 +426,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 
 		break;
 	case DIK_Z:
-		if (mario->GetLevel() == MARIO_LEVEL_TAIL || mario->GetIsTurning() == MARIO_LEVEL_TAIL)
+		if (mario->GetLevel() == MARIO_LEVEL_TAIL || mario->GetIsTurning() == true)
 		{
 			mario->SetIsTurning(true);
 			mario->StartTurning();

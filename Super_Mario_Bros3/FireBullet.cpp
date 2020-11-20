@@ -2,7 +2,7 @@
  CFireBullet::CFireBullet() 
 {
 	isUsed = false;
-	state == BULLET_STATE_DISAPPEARING;
+	state = BULLET_STATE_DISAPPEARING;
 }
 void CFireBullet::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {	// if it's not fired ...return

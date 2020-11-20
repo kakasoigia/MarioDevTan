@@ -38,77 +38,47 @@ void CFlowerBullet::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	//CalcPotentialCollisions(coObjects, coEvents);
 
-	for (UINT i = 0; i < coObjects->size(); i++)
+	/*for (UINT i = 0; i < coObjects->size(); i++)
 	{
 		LPGAMEOBJECT obj = coObjects->at(i);
 		if (dynamic_cast<CFlower *>(obj))
 		{
 			CFlower *flower = dynamic_cast<CFlower *>(obj);
-
-			if (flower->GetIsFiring() && !isUsed && flower->GetType() != FLOWER_GREEN)
+			if (abs(mario->x - flower->x) <= 160)
 			{
-				if (!flower->GetIsFired())
+				if (flower->GetIsFiring() && !isUsed && flower->GetType() != FLOWER_GREEN)
 				{
-					y = flower->y + 5;
-					if (mario->x <= flower->x)
+					if (!flower->GetIsFired())
 					{
-						x = flower->x - 1;
-						if (flower->GetType() == FLOWER_RED)
+						y = flower->y + 5;
+						if (mario->y <= flower->y)
 						{
-							if (mario->x >= FLOWER_BULLET_FIRST_X_LIMIT)
-							{
-								vx = -FLOWER_BULLET_FLYING_SPEED;
-								vy = 0.05f;
-							}
-							else
-							{
-								vx = -(FLOWER_BULLET_FLYING_SPEED *1.1f);
-								vy = 0.02f;
-							}
+							flower->SetIsShootingUp(-1);
 						}
 						else
 						{
-							if (mario->x >= FLOWER_BULLET_THIRD_X_LIMIT)
-							{
-								vx = -0.04f;
-								vy = 0.04f;
-							}
-							else
-							{
-								vx = -(FLOWER_BULLET_FLYING_SPEED *1.1f);
-								vy = 0.02f;
-							}
+							flower->SetIsShootingUp(1);
 						}
-					}
-					else
-					{
-						if (flower->GetType() == FLOWER_RED)
+						if (mario->x <= flower->x)
+						{
+							x = flower->x - 1;
+							flower->nx = -1;
+						}
+						else
 						{
 							x = flower->x + FLOWER_RED_BBOX_WIDTH + 2;
-							if (mario->x <= FLOWER_BULLET_SECOND_X_LIMIT)
-							{
-								vx = FLOWER_BULLET_FLYING_SPEED;
-								vy = 0.05f;
-							}
-							else
-							{
-								vx = FLOWER_BULLET_FLYING_SPEED * 1.1f;
-								vy = 0.02f;
-							}
+							flower->nx = 1;
+						}
+
+						if (abs(mario->x - this->x) <= FLOWER_BULLET_X_LIMIT)
+						{
+							vx = FLOWER_BULLET_FLYING_SPEED * flower->nx;
+							vy = 0.05f * flower->GetIsShootingUp();
 						}
 						else
 						{
-							x = flower->x + FLOWER_GREEN_CAN_SHOOT_BBOX_WIDTH + 2;
-							if (mario->x <= FLOWER_BULLET_FOURTH_X_LIMIT)
-							{
-								vx = 0.03f;
-								vy = 0.04f;
-							}
-							else
-							{
-								vx = 0.04f * 1.3f;
-								vy = 0.02f;
-							}
+							vx = FLOWER_BULLET_FLYING_SPEED * flower->nx;
+							vy = 0.02f * flower->GetIsShootingUp();
 						}
 					}
 					SetState(FLOWER_BULLET_STATE_FLYING);
@@ -117,47 +87,50 @@ void CFlowerBullet::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 		}
 	}
+*/
 
 
 
-	if (this->y >= 170)
+	if (this->y >= 170 || this->y <= -100)
 	{
-		isUsed = false;
+		
 		SetState(FLOWER_BULLET_STATE_HIDDEN);
 
 	}
+	//fly as normal
+	x += dx;
+	y += dy;
+	//// No collision occured, proceed normally
+	//if (coEvents.size() == 0)
+	//{
+	//	x += dx;
+	//	y += dy;
+	//}
+	//else
+	//{
 
-	// No collision occured, proceed normally
-	if (coEvents.size() == 0)
-	{
-		x += dx;
-		y += dy;
-	}
-	else
-	{
+	//	float min_tx, min_ty, nx = 0, ny;
+	//	float rdx = 0;
+	//	float rdy = 0;
 
-		float min_tx, min_ty, nx = 0, ny;
-		float rdx = 0;
-		float rdy = 0;
+	//	// TODO: This is a very ugly designed function!!!!
+	//	FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-		// TODO: This is a very ugly designed function!!!!
-		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+	//	// block 
 
-		// block 
-
-		x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
-		y += min_ty * dy + ny * 0.4f;
+	//	x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
+	//	y += min_ty * dy + ny * 0.4f;
 
 
-		// Collision logic with the others Koopas
-		for (UINT i = 0; i < coEventsResult.size(); i++)
-		{
-			LPCOLLISIONEVENT e = coEventsResult[i];
-		}
-	}
+	//	// Collision logic with the others Koopas
+	//	for (UINT i = 0; i < coEventsResult.size(); i++)
+	//	{
+	//		LPCOLLISIONEVENT e = coEventsResult[i];
+	//	}
+	//}
 
-	// clean up collision events
-	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+	//// clean up collision events
+	//for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
 
@@ -185,6 +158,7 @@ void CFlowerBullet::SetState(int state)
 		isUsed = true;
 		break;
 	case FLOWER_BULLET_STATE_HIDDEN:
+		isUsed = false;
 		vx = 0;
 		vy = 0;
 		SetPosition(2000, 2000);

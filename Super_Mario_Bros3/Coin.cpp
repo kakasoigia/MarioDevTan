@@ -50,7 +50,7 @@ void CCoin::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	else if (state == COIN_STATE_DOWN)
 	{
-		if (GetTickCount() - timing_start >= TIME_COIN_ON_AIR)
+		if (GetTickCount() - timing_start >= TIME_COIN_ON_AIR-100)
 		{
 			isAppear = false;
 		}

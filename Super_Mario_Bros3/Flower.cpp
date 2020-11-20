@@ -84,7 +84,8 @@ void CFlower::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					vy = 0;
 					isFiring = true;
-					isFired = false;
+					Shoot(coObjects);
+
 				}
 			}
 			else
@@ -92,11 +93,13 @@ void CFlower::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				isUp = false;
 				isFiring = false;
 				time_showing = 0;
+				
 			}
 
 		}
 		else
 		{
+
 			if (time_showing == 0)
 				StartShowing();
 			if (GetTickCount() - time_showing <= RED_TIME_SHOWING_LIMIT)
@@ -130,6 +133,7 @@ void CFlower::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else
 			{
+
 				isUp = false;
 				time_showing = 0;
 			}
@@ -166,7 +170,8 @@ void CFlower::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					vy = 0;
 					isFiring = true;
-					isFired = false;
+					Shoot(coObjects);
+
 				}
 			}
 			else
@@ -253,51 +258,116 @@ void CFlower::Render()
 	case FLOWER_RED:
 		if (mario->x <= this->x)
 		{
-			if (vy != 0)
+			if (mario->y >= this->y)
 			{
-				ani = FLOWER_RED_ANI_LEFT;
+				if (vy == 0)
+				{
+					ani = FLOWER_RED_ANI_LEFT_IDLE;
+				}
+				else
+				{
+					ani = FLOWER_RED_ANI_LEFT;
+				}
+
 			}
 			else
 			{
-				ani = FLOWER_RED_ANI_LEFT_IDLE;
+				if (vy == 0)
+				{
+					ani = FLOWER_RED_ANI_LEFT_IDLE_UP;
+				}
+				else
+				{
+					ani = FLOWER_RED_ANI_LEFT_UP;
+				}
 			}
+
 		}
 		else
 		{
-			if (vy != 0)
+			if (mario->y >= this->y)
 			{
-				ani = FLOWER_RED_ANI_RIGHT;
+				if (vy == 0)
+				{
+					ani = FLOWER_RED_ANI_RIGHT_IDLE;
+				}
+				else
+				{
+					ani = FLOWER_RED_ANI_RIGHT;
+				}
+
 			}
 			else
 			{
-				ani = FLOWER_RED_ANI_RIGHT_IDLE;
+				if (vy == 0)
+				{
+					ani = FLOWER_RED_ANI_RIGHT_IDLE_UP;
+				}
+				else
+				{
+					ani = FLOWER_RED_ANI_RIGHT_UP;
+				}
 			}
 		}
 		break;
+
 	case FLOWER_GREEN:
 		ani = FLOWER_GREEN_ANI;
 		break;
 	case FLOWER_GREEN_CAN_SHOOT:
+
 		if (mario->x <= this->x)
 		{
-			if (vy != 0)
+
+			if (isShootingUp == 1)
 			{
-				ani = FLOWER_GREEN_CAN_SHOOT_ANI_LEFT;
+				if (vy == 0)
+				{
+					ani = FLOWER_GREEN_CAN_SHOOT_ANI_LEFT_IDLE;
+				}
+				else
+				{
+					ani = FLOWER_GREEN_CAN_SHOOT_ANI_LEFT;
+				}
+
 			}
 			else
 			{
-				ani = FLOWER_GREEN_CAN_SHOOT_ANI_LEFT_IDLE;
+				if (vy == 0)
+				{
+					ani = FLOWER_GREEN_CAN_SHOOT_ANI_LEFT_IDLE_UP;
+				}
+				else
+				{
+					ani = FLOWER_GREEN_CAN_SHOOT_ANI_LEFT_UP;
+				}
 			}
+
 		}
 		else
 		{
-			if (vy != 0)
+			if (isShootingUp == 1)
 			{
-				ani = FLOWER_GREEN_CAN_SHOOT_ANI_RIGHT;
+				if (vy == 0)
+				{
+					ani = FLOWER_GREEN_CAN_SHOOT_ANI_RIGHT_IDLE;
+				}
+				else
+				{
+					ani = FLOWER_GREEN_CAN_SHOOT_ANI_RIGHT;
+				}
+
 			}
 			else
 			{
-				ani = FLOWER_GREEN_CAN_SHOOT_ANI_RIGHT_IDLE;
+				if (vy == 0)
+				{
+					ani = FLOWER_GREEN_CAN_SHOOT_ANI_RIGHT_IDLE_UP;
+				}
+				else
+				{
+					ani = FLOWER_GREEN_CAN_SHOOT_ANI_RIGHT_UP;
+				}
 			}
 		}
 		break;
@@ -311,4 +381,57 @@ void CFlower::Render()
 void CFlower::SetState(int state)
 {
 	/*CGameObject::SetState(state);*/
+}
+void CFlower::Shoot(vector<LPGAMEOBJECT> *coObjects)
+{
+	CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	for (UINT i = 0; i < coObjects->size(); i++)
+	{
+		LPGAMEOBJECT obj = coObjects->at(i);
+		if (dynamic_cast<CFlowerBullet *>(obj))
+		{
+			CFlowerBullet *bullet = dynamic_cast<CFlowerBullet *>(obj);
+			if (bullet->GetIsUsed()) return;
+			if (abs(mario->x - this->x) <= 160)
+			{
+				if (this->isFiring && !bullet->GetIsUsed() && this->type != FLOWER_GREEN)
+				{
+					
+						bullet->y = this->y + 5;
+						//calc whether shoot up or down
+						if (mario->y <= this->y)
+						{
+							this->SetIsShootingUp(-1);
+						}
+						else
+						{
+							this->SetIsShootingUp(1);
+						}
+						// calc bullet X 
+						if (mario->x <= this->x)
+						{
+							bullet->x = this->x - 1;
+							this->nx = -1;
+						}
+						else
+						{
+							bullet->x = this->x + FLOWER_RED_BBOX_WIDTH + 2;
+							this->nx = 1;
+						}
+						//calc bullet direction
+						if (abs(mario->x - this->x) <= FLOWER_BULLET_X_LIMIT)
+						{
+							bullet->vx = FLOWER_BULLET_FLYING_SPEED * this->nx;
+							bullet->vy = 0.05f * this->isShootingUp;
+						}
+						else
+						{
+							bullet->vx = FLOWER_BULLET_FLYING_SPEED * this->nx;
+							bullet->vy = 0.02f * this->isShootingUp;
+						}
+					}
+					bullet ->SetState(FLOWER_BULLET_STATE_FLYING);
+			}
+		}
+	}
 }

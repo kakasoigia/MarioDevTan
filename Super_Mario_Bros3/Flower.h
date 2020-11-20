@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "algorithm"
+#include "FlowerBullet.h"
 
 #define FLOWER_RED_BBOX_WIDTH  16
 #define FLOWER_RED_BBOX_HEIGHT 32
@@ -20,13 +21,21 @@
 #define FLOWER_GREEN_CAN_SHOOT_ANI_RIGHT		6
 #define FLOWER_GREEN_CAN_SHOOT_ANI_LEFT_IDLE	7
 #define FLOWER_GREEN_CAN_SHOOT_ANI_RIGHT_IDLE	8
+#define FLOWER_RED_ANI_LEFT_UP						9
+#define FLOWER_RED_ANI_RIGHT_UP						10
+#define FLOWER_RED_ANI_LEFT_IDLE_UP					11
+#define FLOWER_RED_ANI_RIGHT_IDLE_UP				12
+#define FLOWER_GREEN_CAN_SHOOT_ANI_LEFT_UP			13
+#define FLOWER_GREEN_CAN_SHOOT_ANI_RIGHT_UP			14
+#define FLOWER_GREEN_CAN_SHOOT_ANI_LEFT_IDLE_UP		15
+#define FLOWER_GREEN_CAN_SHOOT_ANI_RIGHT_IDLE_UP	16
 
 #define FLOWER_RED				100
 #define FLOWER_GREEN			200
 #define FLOWER_GREEN_CAN_SHOOT  300 
 
 
-#define FLOWER_RED_TOP_LIMIT			71
+#define FLOWER_RED_TOP_LIMIT			72
 #define FLOWER_RED_BOT_LIMIT			117
 #define RED_TIME_SHOWING_LIMIT			3000
 
@@ -42,10 +51,12 @@
 class CFlower : public CGameObject
 {
 	int type;
+	int isShootingUp = 1;
 	DWORD time_showing = 0;
 	bool isUp = true;
 	bool isFiring = false;
-	bool isFired = false;
+
+
 public:
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
@@ -57,6 +68,14 @@ public:
 	{
 		time_showing = GetTickCount();
 	}
+	int GetIsShootingUp()
+	{
+		return isShootingUp;
+	}
+	void SetIsShootingUp(int isShootingUpInt)
+	{
+		isShootingUp = isShootingUpInt;
+	}
 	bool GetIsFiring()
 	{
 		return isFiring;
@@ -64,14 +83,6 @@ public:
 	void SetIsFiring(bool isFiringBool)
 	{
 		isFiring = isFiringBool;
-	}
-	bool GetIsFired()
-	{
-		return isFired;
-	}
-	void SetIsFired(bool isFiredBool)
-	{
-		isFired = isFiredBool;
 	}
 	int GetType()
 	{
@@ -81,4 +92,5 @@ public:
 	{
 		type = typeInt;
 	}
+	void Shoot(vector<LPGAMEOBJECT> *coObjects);
 };
