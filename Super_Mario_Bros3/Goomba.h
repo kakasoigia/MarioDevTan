@@ -26,7 +26,7 @@
 #define GOOMBA_ANI_RED_DIE 3
 #define GOOMBA_ANI_RED_WALKING	4
 
-#define	GOOMBA_DYING_TIME 100
+#define	GOOMBA_DYING_TIME 300
 
 #define	GOOMBA_TYPE_ORANGE 1
 #define	GOOMBA_TYPE_RED_FLY 2
@@ -41,7 +41,7 @@ class CGoomba : public CGameObject
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
 	virtual void Render();
 	int dying;
-	DWORD dying_start;
+	DWORD dying_start = 0;
 	int Type;
 	int jumping_start = 0;
 public:

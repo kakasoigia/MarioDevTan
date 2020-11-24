@@ -47,7 +47,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_FLOWER_RED		13
 #define OBJECT_TYPE_FLOWER_BULLET	14
 #define OBJECT_TYPE_QUESTION_BRICK_NORMAL	15
-#define OBJECT_TYPE_LEAF			16
+#define OBJECT_TYPE_LEAF	16
 #define OBJECT_TYPE_MUSHROOM_RED		17
 #define OBJECT_TYPE_QUESTION_BRICK_HAVE_LEAF	18
 #define OBJECT_TYPE_MUSHROOM_GREEN		19
@@ -336,11 +336,11 @@ void CPlayScene::Update(DWORD dt)
 		CGame::GetInstance()->SetCamPos(0, cy);
 	}*/
 
-	int camX = 0;
-	int camY = 0;
-	if (player->x > (game->GetScreenWidth() / 2)) camX = (int)cx;
+	float camX = 0;
+	float camY = 0;
+	if (player->x > (game->GetScreenWidth() / 2)) camX = cx;
 	if (player->GetState()== MARIO_STATE_FLY || player->GetState() == MARIO_STATE_FALL_DOWN || player-> GetIsLanding()==true || player->y<10)
-		if (player->y <= (game->GetScreenHeight() / 2)) camY =(int) cy;
+		if (player->y <= (game->GetScreenHeight() / 2)) camY =cy;
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY);
 
 

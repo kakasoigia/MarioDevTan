@@ -44,6 +44,38 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
 	CalcPotentialCollisions(coObjects, coEvents);
+	// up a bit when being hit
+	if (!isAlive)
+	{
+		if (isUp)
+		{
+			if (time_Y_Up > 4)
+			{
+				time_Y_Up = 0;
+				isUp = false;
+			}
+			else
+			{
+				y -= 2;
+				time_Y_Up++;
+				//DebugOut(L"Nhun len \n");
+			}
+		}
+		else
+		{
+			if (time_Y_Up > 4)
+			{
+				vy = 0;
+			}
+			else
+			{
+				y += 2;
+				time_Y_Up++;
+				//DebugOut(L"Nhun xuong \n");
+			}
+		}
+	}
+
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
@@ -103,7 +135,7 @@ void CQuestionBrick::Render()
 		ani = QUESTION_BRICK_ANI_DEAD;
 	animation_set->at(ani)->Render(x, y);
 
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CQuestionBrick::SetState(int state, vector<LPGAMEOBJECT> *coObjects)

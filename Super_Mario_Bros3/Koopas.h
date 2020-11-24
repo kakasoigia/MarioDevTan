@@ -57,6 +57,8 @@
 
 #define KOOPAS_HOLDING 1
 #define	KOOPAS_NOT_HOLDING 0
+
+#define KOOPAS_TIME_REVIVE 5000
 class CKoopas : public CGameObject
 {
 
@@ -66,6 +68,10 @@ class CKoopas : public CGameObject
 	int Type;
 	bool isHolding = false;
 	int flying_start;
+	bool canTurn = false;
+	DWORD reviveStart= 0;
+	bool CanPullBack = false;
+	float CheckPosition_Y;
 
 public:
 	CKoopas(int type);
@@ -80,5 +86,9 @@ public:
 	void SetIsHolding(int isHolding)
 	{
 		this->isHolding = isHolding;
+	}
+	void StartTimeRevive()
+	{
+		reviveStart = GetTickCount();
 	}
 };

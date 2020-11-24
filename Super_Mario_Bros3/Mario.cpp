@@ -25,55 +25,55 @@ CMario::CMario(float x, float y) : CGameObject()
 	this->y = y;
 	current_level_speed_up = 0;
 }
-void CMario::FilterCollision(
-	vector<LPCOLLISIONEVENT> &coEvents,
-	vector<LPCOLLISIONEVENT> &coEventsResult,
-	float &min_tx, float &min_ty,
-	float &nx, float &ny, float &rdx, float &rdy)
+void CMario::FilterCollision(vector<LPCOLLISIONEVENT> &coEvents, vector<LPCOLLISIONEVENT> &coEventsResult, float &min_tx, float &min_ty, float &nx, float &ny, float &rdx, float &rdy)
 {
+
+	min_tx = 1.0f;
+	min_ty = 1.0f;
+	int min_ix = -1;
+	int min_iy = -1;
+
+	nx = 0.0f;
+	ny = 0.0f;
+
+	coEventsResult.clear();
+
+	for (UINT i = 0; i < coEvents.size(); i++)
 	{
-		min_tx = 1.0f;
-		min_ty = 1.0f;
-		int min_ix = -1;
-		int min_iy = -1;
+		LPCOLLISIONEVENT c = coEvents[i];
 
-		nx = 0.0f;
-		ny = 0.0f;
+		if (c->t < min_tx && c->nx != 0) {
+			min_tx = c->t; nx = c->nx; min_ix = i; rdx = c->dx;
+		}
 
-		coEventsResult.clear();
-
-		for (UINT i = 0; i < coEvents.size(); i++)
+		if (c->t < min_ty  && c->ny != 0) {
+			min_ty = c->t; ny = c->ny; min_iy = i; rdy = c->dy;
+		}
+		if (dynamic_cast<CCoin *>(c->obj))
 		{
-			LPCOLLISIONEVENT c = coEvents[i];
-
-			if (c->t < min_tx && c->nx != 0) {
-				min_tx = c->t; nx = c->nx; min_ix = i; rdx = c->dx;
-			}
-
-			if (c->t < min_ty  && c->ny != 0) {
-				min_ty = c->t; ny = c->ny; min_iy = i; rdy = c->dy;
-			}
-			if (dynamic_cast<CCoin *>(c->obj))
+			nx = 0;
+			ny = 0;
+		}
+		if (dynamic_cast<CMushRoom *>(c->obj) || dynamic_cast<CLeaf *>(c->obj) || dynamic_cast<CFlowerBullet *>(c->obj) || dynamic_cast<CKoopas *>(c->obj) || dynamic_cast<CGoomba *>(c->obj))
+		{
+			ny = -0.0001f;
+		}
+		if (dynamic_cast<CBreakableBrick *>(c->obj))
+		{
+			CBreakableBrick *breakable_brick = dynamic_cast<CBreakableBrick *> (c->obj);
+			if (breakable_brick->GetState() == BREAKABLE_STATE_COIN)
 			{
-				nx = 0;
-				ny = 0;
-			}
-			if (dynamic_cast<CBreakableBrick *>(c->obj))
-			{
-				CBreakableBrick* breakableBrick = dynamic_cast<CBreakableBrick*>(c->obj);
-				if (breakableBrick->GetState() == BREAKABLE_STATE_COIN)
+				if (isJumping)
 				{
 					nx = 0;
 					ny = 0;
 				}
-
 			}
 		}
-
-		if (min_ix >= 0) coEventsResult.push_back(coEvents[min_ix]);
-		if (min_iy >= 0) coEventsResult.push_back(coEvents[min_iy]);
 	}
 
+	if (min_ix >= 0) coEventsResult.push_back(coEvents[min_ix]);
+	if (min_iy >= 0) coEventsResult.push_back(coEvents[min_iy]);
 }
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
@@ -152,6 +152,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			//if (e->ny < 0) isJumping = false; // chạm vật có thể nhảy tiếp
+			if (!dynamic_cast<CPipe *>(e->obj))
+				if (ny != 0) vy = 0;
 			if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
 			{
 				CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
@@ -215,8 +217,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						{
 							koopas->SetType(koopas->GetType() - 1); //subtract 1 type from fly to walk
 						}
-						else
+						else 
 							koopas->SetState(KOOPAS_STATE_SHELL);
+						vy = -2 * MARIO_JUMP_DEFLECT_SPEED;
+					}
+					else if (koopas->GetState() == KOOPAS_STATE_SHELL)
+					{
+						koopas->SetState(KOOPAS_STATE_SPINNING);
 						vy = -2 * MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
@@ -224,17 +231,19 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					if (level == MARIO_LEVEL_TAIL && isTurning)
 					{
-						if (koopas->GetState() != KOOPAS_STATE_DIE && koopas->GetState() != KOOPAS_STATE_SHELL && koopas->GetState() != KOOPAS_STATE_SPINNING)
+						//deflect a bit
+						
+						/*koopas->vx += 0.3f * this->nx;*/
+						if (koopas->GetState()!= KOOPAS_STATE_SHELL)
 							koopas->SetState(KOOPAS_STATE_SHELL);
-						else
-						{
-							koopas->SetState(KOOPAS_STATE_DIE);
-						}
+						koopas->vy = -0.2f;
+						koopas->vx = 0.1f * (-nx);
+						
 					}
 					else if (koopas->GetState() == KOOPAS_STATE_SHELL)
 					{
-						if (ny == 0) // kick Koo || hold Koo
-						{
+						//if (ny == 0) // kick Koo || hold Koo
+						//{
 							if (isHolding /*; state == MARIO_STATE_RUNNING_LEFT || state == MARIO_STATE_RUNNING_RIGHT*/)
 							{
 
@@ -258,7 +267,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 									koopas->SetState(KOOPAS_STATE_SPINNING);
 								}*/
 							}
-						}
+						/*}*/
 					}
 					else if (koopas->GetState() != KOOPAS_STATE_SHELL && isKicking == false && isTurning == false)
 					{
@@ -327,7 +336,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					CQuestionBrick *question_brick = dynamic_cast<CQuestionBrick *>(e->obj);
 					if (question_brick->GetIsAlive())
-						question_brick->SetState(QUESTION_BRICK_STATE_USED,coObjects);
+					{
+						question_brick->SetState(QUESTION_BRICK_STATE_USED, coObjects);
+						question_brick->SetIsUp(true);
+					}
+						
 
 				}
 
@@ -362,7 +375,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 										if (brick->x == obj->x && brick->y == obj->y)
 										{
 											CBell *bell = dynamic_cast<CBell *>(obj);
-											bell->SetIsUp(true);
+											bell->SetState(BELL_STATE_SHOW);
 											bell->y = brick->y - 16;
 										}
 									}
@@ -376,8 +389,24 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						{
 							if (brick->GetType() == BREAKABLE_BRICK_NORMAL)
 								brick->SetState(BREAKABLE_STATE_BROKEN);
-							else if (brick->GetState() == BREAKABLE_BRICK_BELL)
+							else if (brick->GetState() == BREAKABLE_BRICK_BELL) {
 								brick->SetState(BREAKABLE_STATE_EMPTY_BOX);
+								//find Bell available at same place
+								for (UINT i = 0; i < coObjects->size(); i++)
+								{
+									LPGAMEOBJECT obj = coObjects->at(i);
+									if (dynamic_cast<CBell *>(obj))
+									{
+										////check position
+										if (brick->x == obj->x && brick->y == obj->y)
+										{
+											CBell *bell = dynamic_cast<CBell *>(obj);
+											bell->SetState(BELL_STATE_SHOW);
+											bell->y = brick->y - 16;
+										}
+									}
+								}
+							}
 						}
 
 					}
@@ -389,9 +418,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				CBell *bell = dynamic_cast<CBell *>(e->obj);
 				if (e->ny < 0)
 				{
+					if (bell->GetState() != BELL_STATE_PRESSED)
 					bell->SetActive(true);
 				}
 			}
+		
 		}
 
 	}

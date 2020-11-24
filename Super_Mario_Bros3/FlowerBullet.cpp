@@ -151,7 +151,7 @@ void CFlowerBullet::Render()
 void CFlowerBullet::SetState(int state)
 {
 	CGameObject::SetState(state);
-	CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+
 	switch (state)
 	{
 	case FLOWER_BULLET_STATE_FLYING:

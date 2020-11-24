@@ -4,15 +4,23 @@
 #include "Utils.h"
 void CBell::Render()
 {
-	if (isActive == true) return;
-	animation_set->at(0)->Render(x, y);
+	int ani = -1;
+	if (state ==BELL_STATE_DISAPPEAR) return;
+	else if (state == BELL_STATE_SHOW)
+	{
+		ani = 0;
+	}
+	else
+	{
+		ani = 1;
+	}
+	animation_set->at(ani)->Render(x, y);
 	//RenderBoundingBox();
 }
-
 void CBell::GetBoundingBox(float &l, float &t, float &r, float &b)
 {
 
-	if (isUp && !isActive)
+	if (state == BELL_STATE_SHOW)
 	{
 		
 		l = x;
@@ -20,9 +28,16 @@ void CBell::GetBoundingBox(float &l, float &t, float &r, float &b)
 		r = x + BELL_BBOX_WIDTH;
 		b = y + BELL_BBOX_HEIGHT;
 	}
-	else
+	else if (state == BELL_STATE_DISAPPEAR)
 	{
 		l = t = r = b = 0;
+	}
+	else
+	{
+		l = x;
+		t = y;
+		r = x + BELL_BBOX_WIDTH;
+		b = y + BELL_BBOX_HEIGHT;
 	}
 	
 }
@@ -39,14 +54,22 @@ void CBell::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			LPGAMEOBJECT obj = coObjects->at(i);
 				if (dynamic_cast<CBreakableBrick*>(obj))
 				{
-					DebugOut(L"[INFO] Vô đây r \n");
 					CBreakableBrick* breakableBrick = dynamic_cast<CBreakableBrick*>(obj);
 					if (breakableBrick->GetState() == BREAKABLE_STATE_SHOW)
 					{
 						breakableBrick->SetState(BREAKABLE_STATE_COIN);
+						breakableBrick->StartReviteTime();
 					}
 				}
 				
 		}
+		isActive = false;
+		state = BELL_STATE_PRESSED;
+		y += 9; 
 	}
+}
+void CBell::SetState(int state)
+{
+	this->state = state;
+	
 }

@@ -55,6 +55,7 @@ class CFlower : public CGameObject
 	DWORD time_showing = 0;
 	bool isUp = true;
 	bool isFiring = false;
+	bool isFired = false;
 
 
 public:

@@ -32,7 +32,6 @@ public:
 
 	CFlowerBullet()
 	{
-		isUsed = false;
 		SetState(FLOWER_BULLET_STATE_HIDDEN);
 	}
 	bool GetIsUsed()

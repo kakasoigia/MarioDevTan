@@ -26,6 +26,8 @@ class CQuestionBrick : public CGameObject
 	int type;
 	bool isAlive = true;
 	bool isUsed = false;
+	int time_Y_Up = 0;
+	bool isUp = false;
 
 public:
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
@@ -58,5 +60,12 @@ public:
 	{
 		isUsed = isUsedBool;
 	}
-
+	bool GetIsUp()
+	{
+		return isUp;
+	}
+	void SetIsUp(bool isUpBool)
+	{
+		isUp = isUpBool;
+	}
 };
