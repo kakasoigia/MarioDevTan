@@ -62,9 +62,7 @@
 class CKoopas : public CGameObject
 {
 
-	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
-	virtual void Render();
+	
 	int Type;
 	bool isHolding = false;
 	int flying_start;
@@ -75,6 +73,10 @@ class CKoopas : public CGameObject
 
 public:
 	CKoopas(int type);
+	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
+	void FilterCollision(vector<LPCOLLISIONEVENT> &coEvents, vector<LPCOLLISIONEVENT> &coEventsResult, float &min_tx, float &min_ty, float &nx, float &ny, float &rdx, float &rdy);
+	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
+	virtual void Render();
 	void StartFlying() { flying_start = GetTickCount(); }
 	virtual void SetState(int state);
 	int GetType() { return Type; };
@@ -91,4 +93,5 @@ public:
 	{
 		reviveStart = GetTickCount();
 	}
+	void CalcPotentialCollisions(vector<LPGAMEOBJECT> *coObjects, vector<LPCOLLISIONEVENT> &coEvents);
 };

@@ -65,7 +65,7 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			if (time_Y_Up > 4)
 			{
-				vy = 0;
+				
 			}
 			else
 			{
@@ -106,10 +106,6 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 
 		}
-
-
-
-
 	}
 
 

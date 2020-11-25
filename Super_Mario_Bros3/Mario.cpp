@@ -361,7 +361,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						{
 
 							if (brick->GetType() == BREAKABLE_BRICK_NORMAL)
-								brick->SetState(BREAKABLE_STATE_BROKEN);
+							{
+
+							}
 							else
 							{
 								brick->SetState(BREAKABLE_STATE_EMPTY_BOX);
@@ -781,7 +783,7 @@ void CMario::Render()
 	if (untouchable) alpha = 128;
 
 	animation_set->at(ani)->Render(x, y, alpha);
-
+	animation_set->at(ani)->Render(x+10, y+10, alpha);
 	/*RenderBoundingBox();*/
 }
 void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom)

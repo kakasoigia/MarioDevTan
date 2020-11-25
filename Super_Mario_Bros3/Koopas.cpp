@@ -28,6 +28,71 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 
 
 }
+void CKoopas::FilterCollision(vector<LPCOLLISIONEVENT> &coEvents, vector<LPCOLLISIONEVENT> &coEventsResult, float &min_tx, float &min_ty, float &nx, float &ny, float &rdx, float &rdy)
+{
+	min_tx = 1.0f;
+	min_ty = 1.0f;
+	int min_ix = -1;
+	int min_iy = -1;
+
+	nx = 0.0f;
+	ny = 0.0f;
+
+	coEventsResult.clear();
+
+	for (UINT i = 0; i < coEvents.size(); i++)
+	{
+		LPCOLLISIONEVENT c = coEvents[i];
+
+		if (c->t < min_tx && c->nx != 0) {
+			min_tx = c->t; nx = c->nx; min_ix = i; rdx = c->dx;
+		}
+
+		if (c->t < min_ty  && c->ny != 0) {
+			min_ty = c->t; ny = c->ny; min_iy = i; rdy = c->dy;
+		}
+		if (dynamic_cast<CMario *>(c->obj))
+		{
+			ny = -0.01f;
+		}
+	}
+	if (min_ix >= 0) coEventsResult.push_back(coEvents[min_ix]);
+	if (min_iy >= 0) coEventsResult.push_back(coEvents[min_iy]);
+}
+
+
+void CKoopas::CalcPotentialCollisions(vector<LPGAMEOBJECT> *coObjects, vector<LPCOLLISIONEVENT> &coEvents)
+{
+	for (UINT i = 0; i < coObjects->size(); i++)
+	{
+		//CMario* player = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+		if (dynamic_cast<CRectangle *>(coObjects->at(i)) && vy < 0)
+		{
+			continue;
+		}
+		if (dynamic_cast<CFlowerBullet *>(coObjects->at(i)))
+		{
+			continue;
+		}
+		if (dynamic_cast<CBreakableBrick *>(coObjects->at(i)))
+		{
+
+			CBreakableBrick *breakable_brick = dynamic_cast<CBreakableBrick *>(coObjects->at(i));
+			if (breakable_brick->GetState() != BREAKABLE_STATE_SHOW)
+			{
+				continue;
+			}
+		}
+		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
+
+		if (e->t > 0 && e->t <= 1.0f)
+			coEvents.push_back(e);
+		else
+			delete e;
+	}
+
+	std::sort(coEvents.begin(), coEvents.end(), CCollisionEvent::compare);
+}
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {

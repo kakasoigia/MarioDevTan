@@ -351,14 +351,10 @@ void CPlayScene::Render()
 	
 	for (unsigned int i = 1; i < objects.size(); i++)
 	{
-		/*float x, y;
-		objects[i]->GetPosition(x,y);
 		CGame *game = CGame::GetInstance();
-		float rangeXleft = player->x - game->GetScreenHeight() -100 ;
+		float rangeXleft = player->x - game->GetScreenHeight() - 100;
 		float rangeXright = player->x + game->GetScreenHeight() + 100;
-		float rangeYup = player->y - game->GetScreenHeight() - 100;
-		float rangeYdown = player->y + game->GetScreenHeight() + 100;
-		if( x> rangeXleft && x<rangeXright && y > rangeYup && y<rangeYdown)*/
+		if (objects[i]->x > rangeXleft && objects[i]->x < rangeXright)
 			objects[i]->Render();
 	}
 		
