@@ -131,14 +131,14 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 
-			if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
-			{
-				CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
-				this->vx = -this->vx;
-				goomba->vx = -goomba->vx;
+			//if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
+			//{
+			//	CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
+			//	this->vx = -this->vx;
+			//	goomba->vx = -goomba->vx;
 
 
-			}
+			//}
 			//else if ( dynamic_cast<CPipe *>(e->obj)) /*dynamic_cast<CBrick *>(e->obj) ||*/
 			{
 				

@@ -11,6 +11,8 @@
 #include "Bell.h"
 #include "Leaf.h"
 #include "MushRoom.h"
+#include "HudPanels.h"
+#include "HudSubPanels.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
@@ -58,7 +60,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_BREAKABLE_BRICK_BELL	25
 #define OBJECT_TYPE_BELL	24
 #define OBJECT_TYPE_COIN_CAN_TOSS	26
-
+#define OBJECT_TYPE_HUD	27
 #define OBJECT_TYPE_PORTAL	50
  
 #define MAX_SCENE_LINE 1024
@@ -146,6 +148,7 @@ void CPlayScene::_ParseSection_ANIMATION_SETS(string line)
 	}
 
 	CAnimationSets::GetInstance()->Add(ani_set_id, s);
+	
 }
 
 /*
@@ -208,6 +211,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BREAKABLE_BRICK_NORMAL: obj = new CBreakableBrick(BREAKABLE_BRICK_NORMAL); break;
 	case OBJECT_TYPE_BREAKABLE_BRICK_BELL: obj = new CBreakableBrick(BREAKABLE_BRICK_BELL); break;
 	case OBJECT_TYPE_BELL: obj = new CBell(); break;
+	case OBJECT_TYPE_HUD: obj = new HudPanel(); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		double r = atof(tokens[4].c_str());
@@ -342,6 +346,7 @@ void CPlayScene::Update(DWORD dt)
 	if (player->GetState()== MARIO_STATE_FLY || player->GetState() == MARIO_STATE_FALL_DOWN || player-> GetIsLanding()==true || player->y<10)
 		if (player->y <= (game->GetScreenHeight() / 2)) camY =cy;
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY);
+	
 
 
 }
@@ -351,10 +356,7 @@ void CPlayScene::Render()
 	
 	for (unsigned int i = 1; i < objects.size(); i++)
 	{
-		CGame *game = CGame::GetInstance();
-		float rangeXleft = player->x - game->GetScreenHeight() - 100;
-		float rangeXright = player->x + game->GetScreenHeight() + 100;
-		if (objects[i]->x > rangeXleft && objects[i]->x < rangeXright)
+		
 			objects[i]->Render();
 	}
 		

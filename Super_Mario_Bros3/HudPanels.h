@@ -1,0 +1,72 @@
+#pragma once
+
+#include <map>
+#include "HudSubPanels.h"
+#include "GameObject.h"
+
+#define HUDPANEL_ANIMATION_SET_ID 91
+
+#define HUDPANEL_ANI_NUMBER_0	0
+#define HUDPANEL_ANI_NUMBER_1	1
+#define HUDPANEL_ANI_NUMBER_2	2
+#define HUDPANEL_ANI_NUMBER_3	3
+#define HUDPANEL_ANI_NUMBER_4	4
+#define HUDPANEL_ANI_NUMBER_5	5
+#define HUDPANEL_ANI_NUMBER_6	6
+#define HUDPANEL_ANI_NUMBER_7	7
+#define HUDPANEL_ANI_NUMBER_8	8
+#define HUDPANEL_ANI_NUMBER_9	9
+#define HUDPANEL_ANI_BIG_HUD	10
+#define HUDPANEL_ANI_ARROW_MELTER	11
+#define HUDPANEL_ANI_LIGHT_MELTER	12
+#define HUDPANEL_ANI_LETTER_A	13
+#define HUDPANEL_ANI_LETTER_B	14
+#define HUDPANEL_ANI_LETTER_C	15
+#define HUDPANEL_ANI_LETTER_D	16
+#define HUDPANEL_ANI_LETTER_E	17
+#define HUDPANEL_ANI_LETTER_F	18
+#define HUDPANEL_ANI_LETTER_G	19
+#define HUDPANEL_ANI_LETTER_H	20
+#define HUDPANEL_ANI_LETTER_I	21
+#define HUDPANEL_ANI_LETTER_J	22
+#define HUDPANEL_ANI_LETTER_K	23
+#define HUDPANEL_ANI_LETTER_L	24
+#define HUDPANEL_ANI_LETTER_M	25
+#define HUDPANEL_ANI_LETTER_N	26
+#define HUDPANEL_ANI_LETTER_O	27
+#define HUDPANEL_ANI_LETTER_P	28
+#define HUDPANEL_ANI_LETTER_Q	29
+#define HUDPANEL_ANI_LETTER_R	30
+#define HUDPANEL_ANI_LETTER_S	31
+#define HUDPANEL_ANI_LETTER_T	32
+#define HUDPANEL_ANI_LETTER_U	33
+#define HUDPANEL_ANI_LETTER_V	34
+#define HUDPANEL_ANI_LETTER_W	35
+#define HUDPANEL_ANI_LETTER_X	36
+#define HUDPANEL_ANI_LETTER_Y	37
+#define HUDPANEL_ANI_LETTER_Z	38
+#define HUDPANEL_ANI_HUD_ITEM	39
+#define HUDPANEL_ANI_HUD_ITEM_MUSHROOM	40
+#define HUDPANEL_ANI_HUD_ITEM_FLOWER	41
+#define HUDPANEL_ANI_HUD_ITEM_STAR	42
+#define HUDPANEL_ANI_HUD_STATE_M	43
+#define HUDPANEL_ANI_HUD_STATE_L	44
+#define HUDPANEL_ANI_HUD_BLACK_BACKGROUD	45
+
+
+class HudPanel : public CGameObject
+{
+private:
+
+	/*CGameObject texture_panel;*/
+	std::map<std::string, HudSubPanel*>sub_panels;
+
+public:
+
+	HudPanel();
+
+	virtual void Render();
+	virtual void GetBoundingBox(float &l, float &t, float &r, float &b);
+	void reset();
+	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
+};

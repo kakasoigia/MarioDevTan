@@ -783,7 +783,7 @@ void CMario::Render()
 	if (untouchable) alpha = 128;
 
 	animation_set->at(ani)->Render(x, y, alpha);
-	animation_set->at(ani)->Render(x+10, y+10, alpha);
+	
 	/*RenderBoundingBox();*/
 }
 void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -816,6 +816,7 @@ void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom
 
 void CMario::SetState(int state)
 {
+	
 	CGameObject::SetState(state);
 
 	switch (state)

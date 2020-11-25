@@ -76,7 +76,7 @@ void CFireBullet::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
 				if (nx != 0)
 				{
-					goomba->SetState(GOOMBA_STATE_DIE);
+					goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
 					SetState(BULLET_STATE_DISAPPEARING);
 				}
 
