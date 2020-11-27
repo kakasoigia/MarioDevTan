@@ -12,6 +12,8 @@
 #include "BreakableBrick.h"
 #include "Bell.h"
 #include "QuestionBrick.h"
+#include "Leaf.h"
+#include "MushRoom.h"
 
 CMario::CMario(float x, float y) : CGameObject()
 {
@@ -168,12 +170,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						{
 
 							goomba->SetState(GOOMBA_STATE_DIE);
+							CGame::GetInstance()->AddScore(100);
 							vy = -MARIO_JUMP_DEFLECT_SPEED;
 						}
 						else// redfly
 						{
 							goomba->SetType(GOOMBA_TYPE_RED_WALK);
 							goomba->SetState(GOOMBA_STATE_WALKING);
+							CGame::GetInstance()->AddScore(100);
 							vy = -MARIO_JUMP_DEFLECT_SPEED;
 
 
@@ -186,7 +190,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					if (level == MARIO_LEVEL_TAIL && isTurning)
 					{
 						if (goomba->GetState() != GOOMBA_STATE_DIE_BY_KICK)
+						{
 							goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
+							CGame::GetInstance()->AddScore(100);
+						}
+							
 					}
 					else if (untouchable == 0)
 					{
@@ -196,7 +204,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							{
 								level = MARIO_LEVEL_SMALL;
 								isFiring = false; // when being touched... stop fire 
-								DebugOut(L"[INFO] Lỗi untouch \n");
+								
 								StartUntouchable();
 							}
 							else
@@ -216,15 +224,20 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					{
 						if (koopas->GetType() == KOOPAS_TYPE_GREEN_FLY || koopas->GetType() == KOOPAS_TYPE_RED_FLY)
 						{
+							CGame::GetInstance()->AddScore(100);
 							koopas->SetType(koopas->GetType() - 1); //subtract 1 type from fly to walk
 						}
-						else 
+						else
+						{
+							CGame::GetInstance()->AddScore(100);
 							koopas->SetState(KOOPAS_STATE_SHELL);
+						}
 						vy = -2 * MARIO_JUMP_DEFLECT_SPEED;
 					}
 					else if (koopas->GetState() == KOOPAS_STATE_SHELL)
 					{
 						koopas->SetState(KOOPAS_STATE_SPINNING);
+						CGame::GetInstance()->AddScore(100);
 						vy = -2 * MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
@@ -425,6 +438,53 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					if (bell->GetState() != BELL_STATE_PRESSED)
 					bell->SetActive(true);
+				}
+			}
+			else if ((dynamic_cast<CLeaf *>(e->obj)))
+			{
+				CLeaf *leaf = dynamic_cast<CLeaf *>(e->obj);
+				if (GetLevel() == MARIO_LEVEL_SMALL)
+				{
+					SetLevel(MARIO_LEVEL_BIG);
+					leaf->SetIsAppear ( false);
+				
+				}
+				else if (GetLevel() == MARIO_LEVEL_BIG)
+				{
+					SetLevel(MARIO_LEVEL_TAIL);
+					leaf->SetIsAppear(false);
+					
+				}
+				else
+				{
+					leaf->SetIsAppear(false);
+					
+					CGame::GetInstance()->AddScore(1000);
+				}
+			}
+			else if ((dynamic_cast<CMushRoom *>(e->obj)))
+			{
+				CMushRoom *mushroom = dynamic_cast<CMushRoom *>(e->obj);
+				
+				if (mushroom->GetType() == MUSHROOM_RED)
+				{
+					if (GetLevel() == MARIO_LEVEL_SMALL)
+					{
+						SetLevel(MARIO_LEVEL_BIG);
+						mushroom->SetIsAppear ( false);
+					}
+					else
+					{
+						mushroom->SetIsAppear(false);
+						CGame::GetInstance()->AddScore(1000);
+						//Cong diem
+					}
+
+				}
+				else // green mush
+				{
+					mushroom->SetIsAppear(false);
+					CGame::GetInstance()->AddScore(1000);
 				}
 			}
 		

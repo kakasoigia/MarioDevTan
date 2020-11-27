@@ -89,7 +89,7 @@ public:
 	int GetCoinCounter() { return CoinCounter; };
 	void CoinCounterUp() { CoinCounter++; };
 	long GetScore (){ return Score; };
-	void SetScore(long score) { Score= score; };
+	void AddScore(long score) { Score+= score; };
 	static CGame * GetInstance();
 	int GetCurrentLevel();
 	~CGame();

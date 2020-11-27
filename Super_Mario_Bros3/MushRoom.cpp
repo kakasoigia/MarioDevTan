@@ -95,33 +95,7 @@ void CMushRoom::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CMario *>(e->obj))
-			{
-				CMario *mario = dynamic_cast<CMario *>(e->obj);
-				if (type == MUSHROOM_RED)
-				{
-					if (mario->GetLevel() == MARIO_LEVEL_SMALL)
-					{
-						mario->SetLevel(MARIO_LEVEL_BIG);
-						isAppear = false;
-						SetPosition(6000, 6000);
-					}
-					else
-					{
-						isAppear = false;
-						SetPosition(6000, 6000);
-						//Cong diem
-					}
-
-				}
-				else
-				{
-					isAppear = false;
-					SetPosition(6000, 6000);
-					//Cong diem
-				}
-			}
-			else  // Collisions with other things  
+			 // Collisions with other things  
 			{
 				if (nx != 0 && ny == 0)
 				{

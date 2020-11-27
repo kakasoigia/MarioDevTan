@@ -52,8 +52,8 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	coEvents.clear();
 
-	if (isAppear)
-		CalcPotentialCollisions(coObjects, coEvents);
+	/*if (isAppear)
+		CalcPotentialCollisions(coObjects, coEvents);*/
 
 
 	if (state == LEAF_STATE_UP)
@@ -76,60 +76,60 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	}
 
+	x += dx;
+	y += dy;
 
+	//// No collision occured, proceed normally
+	//if (coEvents.size() == 0)
+	//{
+	//	
+	//}
+	//else
+	//{
 
-	// No collision occured, proceed normally
-	if (coEvents.size() == 0)
-	{
-		x += dx;
-		y += dy;
-	}
-	else
-	{
+	//	float min_tx, min_ty, nx = 0, ny;
+	//	float rdx = 0;
+	//	float rdy = 0;
 
-		float min_tx, min_ty, nx = 0, ny;
-		float rdx = 0;
-		float rdy = 0;
+	//	// TODO: This is a very ugly designed function!!!!
+	//	FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-		// TODO: This is a very ugly designed function!!!!
-		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+	//	// block 
+	//	//x += min_tx * dx + nx * 0.5f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
+	//	//y += min_ty * dy + ny * 0.5f;
 
-		// block 
-		//x += min_tx * dx + nx * 0.5f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
-		//y += min_ty * dy + ny * 0.5f;
+	//	/*if (nx != 0) vx = 0;
+	//	if (ny != 0) vy = 0;*/
 
-		/*if (nx != 0) vx = 0;
-		if (ny != 0) vy = 0;*/
+	//	// Collision logic with the others Goombas
+	//	for (UINT i = 0; i < coEventsResult.size(); i++)
+	//	{
+	//		LPCOLLISIONEVENT e = coEventsResult[i];
+	//		if (dynamic_cast<CMario *>(e->obj))
+	//		{
+	//			CMario *mario = dynamic_cast<CMario *>(e->obj);
+	//			if (mario->GetLevel() == MARIO_LEVEL_SMALL)
+	//			{
+	//				mario->SetLevel(MARIO_LEVEL_BIG);
+	//				isAppear = false;
+	//				SetPosition(5000, 5000);
+	//			}
+	//			else if (mario->GetLevel() == MARIO_LEVEL_BIG)
+	//			{
+	//				mario->SetLevel(MARIO_LEVEL_TAIL);
+	//				isAppear = false;
+	//				SetPosition(5000, 5000);
+	//			}
+	//			else
+	//			{
+	//				isAppear = false;
+	//				SetPosition(5000, 5000);
+	//				CGame::GetInstance()->AddScore(1000);
+	//			}
+	//		}
 
-		// Collision logic with the others Goombas
-		for (UINT i = 0; i < coEventsResult.size(); i++)
-		{
-			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CMario *>(e->obj))
-			{
-				CMario *mario = dynamic_cast<CMario *>(e->obj);
-				if (mario->GetLevel() == MARIO_LEVEL_SMALL)
-				{
-					mario->SetLevel(MARIO_LEVEL_BIG);
-					isAppear = false;
-					SetPosition(5000, 5000);
-				}
-				else if (mario->GetLevel() == MARIO_LEVEL_BIG)
-				{
-					mario->SetLevel(MARIO_LEVEL_TAIL);
-					isAppear = false;
-					SetPosition(5000, 5000);
-				}
-				else
-				{
-					isAppear = false;
-					SetPosition(5000, 5000);
-					//Cong diem
-				}
-			}
-
-		}
-	}
+	//	}
+	//}
 
 
 	// clean up collision events
