@@ -191,6 +191,7 @@ void CQuestionBrick::SetState(int state, vector<LPGAMEOBJECT> *coObjects)
 		}
 		else if (type == QUESTION_BRICK_NORMAL) // toss coin
 		{
+
 			for (UINT i = 0; i < coObjects->size(); i++)
 			{
 				LPGAMEOBJECT obj = coObjects->at(i);

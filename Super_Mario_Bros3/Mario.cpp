@@ -15,6 +15,7 @@
 
 CMario::CMario(float x, float y) : CGameObject()
 {
+	
 	level = MARIO_LEVEL_BIG;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
@@ -299,6 +300,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				CCoin *coin = dynamic_cast<CCoin *>(e->obj);
 				coin->SetIsAppear(false);
+				CGame::GetInstance()->CoinCounterUp();
 			}
 			else if (dynamic_cast<CFlower *>(e->obj))
 			{
@@ -352,6 +354,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (brick->GetState() == BREAKABLE_STATE_COIN) // if COIN ..
 				{
 					brick->SetState(BREAKABLE_STATE_BROKEN);
+					CGame::GetInstance()->CoinCounterUp();
 				}
 				else // another situattion
 				{
@@ -432,6 +435,20 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+	// Update camera to follow mario
+	float cx= this->x, cy=this->y;
+	/*player->GetPosition(cx, cy);*/
+
+	CGame *game = CGame::GetInstance();
+	cx -= game->GetScreenWidth() / 2;
+	cy -= game->GetScreenHeight() / 2;
+
+	float camX = 0;
+	float camY = 0;
+	if (x > (game->GetScreenWidth() / 2)) camX = cx;
+	if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true || y < 10)
+		if (y <= (game->GetScreenHeight() / 2)) camY = cy;
+	CGame::GetInstance()->SetCamPos((int)camX, (int)camY);
 
 }
 

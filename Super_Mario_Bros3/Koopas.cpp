@@ -263,7 +263,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				}
 				else if (e->nx != 0 && (this->state == KOOPAS_STATE_SPINNING || isHolding == KOOPAS_HOLDING))
 				{
-					goomba->SetState(GOOMBA_STATE_DIE);
+					goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
 				}
 
 			}

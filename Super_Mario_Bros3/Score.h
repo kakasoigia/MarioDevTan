@@ -21,7 +21,7 @@ private:
 public:
 
 	Score();
-	void Update();
+	void Update(float x,float y);
 	void Render();
 	virtual void reset();
 };

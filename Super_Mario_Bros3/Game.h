@@ -43,10 +43,11 @@ class CGame
 
 	unordered_map<int, LPSCENE> scenes;
 	int current_scene;
-
+	int CoinCounter = 0;
+	long Score = 0;
 	void _ParseSection_SETTINGS(string line);
 	void _ParseSection_SCENES(string line);
-
+	int Mario_Level = 0;
 public:
 	void InitKeyboard();
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; }
@@ -85,9 +86,12 @@ public:
 	void SetCamPos(float x, float y) { cam_x = x; cam_y = y; }
 	float GetCamPosX() { return cam_x; };
 	float GetCamPosY() { return cam_y; };
-
+	int GetCoinCounter() { return CoinCounter; };
+	void CoinCounterUp() { CoinCounter++; };
+	long GetScore (){ return Score; };
+	void SetScore(long score) { Score= score; };
 	static CGame * GetInstance();
-
+	int GetCurrentLevel();
 	~CGame();
 };
 
