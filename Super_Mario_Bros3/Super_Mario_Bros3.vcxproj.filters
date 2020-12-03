@@ -111,6 +111,12 @@
     <ClInclude Include="CoinCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PowerMeter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LifeCounter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -207,6 +213,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CoinCounter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PowerMeter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LifeCounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

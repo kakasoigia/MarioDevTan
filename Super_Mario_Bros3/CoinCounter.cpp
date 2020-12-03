@@ -1,4 +1,6 @@
 #include "CoinCounter.h"
+#include "PlayScence.h"
+#include "Mario.h"
 CoinCounter::CoinCounter()
 {
 
@@ -19,7 +21,8 @@ void CoinCounter::Update(float hud_x, float hud_y)
 	{
 		panel_numbers[i]->SetPosition(hud_x + 132 + 8 * i, hud_y + 7);
 	}
-	int total_coins= CGame::GetInstance()->GetCoinCounter();
+	CMario* player = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	int total_coins= player->GetCoinCounter()<100? player->GetCoinCounter() :99;  // max 99 coin 
 	dozens = (int)total_coins/10;
 	units = total_coins %10;
 }

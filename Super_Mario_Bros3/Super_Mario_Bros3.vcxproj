@@ -158,10 +158,12 @@
     <ClInclude Include="HudPanels.h" />
     <ClInclude Include="HudSubPanels.h" />
     <ClInclude Include="Leaf.h" />
+    <ClInclude Include="LifeCounter.h" />
     <ClInclude Include="MushRoom.h" />
     <ClInclude Include="NoCollisionObjects.h" />
     <ClInclude Include="Number.h" />
     <ClInclude Include="Pipe.h" />
+    <ClInclude Include="PowerMeter.h" />
     <ClInclude Include="QuestionBrick.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Score.h" />
@@ -193,12 +195,14 @@
     <ClCompile Include="HudSubPanels.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="Leaf.cpp" />
+    <ClCompile Include="LifeCounter.cpp" />
     <ClCompile Include="MushRoom.cpp" />
     <ClCompile Include="NoCollisionObjects.cpp" />
     <ClCompile Include="Number.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="PlayScence.cpp" />
     <ClCompile Include="Portal.cpp" />
+    <ClCompile Include="PowerMeter.cpp" />
     <ClCompile Include="QuestionBrick.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Scence.cpp" />

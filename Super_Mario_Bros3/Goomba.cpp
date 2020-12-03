@@ -81,7 +81,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				jumping_start = GetTickCount();
 		}
 	}
-	if (state == GOOMBA_STATE_DIE || state == GOOMBA_STATE_DIE_BY_KICK)
+	if (state == GOOMBA_STATE_DIE )
 	{
 		if (GetTickCount() - dying_start> GOOMBA_DYING_TIME)
 		{

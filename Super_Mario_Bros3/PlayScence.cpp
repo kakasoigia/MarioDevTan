@@ -432,12 +432,10 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		mario->SetIsHolding(0);
 		break;
 	case DIK_SPACE:
-		if (mario->GetLevel() == MARIO_LEVEL_FIRE)
-		{
-
+		
 			mario->SetIsFiring(false);
 			/*mario->StartFiring();*/
-		}
+		
 
 		break;
 	}

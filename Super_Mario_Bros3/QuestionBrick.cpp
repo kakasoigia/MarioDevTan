@@ -201,7 +201,8 @@ void CQuestionBrick::SetState(int state, vector<LPGAMEOBJECT> *coObjects)
 					if (!coin->GetIsAppear() && this->x == coin->x && this->y == coin->y) // unUsed and is Green
 					{
 						coin->SetState(COIN_STATE_UP);
-						CGame::GetInstance()->CoinCounterUp();
+						CMario* player = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+						player->CoinCounterUp();
 						return;
 					}
 				}

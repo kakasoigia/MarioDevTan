@@ -5,6 +5,8 @@
 #include "HudSubPanels.h"
 #include "HudPanels.h"
 #include "Utils.h"
+#include "Mario.h"
+#include "PlayScence.h"
 Score::Score() 
 {
 	//set default number for panels
@@ -36,7 +38,8 @@ void Score::Update(float hud_x,float hud_y)
 	{
 		panel_numbers[i]->SetPosition(hud_x + 52 + 8 * i, hud_y + 15);
 	}
-	int info = game->GetScore();
+	CMario* player = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	int info = player->GetScore();
 	
 	millions = info / 1000000;
 	info = info % 1000000;

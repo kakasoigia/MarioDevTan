@@ -164,7 +164,10 @@ class CMario : public CGameObject
 	int kicking_start;
 	int flying_start;
 	DWORD untouchable_start;
-
+	int CoinCounter = 0;
+	long Score = 0;
+	int life_counter = 4;
+	int Mario_Level = 0;
 	float start_x;			// initial position of Mario at scene
 	float start_y;
 protected:
@@ -280,4 +283,11 @@ public:
 	 {
 		 isHitted = isHittedBool;
 	 }
+	 // HUD 
+	 int GetCoinCounter() { return CoinCounter; };
+	 void CoinCounterUp() { CoinCounter++; };
+	 long GetScore() { return Score; };
+	 void AddScore(long score) { Score += score; };
+	 void AddLifeCounter() { life_counter++; };
+	 int GetLifeCounter() { return life_counter; };
 };

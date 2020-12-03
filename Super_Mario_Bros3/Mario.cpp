@@ -170,14 +170,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						{
 
 							goomba->SetState(GOOMBA_STATE_DIE);
-							CGame::GetInstance()->AddScore(100);
+							AddScore(100);
 							vy = -MARIO_JUMP_DEFLECT_SPEED;
 						}
 						else// redfly
 						{
 							goomba->SetType(GOOMBA_TYPE_RED_WALK);
 							goomba->SetState(GOOMBA_STATE_WALKING);
-							CGame::GetInstance()->AddScore(100);
+							AddScore(100);
 							vy = -MARIO_JUMP_DEFLECT_SPEED;
 
 
@@ -192,7 +192,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						if (goomba->GetState() != GOOMBA_STATE_DIE_BY_KICK)
 						{
 							goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
-							CGame::GetInstance()->AddScore(100);
+							AddScore(100);
 						}
 							
 					}
@@ -224,12 +224,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					{
 						if (koopas->GetType() == KOOPAS_TYPE_GREEN_FLY || koopas->GetType() == KOOPAS_TYPE_RED_FLY)
 						{
-							CGame::GetInstance()->AddScore(100);
+							AddScore(100);
 							koopas->SetType(koopas->GetType() - 1); //subtract 1 type from fly to walk
 						}
 						else
 						{
-							CGame::GetInstance()->AddScore(100);
+							AddScore(100);
 							koopas->SetState(KOOPAS_STATE_SHELL);
 						}
 						vy = -2 * MARIO_JUMP_DEFLECT_SPEED;
@@ -237,7 +237,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					else if (koopas->GetState() == KOOPAS_STATE_SHELL)
 					{
 						koopas->SetState(KOOPAS_STATE_SPINNING);
-						CGame::GetInstance()->AddScore(100);
+						AddScore(100);
 						vy = -2 * MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
@@ -313,7 +313,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				CCoin *coin = dynamic_cast<CCoin *>(e->obj);
 				coin->SetIsAppear(false);
-				CGame::GetInstance()->CoinCounterUp();
+				CoinCounterUp();
 			}
 			else if (dynamic_cast<CFlower *>(e->obj))
 			{
@@ -367,7 +367,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (brick->GetState() == BREAKABLE_STATE_COIN) // if COIN ..
 				{
 					brick->SetState(BREAKABLE_STATE_BROKEN);
-					CGame::GetInstance()->CoinCounterUp();
+					CoinCounterUp();
 				}
 				else // another situattion
 				{
@@ -459,7 +459,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					leaf->SetIsAppear(false);
 					
-					CGame::GetInstance()->AddScore(1000);
+					AddScore(1000);
 				}
 			}
 			else if ((dynamic_cast<CMushRoom *>(e->obj)))
@@ -476,7 +476,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					else
 					{
 						mushroom->SetIsAppear(false);
-						CGame::GetInstance()->AddScore(1000);
+						AddScore(1000);
 						//Cong diem
 					}
 
@@ -484,7 +484,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				else // green mush
 				{
 					mushroom->SetIsAppear(false);
-					CGame::GetInstance()->AddScore(1000);
+					AddLifeCounter();
 				}
 			}
 		

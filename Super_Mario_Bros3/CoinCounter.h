@@ -18,8 +18,8 @@ private:
 public:
 
 	CoinCounter();
-	 void Update(float hud_x,float hud_y);
-	 void Render();
+	virtual void Update(float hud_x,float hud_y);
+	virtual void Render();
 	virtual void reset();
 
 };
