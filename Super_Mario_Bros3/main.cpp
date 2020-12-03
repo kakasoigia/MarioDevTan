@@ -134,6 +134,7 @@ HWND CreateGameWindow(HINSTANCE hInstance, int nCmdShow, int ScreenWidth, int Sc
 
 int Run()
 {
+	
 	MSG msg;
 	int done = 0;
 	DWORD frameStart = GetTickCount();

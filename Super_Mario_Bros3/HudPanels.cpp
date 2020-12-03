@@ -14,7 +14,7 @@ HudPanel::HudPanel()
 
 	sub_panels["Score"] = new Score();
 
-	/*sub_panels["GameTime"] = new GameTime();*/
+	sub_panels["GameTime"] = new GameTime();
 	
 	sub_panels["CoinCounter"] = new CoinCounter();
 	sub_panels["PowerMeter"] = new PowerMeter();
@@ -60,6 +60,10 @@ void HudPanel::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	string panel_id4 = "LifeCounter";
 	LifeCounter *life_counter = dynamic_cast<LifeCounter *>(sub_panels[panel_id4]);
 	life_counter->Update(x, y);
+	//update GameTime
+	string panel_id5 = "GameTime";
+	GameTime *game_time = dynamic_cast<GameTime *>(sub_panels[panel_id5]);
+	game_time->Update(x, y);
 	/*sub_panels[panel_id]->Update(x, y);*/
 }
 void HudPanel::Render()

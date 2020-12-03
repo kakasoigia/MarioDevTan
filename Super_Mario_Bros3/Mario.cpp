@@ -506,7 +506,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	float camX = 0;
 	float camY = 0;
 	if (x > (game->GetScreenWidth() / 2)) camX = cx;
-	if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true || y < 10)
+	if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true || y < 0)
 		if (y <= (game->GetScreenHeight() / 2)) camY = cy;
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY);
 

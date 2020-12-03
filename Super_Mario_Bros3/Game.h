@@ -46,7 +46,8 @@ class CGame
 	
 	void _ParseSection_SETTINGS(string line);
 	void _ParseSection_SCENES(string line);
-	
+	int game_time = 300;
+	DWORD time_counter = 0;
 public:
 	void InitKeyboard();
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; }
@@ -88,6 +89,8 @@ public:
 	
 	static CGame * GetInstance();
 	int GetCurrentLevel();
+	int GetGameTime() { return game_time; };
+	void GameTimeInc() ;
 	~CGame();
 };
 

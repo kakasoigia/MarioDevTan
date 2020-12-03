@@ -1,11 +1,15 @@
 #include "GameTime.h"
+#include "Game.h"
+#include "HudPanels.h"
+#include "Mario.h"
+#include "PlayScence.h"
 GameTime::GameTime()
 {
 	for (int i = 0; i < 3; i++)
 	{
 		panel_numbers.push_back(new Number());
 		/*panel_numbers[i]->SetPosition(57 + 8 * i, 17);*/
-		panel_numbers[i]->SetPosition(129 + 8 * i, 17);
+		
 	
 	}
 
@@ -13,47 +17,55 @@ GameTime::GameTime()
 	resetValues();
 }
 
-void GameTime::Update()
+void GameTime::Update(float hud_x,float hud_y)
 {
-
-	/*if (hundreds == 0 && dozens == 0 && units == 0)
+	//update position
+	CGame *game = CGame::GetInstance();
+	for (int i = 0; i < 3; i++)
 	{
-		Game::instance()->stopGameTime();
-		if (Game::instance()->getCurState() != "END_OF_LEVEL")
-			Game::instance()->gameover();
-		return;
+		panel_numbers[i]->SetPosition(hud_x + 124 + 8 * i, hud_y + 15);
 	}
-	if (dozens == 0 && units == 0)
+	CMario* player = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (player->GetState() == MARIO_STATE_DIE) return;
+	//update value
+	int game_time = CGame::GetInstance()->GetGameTime();
+	//time _up
+	if (game_time == 0)
 	{
-		if (Game::instance()->getCurState() != "END_OF_LEVEL")
-		{
-			if (hundreds == 1)
-				Game::instance()->hurryUp();
-		}
-
-		dozens = 10;
-		panel_numbers[0]->setPixmap(numbers[--hundreds]);
+		player->SetState(MARIO_STATE_DIE);
+		
 	}
-	if (units == 0)
-	{
-		units = 10;
-		panel_numbers[1]->setPixmap(numbers[--dozens]);
-	}
+	hundreds = game_time / 100;
+	game_time = game_time % 100;
 
-	panel_numbers[2]->setPixmap(numbers[--units]);*/
+	dozens = game_time / 10;
+	game_time = game_time % 10;
+
+	units = game_time;
+	
+	
+	
+	 
+	
+	
 }
 void GameTime::Render()
 {
+	//set pos go with mario
 
+	animation_set = CAnimationSets::GetInstance()->Get(HUDPANEL_ANIMATION_SET_ID);
+
+	
+	animation_set->at(hundreds)->Render(panel_numbers[0]->x, panel_numbers[0]->y, 255);
+	animation_set->at(dozens)->Render(panel_numbers[1]->x, panel_numbers[1]->y, 255);
+	animation_set->at(units)->Render(panel_numbers[2]->x, panel_numbers[2]->y, 255);
 }
 void GameTime::resetValues()
 {
 	units = 0;
 	dozens = 0;
 	hundreds = 3;
-	/*panel_numbers[0]->setPixmap(numbers[hundreds]);
-	panel_numbers[1]->setPixmap(numbers[dozens]);
-	panel_numbers[2]->setPixmap(numbers[units]);*/
+
 }
 
 void GameTime::reset()

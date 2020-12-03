@@ -396,3 +396,12 @@ void CGame::SwitchScene(int scene_id)
 	CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
 	s->Load();
 }
+void CGame::GameTimeInc()
+{
+	if (GetTickCount() - time_counter >= 1000)
+	{
+		time_counter = GetTickCount();
+		game_time--;
+		
+	}
+}

@@ -334,8 +334,8 @@ void CPlayScene::Update(DWORD dt)
 	//if (player->GetState()== MARIO_STATE_FLY || player->GetState() == MARIO_STATE_FALL_DOWN || player-> GetIsLanding()==true || player->y<10)
 	//	if (player->y <= (game->GetScreenHeight() / 2)) camY =cy;
 	//CGame::GetInstance()->SetCamPos((int)camX, (int)camY);
-	
-
+	if(player->GetState() != MARIO_STATE_DIE)
+		CGame::GetInstance()->GameTimeInc();
 
 }
 
