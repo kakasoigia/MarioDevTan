@@ -294,10 +294,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					koopas->SetState(KOOPAS_STATE_DIE);
 				}
-				else if (this->state == KOOPAS_STATE_WALKING)
-				{
-					this->vx = -this->vx;
-				}
+				
 			}
 			else if (dynamic_cast<CBreakableBrick *>(e->obj))
 			{

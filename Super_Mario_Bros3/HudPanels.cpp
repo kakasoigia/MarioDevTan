@@ -9,22 +9,46 @@
 #include "LifeCounter.h"
 #include "CoinCounter.h"
 #include "PowerMeter.h"
+#include "Game.h"
+#include "Sprites.h"
+#include "Mario.h"
+#include "GameObject.h"
+#include <string>
 HudPanel::HudPanel()
 {
-
-	sub_panels["Score"] = new Score();
-
-	sub_panels["GameTime"] = new GameTime();
 	
-	sub_panels["CoinCounter"] = new CoinCounter();
-	sub_panels["PowerMeter"] = new PowerMeter();
+	// Shoud I make it an instance so i won't have to 
+	// access all of this thing ????
+	CSprites* sprites = CSprites::GetInstance();
+	CGame* game = CGame::GetInstance();
+	CMario* mario = ((CPlayScene*)game->GetCurrentScene())->GetPlayer();
 	
-	sub_panels["LifeCounter"] = new LifeCounter();
-	/*sub_panels["CardsTaken"] = new CardsTaken();*/
+	hudInfo = sprites->Get(HUD_SPRITE_PANEL_INFO);
+	hudItem = sprites->Get(HUD_SPRITE_PANEL_ITEM);
+	background = sprites->Get(HUD_SPRITE_BLACK_BACKGROUND);
+	worldSprite = GetSprite('1');
+	
+	playertypeSprite = sprites->Get(HUD_SPRITE_ICON_MARIO);
+	for (unsigned int i = 0; i < 7; i++)
+	{
+		if (i != 6)
+			powerMelterSprite.push_back(sprites->Get(HUD_SPRITE_POWERMELTER_EMPTY_ARROW));
+		else
+			powerMelterSprite.push_back(sprites->Get(HUD_SPRITE_POWERMELTER_EMPTY_LIGHT));
+	}
+	for (unsigned int i = 0; i < 7; i++)
+	{
+		if (i != 6)
+			filledPowerMelterSprite.push_back(sprites->Get(HUD_SPRITE_POWERMELTER_FILLED_ARROW));
+		else
+			filledPowerMelterSprite.push_back(sprites->Get(HUD_SPRITE_POWERMELTER_FILLED_LIGHT));
+	}
 
-	CGame *game = CGame::GetInstance();
-	this->SetPosition(game->GetCamPosX() + 20, game->GetCamPosY() + 170);
-
+	powerMelterStack = mario->GetLevelSpeedUp();
+	coin = mario->GetCoinCounter();
+	score = mario->GetScore();
+	life_count = mario->GetLifeCounter();
+	
 
 
 }
@@ -40,49 +64,137 @@ void HudPanel::reset()
 
 void HudPanel::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	CGame *game = CGame::GetInstance();
-	this->SetPosition(game->GetCamPosX() + 20, game->GetCamPosY() + 170);
-	//set HUD run behind Mario
 	
-		// update Score
-	string panel_id = "Score";
-	Score *score_hud = dynamic_cast<Score *>(sub_panels[panel_id]);
-	score_hud->Update(x, y);
-	//update CoinCounter
-	string panel_id2 = "CoinCounter";
-	CoinCounter *coin_counter = dynamic_cast<CoinCounter *>(sub_panels[panel_id2]);
-	coin_counter->Update(x, y);
-	//update PowerMeter
-	string panel_id3 = "PowerMeter";
-	PowerMeter *power_meter = dynamic_cast<PowerMeter *>(sub_panels[panel_id3]);
-	power_meter->Update(x, y);
-	//update LifeCounter
-	string panel_id4 = "LifeCounter";
-	LifeCounter *life_counter = dynamic_cast<LifeCounter *>(sub_panels[panel_id4]);
-	life_counter->Update(x, y);
-	//update GameTime
-	string panel_id5 = "GameTime";
-	GameTime *game_time = dynamic_cast<GameTime *>(sub_panels[panel_id5]);
-	game_time->Update(x, y);
-	/*sub_panels[panel_id]->Update(x, y);*/
+	CGame *game = CGame::GetInstance();
+	this->SetPosition(game->GetCamPosX() , game->GetCamPosY() + 250);
+	CMario* mario = ((CPlayScene*)game->GetCurrentScene())->GetPlayer();
+	if (mario->GetState() == MARIO_STATE_DIE) return;
+	//update new info
+	powerMelterStack = mario->GetLevelSpeedUp();
+	coin = mario->GetCoinCounter();
+	score = mario->GetScore();
+	life_count = mario->GetLifeCounter();
+
+	time += dt;
+	game_time = 300 - time / 1000;
+	if (game_time ==0)  
+		mario->SetState(MARIO_STATE_DIE);
+	//update sprite value
+	string life_count_str = to_string(life_count);
+	while (life_count_str.length() < 2) life_count_str = "0" + life_count_str;
+	lifecountSprite = StringToSprite(life_count_str);
+
+	string time_str = to_string(game_time);
+	while (time_str.length() < 3) time_str = "0" + time_str;
+	gameTimeSprites = StringToSprite(time_str);
+
+	string score_str = to_string(score);
+	while (score_str.length() < 7) score_str = "0" + score_str;
+	scoreSprite = StringToSprite(score_str);
+
+	string coin_str = to_string(coin);
+	coinSprite = StringToSprite(coin_str);
 }
 void HudPanel::Render()
 {
 	
+	//draw a black background
+	background->Draw(x, y-78);
+	hudInfo->Draw( x + 40, y - 78);
 	
-	//render Background Black
-	animation_set->at(HUDPANEL_ANI_HUD_BLACK_BACKGROUD)->Render(this->x-20, this->y-3, 255);
-	//render BIG HUD
-	animation_set->at(HUDPANEL_ANI_BIG_HUD)->Render(this->x, this->y, 255);
-	//render world map 1 
-	animation_set->at(1)->Render(this->x+38, this->y+7, 255);
-	map<string, HudSubPanel*>::iterator i;
+	hudItem->Draw( x + 220, y - 78);
 
-	for (i = sub_panels.begin(); i != sub_panels.end(); i++)
-		i->second->Render();
+	playertypeSprite->Draw( x + 44, y - 63);
+	
+	worldSprite->Draw( x + 77, y - 71);
+	
+	for (unsigned int i = 0; i < lifecountSprite.size(); i++)
+	{
+		
+		lifecountSprite[i]->Draw( x + 69 + 8 * i, y - 63);
+	}
+	
+	for (unsigned int i = 0; i < gameTimeSprites.size(); i++)
+	{
+		gameTimeSprites[i]->Draw( x + 164 + 8 * i, y - 63);
+	}
+	
+	for (unsigned int i = 0; i < scoreSprite.size(); i++)
+	{
+		scoreSprite[i]->Draw( x + 92 + 8 * i, y - 63);
+	}
 
+	for (unsigned int i = 0; i < coinSprite.size(); i++)
+	{
+		coinSprite[i]->Draw( x + 172 + 8 * i, y - 71);
+	}
+	
+	for (unsigned int i = 0; i < powerMelterSprite.size(); i++)
+	{
+		powerMelterSprite[i]->Draw( x + 92 + 8 * i, y - 71);
+	}
+
+	for (int i = 0; i < powerMelterStack; i++)
+	{
+		filledPowerMelterSprite[i]->Draw( x + 92 + 8 * i, y - 71);
+	}
+	
 }
 void HudPanel::GetBoundingBox(float &l, float &t, float &r, float &b)
 {
 	
+}
+LPSPRITE HudPanel::GetSprite(char a)
+{
+	CSprites * sprites = CSprites::GetInstance();
+	switch (a)
+	{
+	case '0':
+		return sprites->Get(HUD_SPRITE_0);
+		break;
+	case '1':
+		return sprites->Get(HUD_SPRITE_1);
+		break;
+	case '2':
+		return sprites->Get(HUD_SPRITE_2);
+		break;
+	case '3':
+		return sprites->Get(HUD_SPRITE_3);
+		break;
+	case '4':
+		return sprites->Get(HUD_SPRITE_4);
+		break;
+	case '5':
+		return sprites->Get(HUD_SPRITE_5);
+		break;
+	case '6':
+		return sprites->Get(HUD_SPRITE_6);
+		break;
+	case '7':
+		return sprites->Get(HUD_SPRITE_7);
+		break;
+	case '8':
+		return sprites->Get(HUD_SPRITE_8);
+		break;
+	case '9':
+		return sprites->Get(HUD_SPRITE_9);
+		break;
+	default:
+		return NULL;
+		break;
+	}
+}
+vector<LPSPRITE> HudPanel::StringToSprite(string str)
+{
+	vector<LPSPRITE> sprites;
+	LPSPRITE sprite;
+	char c;
+	for (int i = 0; i < str.size(); i++)
+	{
+		c = (char)str[i];
+		sprite = GetSprite(c);
+		if (sprite != NULL)
+			sprites.push_back(sprite);
+	}
+	return sprites;
 }

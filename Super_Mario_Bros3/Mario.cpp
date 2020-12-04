@@ -1046,6 +1046,7 @@ void CMario::StartFlying()
 			flying_start = 0;
 			isLanding = true;
 			canFly = false;
+			current_level_speed_up = 0;
 		}
 	}
 }
