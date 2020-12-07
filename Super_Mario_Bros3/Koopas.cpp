@@ -153,6 +153,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			isHolding = false;
 			mario->StartKicking();
 			mario->SetIsKicking(true);
+			mario->SetIsHoldAni(false);
 			nx = mario->nx;
 			SetState(KOOPAS_STATE_SPINNING);
 		}
@@ -200,6 +201,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				x = mario->x - MARIO_FIRE_BBOX_WIDTH;
 			}
 		}
+		mario->SetIsHoldAni(true);
 	}
 
 

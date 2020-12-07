@@ -427,8 +427,9 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	if (mario->GetState() == MARIO_STATE_DIE) return;
 	switch (KeyCode)
 	{
-	case DIK_V:
-		mario->SetIsHolding(0);
+	case DIK_A:
+		mario->SetIsHolding(false);
+		mario->SetIsHoldAni(false);
 		break;
 	case DIK_SPACE:
 		
@@ -447,10 +448,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 
 	// disable control key when Mario die 
 	if (mario->GetState() == MARIO_STATE_DIE) return;
-	if (game->IsKeyDown(DIK_V))
-	{
-		mario->SetIsHolding(1);
-	}
+	
 	if (game->IsKeyDown(DIK_RIGHT))
 	{
 		int current_time = GetTickCount();
@@ -458,6 +456,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 		{
 			mario->SetState(MARIO_STATE_RUNNING_RIGHT);
 			SetLevelSpeedUp(mario);
+			mario->SetIsHolding(1);
 		}
 		else
 		{

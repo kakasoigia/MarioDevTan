@@ -557,7 +557,7 @@ void CMario::Render()
 		if (nx < 0) ani = MARIO_ANI_FIRE_FIRING_BULLET_LEFT;
 		else ani = MARIO_ANI_FIRE_FIRING_BULLET_RIGHT;
 	}
-	else if (isHolding )
+	else if (isHoldAni )
 	{
 		if (level == MARIO_LEVEL_BIG)
 		{

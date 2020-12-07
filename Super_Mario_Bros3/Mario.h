@@ -181,6 +181,7 @@ protected:
 	bool isHitted = false;
 	bool canFly = false;
 	bool isLanding = false;
+	bool isHoldAni = false;
 	int current_level_speed_up;
 	DWORD turning_start = 0;
 public:
@@ -282,6 +283,14 @@ public:
 	 void SetIsHitted(bool isHittedBool)
 	 {
 		 isHitted = isHittedBool;
+	 }
+	 bool GetIsHoldAni()
+	 {
+		 return isHoldAni;
+	 }
+	 void SetIsHoldAni(bool isHoldAni)
+	 {
+		this->isHoldAni = isHoldAni;
 	 }
 	 // HUD 
 	 int GetCoinCounter() { return CoinCounter; };
