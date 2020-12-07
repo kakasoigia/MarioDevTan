@@ -1,5 +1,5 @@
 #include "BreakableBrick.h"
-
+#include "Utils.h"
 CBreakableBrick::CBreakableBrick(int type)
 {
 	Type = type;
@@ -50,7 +50,30 @@ void CBreakableBrick::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	////
 	//// TO-DO: make sure Goomba can interact with the world and to each of them too!
 	////
+	if (isBouncing)
+	{
+	
+			if (time_Y_Up < 4)
+			{
 
+				y -= 2;
+				time_Y_Up++;
+				
+			}
+			else if (time_Y_Up < 8)
+			{
+				y += 2;
+				time_Y_Up++;
+				
+			}
+			else
+			{
+				time_Y_Up = 0;
+				isBouncing = false;
+			}
+		
+		
+	}
 	if (GetTickCount() - time_revive_start > TIME_REVIVE_FROM_COIN)
 	{
 		if (state == BREAKABLE_STATE_COIN) state =BREAKABLE_STATE_SHOW;

@@ -298,12 +298,17 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else if (dynamic_cast<CBreakableBrick *>(e->obj))
 			{
+				CBreakableBrick *brick = dynamic_cast<CBreakableBrick *>(e->obj);
 				if (e->nx != 0 && ny == 0 && this->state == KOOPAS_STATE_SPINNING)
 				{
-					CBreakableBrick *brick = dynamic_cast<CBreakableBrick *>(e->obj);
 					this->vx = -this->vx;
 					brick->SetState(BREAKABLE_STATE_BROKEN);
 
+				}
+				if (e->ny < 0 && brick->GetIsBouncing() )
+				{
+					this->state == KOOPAS_STATE_SHELL;
+					vy -= 0.1f;
 				}
 			}
 			else if (!dynamic_cast<CMario *>(e->obj))

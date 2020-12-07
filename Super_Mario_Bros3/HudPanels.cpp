@@ -14,6 +14,7 @@
 #include "Mario.h"
 #include "GameObject.h"
 #include <string>
+HudPanel * HudPanel::__instance = NULL;
 HudPanel::HudPanel()
 {
 	
@@ -100,6 +101,7 @@ void HudPanel::Render()
 	
 	//draw a black background
 	background->Draw(x, y-78);
+	//draw info
 	hudInfo->Draw( x + 40, y - 78);
 	
 	hudItem->Draw( x + 220, y - 78);
@@ -197,4 +199,9 @@ vector<LPSPRITE> HudPanel::StringToSprite(string str)
 			sprites.push_back(sprite);
 	}
 	return sprites;
+}
+HudPanel *HudPanel::GetInstance()
+{
+	if (__instance == NULL) __instance = new HudPanel();
+	return __instance;
 }

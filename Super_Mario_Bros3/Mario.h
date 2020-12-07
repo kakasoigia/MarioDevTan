@@ -285,7 +285,7 @@ public:
 	 }
 	 // HUD 
 	 int GetCoinCounter() { return CoinCounter; };
-	 void CoinCounterUp() { CoinCounter++; };
+	 void CoinCounterUp() { CoinCounter++; Score += 50; };
 	 long GetScore() { return Score; };
 	 void AddScore(long score) { Score += score; };
 	 void AddLifeCounter() { life_counter++; };

@@ -61,7 +61,7 @@
 class HudPanel : public CGameObject
 {
 private:
-
+	static HudPanel * __instance;
 	/*CGameObject texture_panel;*/
 	LPSPRITE background;
 	LPSPRITE hudInfo;
@@ -85,7 +85,7 @@ private:
 public:
 
 	HudPanel();
-
+	static HudPanel * GetInstance();
 	virtual void Render();
 	virtual void GetBoundingBox(float &l, float &t, float &r, float &b);
 	void reset();

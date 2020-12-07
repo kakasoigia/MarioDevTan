@@ -23,6 +23,8 @@ class CBreakableBrick : public CGameObject
 {
 	int Type;
 	int time_revive_start = 0;
+	bool isBouncing = false;
+	int time_Y_Up = 0;
 public:
 	virtual void Render();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
@@ -39,5 +41,13 @@ public:
 	void StartReviteTime()
 	{
 		time_revive_start = GetTickCount();
+	}
+	bool GetIsBouncing()
+	{
+		return isBouncing;
+	}
+	void SetIsBouncing(bool isBouncing)
+	{
+		this->isBouncing = isBouncing;
 	}
 };

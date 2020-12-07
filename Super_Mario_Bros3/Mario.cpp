@@ -368,17 +368,24 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					brick->SetState(BREAKABLE_STATE_BROKEN);
 					CoinCounterUp();
+					
 				}
 				else // another situattion
 				{
 					if (e->ny > 0)
 					{
-						if (dynamic_cast<CBreakableBrick *>(e->obj))
-						{
-
 							if (brick->GetType() == BREAKABLE_BRICK_NORMAL)
 							{
-
+								if (this->level == MARIO_LEVEL_SMALL)
+								{
+									brick->SetIsBouncing(true);
+									
+								}
+								else
+								{
+									brick->SetState(BREAKABLE_STATE_BROKEN);
+									AddScore(10);
+								}
 							}
 							else
 							{
@@ -399,15 +406,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 									}
 								}
 							}
-						}
 					}
 					if (e->nx != 0)
 					{
 						if (isTurning == true)
 						{
 							if (brick->GetType() == BREAKABLE_BRICK_NORMAL)
+							{
 								brick->SetState(BREAKABLE_STATE_BROKEN);
-							else if (brick->GetState() == BREAKABLE_BRICK_BELL) {
+								AddScore(10);
+							}
+							else if (brick->GetState() == BREAKABLE_BRICK_BELL)
+							{
 								brick->SetState(BREAKABLE_STATE_EMPTY_BOX);
 								//find Bell available at same place
 								for (UINT i = 0; i < coObjects->size(); i++)
