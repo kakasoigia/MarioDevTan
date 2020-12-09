@@ -170,14 +170,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						{
 
 							goomba->SetState(GOOMBA_STATE_DIE);
-							AddScore(100);
+							IncScore(100, goomba->x,goomba->y);
 							vy = -MARIO_JUMP_DEFLECT_SPEED;
 						}
 						else// redfly
 						{
 							goomba->SetType(GOOMBA_TYPE_RED_WALK);
 							goomba->SetState(GOOMBA_STATE_WALKING);
-							AddScore(100);
+							IncScore(100, goomba->x,goomba->y);
 							vy = -MARIO_JUMP_DEFLECT_SPEED;
 
 
@@ -192,7 +192,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						if (goomba->GetState() != GOOMBA_STATE_DIE_BY_KICK)
 						{
 							goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
-							AddScore(100);
+							IncScore(100, goomba->x, goomba->y);
 						}
 							
 					}
@@ -224,12 +224,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					{
 						if (koopas->GetType() == KOOPAS_TYPE_GREEN_FLY || koopas->GetType() == KOOPAS_TYPE_RED_FLY)
 						{
-							AddScore(100);
+							IncScore(100, koopas->x, koopas->y);
 							koopas->SetType(koopas->GetType() - 1); //subtract 1 type from fly to walk
 						}
 						else
 						{
-							AddScore(100);
+							IncScore(100, koopas->x, koopas->y);
 							koopas->SetState(KOOPAS_STATE_SHELL);
 						}
 						vy = -2 * MARIO_JUMP_DEFLECT_SPEED;
@@ -237,7 +237,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					else if (koopas->GetState() == KOOPAS_STATE_SHELL)
 					{
 						koopas->SetState(KOOPAS_STATE_SPINNING);
-						AddScore(100);
+						IncScore(100, koopas->x, koopas->y);
 						vy = -2 * MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
@@ -384,7 +384,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 								else
 								{
 									brick->SetState(BREAKABLE_STATE_BROKEN);
-									AddScore(10);
+									IncScore(10, brick->x, brick->y);
 								}
 							}
 							else
@@ -414,7 +414,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							if (brick->GetType() == BREAKABLE_BRICK_NORMAL)
 							{
 								brick->SetState(BREAKABLE_STATE_BROKEN);
-								AddScore(10);
+								IncScore(10, brick->x, brick->y);
 							}
 							else if (brick->GetState() == BREAKABLE_BRICK_BELL)
 							{
@@ -469,7 +469,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					leaf->SetIsAppear(false);
 					
-					AddScore(1000);
+					IncScore(1000, leaf->x, leaf->y);
 				}
 			}
 			else if ((dynamic_cast<CMushRoom *>(e->obj)))
@@ -486,7 +486,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					else
 					{
 						mushroom->SetIsAppear(false);
-						AddScore(1000);
+						IncScore(1000, mushroom->x, mushroom->y);
 						//Cong diem
 					}
 
@@ -875,6 +875,7 @@ void CMario::Render()
 }
 void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
+	
 	left = x;
 	top = y;
 	if (level == MARIO_LEVEL_BIG)
@@ -899,6 +900,7 @@ void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom
 		right = x + MARIO_FIRE_BBOX_WIDTH;
 		bottom = y + MARIO_FIRE_BBOX_HEIGHT;
 	}
+	
 }
 
 void CMario::SetState(int state)
@@ -1059,4 +1061,45 @@ void CMario::StartFlying()
 			current_level_speed_up = 0;
 		}
 	}
+}
+void CMario::IncScore(int score,long pos_x, long pos_y)
+{ 
+	
+	Score += score; 
+	/*CGameObject *scoreSprite = new CNoCollisionObjects();
+	CSprites * sprites = CSprites::GetInstance();
+	scoreSprite->SetPosition(pos_x, pos_y);
+	
+	CNoCollisionObjects *scoreSprite2 = dynamic_cast<CNoCollisionObjects *>(scoreSprite);
+	switch (score)
+	{
+		
+	case 100:
+		scoreSprite2->SetSprite (sprites->Get(MARIO_SPRITE_SCORE_UP_100));
+		break;
+	case 200:
+		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_200));
+		break;
+	case 400:
+		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_400));
+	case 800:
+		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_800));
+	case 1000:
+		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_1000));
+	case 2000:
+		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_2000));
+		break;
+	case 4000:
+		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_4000));
+		break;
+	case 8000:
+		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_8000));
+		break;
+
+	}
+	scoreSpawn_list.push_back(scoreSprite);
+	DebugOut(L"[INFO]Add\n");
+*/
+
+
 }

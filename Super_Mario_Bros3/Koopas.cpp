@@ -161,7 +161,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	 if (isHolding )
 	{
 		y = mario->y + 8;
-		if (mario->nx > 0)
+		if (mario->nx > 0) //turn right
 		{
 			if (mario->GetLevel() == MARIO_LEVEL_BIG)
 			{
@@ -181,7 +181,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				x = mario->x + MARIO_FIRE_BBOX_WIDTH;
 			}
 		}
-		else
+		else// go left
 		{
 			if (mario->GetLevel() == MARIO_LEVEL_BIG)
 			{
@@ -194,7 +194,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else if (mario->GetLevel() == MARIO_LEVEL_TAIL)
 			{
-				x = mario->x - MARIO_TAIL_BBOX_WIDTH;
+				x = mario->x - MARIO_TAIL_BBOX_WIDTH +6;
 			}
 			else
 			{
@@ -263,7 +263,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					this->vx = -this->vx;
 					goomba->vx = -goomba->vx;
 				}
-				else if (e->nx != 0 && (this->state == KOOPAS_STATE_SPINNING || isHolding == KOOPAS_HOLDING))
+				else if (e->nx != 0 && (this->state == KOOPAS_STATE_SPINNING || isHolding == true))
 				{
 					goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
 				}
@@ -292,7 +292,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			else if (dynamic_cast<CKoopas *>(e->obj)) // if e->obj is Goomba 
 			{
 				CKoopas *koopas = dynamic_cast<CKoopas *>(e->obj);
-				if (nx != 0 && (this->state == KOOPAS_STATE_SPINNING || isHolding == KOOPAS_HOLDING))
+				if (nx != 0 && (this->state == KOOPAS_STATE_SPINNING || isHolding == true))
 				{
 					koopas->SetState(KOOPAS_STATE_DIE);
 				}

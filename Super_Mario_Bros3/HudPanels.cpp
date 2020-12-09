@@ -18,8 +18,6 @@ HudPanel * HudPanel::__instance = NULL;
 HudPanel::HudPanel()
 {
 	
-	// Shoud I make it an instance so i won't have to 
-	// access all of this thing ????
 	CSprites* sprites = CSprites::GetInstance();
 	CGame* game = CGame::GetInstance();
 	CMario* mario = ((CPlayScene*)game->GetCurrentScene())->GetPlayer();
@@ -58,7 +56,10 @@ HudPanel::HudPanel()
 
 void HudPanel::reset()
 {
-	
+	powerMelterStack = 0;
+	coin = 0;
+	score = 0;
+	life_count = 0;
 }
 
 

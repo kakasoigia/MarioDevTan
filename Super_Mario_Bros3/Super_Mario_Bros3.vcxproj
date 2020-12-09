@@ -157,9 +157,12 @@
     <ClInclude Include="Leaf.h" />
     <ClInclude Include="MushRoom.h" />
     <ClInclude Include="NoCollisionObjects.h" />
+    <ClInclude Include="Node.h" />
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="QuestionBrick.h" />
     <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="ScoreSpawnable.h" />
+    <ClInclude Include="StartScene.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
@@ -172,6 +175,8 @@
     <ClInclude Include="Scence.h" />
     <ClInclude Include="Sprites.h" />
     <ClInclude Include="Textures.h" />
+    <ClInclude Include="WorldMap.h" />
+    <ClInclude Include="WorldMapObjects.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bell.cpp" />
@@ -187,12 +192,15 @@
     <ClCompile Include="Leaf.cpp" />
     <ClCompile Include="MushRoom.cpp" />
     <ClCompile Include="NoCollisionObjects.cpp" />
+    <ClCompile Include="Node.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="PlayScence.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="QuestionBrick.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Scence.cpp" />
+    <ClCompile Include="ScoreSpawnable.cpp" />
+    <ClCompile Include="StartScene.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -201,6 +209,8 @@
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Animations.cpp" />
     <ClCompile Include="Textures.cpp" />
+    <ClCompile Include="WorldMap.cpp" />
+    <ClCompile Include="WorldMapObjects.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -535,6 +535,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 }
 void CPlayScenceKeyHandler::SetLevelSpeedUp(CMario *mario)
 {
+	if (mario->GetIsLanding()) return;
 	int current_time = GetTickCount();
 	// if starttime =0 ..begin to speedup....after 1s...speed up one level and set back starttime..max 7 level ..
 	if (start_time_speed_up == 0) // begin to run 

@@ -6,7 +6,10 @@
 
 class CNoCollisionObjects : public CGameObject
 {
+	LPSPRITE valueSprite;
 public:
 	virtual void Render();
 	virtual void GetBoundingBox(float &l, float &t, float &r, float &b);
+	void SetSprite(LPSPRITE sprite) { valueSprite = sprite; };
+	LPSPRITE GetSprite() {	return valueSprite	;};
 };

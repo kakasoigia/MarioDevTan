@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "NoCollisionObjects.h"
 
 #define MARIO_WALKING_SPEED		0.1f 
 
@@ -157,6 +158,17 @@
 #define MARIO_INERTIA 0.03f
 #define MARIO_FLYING_SPEED 0.075f
 #define MARIO_TAIL_FALL_SPEED 0.05f
+
+#define MARIO_SPRITE_SCORE_UP_100	60150
+#define MARIO_SPRITE_SCORE_UP_200	60151
+#define MARIO_SPRITE_SCORE_UP_400	60152
+#define MARIO_SPRITE_SCORE_UP_800	60153
+#define MARIO_SPRITE_SCORE_UP_1000	60154
+#define MARIO_SPRITE_SCORE_UP_2000	60155
+#define MARIO_SPRITE_SCORE_UP_4000	60156
+#define MARIO_SPRITE_SCORE_UP_8000	60157
+#define MARIO_SPRITE_SCORE_UP_LV_UP	60158
+
 class CMario : public CGameObject
 {
 	int level;
@@ -184,6 +196,8 @@ protected:
 	bool isHoldAni = false;
 	int current_level_speed_up;
 	DWORD turning_start = 0;
+	
+	
 public:
 	CMario(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
@@ -296,7 +310,7 @@ public:
 	 int GetCoinCounter() { return CoinCounter; };
 	 void CoinCounterUp() { CoinCounter++; Score += 50; };
 	 long GetScore() { return Score; };
-	 void AddScore(long score) { Score += score; };
+	 void IncScore(int score,long pos_x,long pos_y);
 	 void AddLifeCounter() { life_counter++; };
 	 int GetLifeCounter() { return life_counter; };
 };
