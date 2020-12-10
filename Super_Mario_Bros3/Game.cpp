@@ -340,9 +340,9 @@ void CGame::_ParseSection_SCENES(string line)
 	int id = atoi(tokens[0].c_str());
 	LPCWSTR path = ToLPCWSTR(tokens[1]);
 	LPSCENE scene;
-	if (id == 1)
+	/*if (id == 1)
 		scene = new CStartScene(id, path);
-	else if (id == 2)
+	else*/ if (id == 2)
 	{
 		scene = new CWorldMap(id, path);
 	}
@@ -407,12 +407,4 @@ void CGame::SwitchScene(int scene_id)
 	CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
 	s->Load();
 }
-void CGame::GameTimeInc()
-{
-	if (GetTickCount() - time_counter >= 1000)
-	{
-		time_counter = GetTickCount();
-		game_time--;
-		
-	}
-}
+

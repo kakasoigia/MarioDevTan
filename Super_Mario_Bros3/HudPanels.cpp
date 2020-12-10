@@ -20,7 +20,6 @@ HudPanel::HudPanel()
 	
 	CSprites* sprites = CSprites::GetInstance();
 	CGame* game = CGame::GetInstance();
-	CMario* mario = ((CPlayScene*)game->GetCurrentScene())->GetPlayer();
 	
 	hudInfo = sprites->Get(HUD_SPRITE_PANEL_INFO);
 	hudItem = sprites->Get(HUD_SPRITE_PANEL_ITEM);
@@ -42,11 +41,11 @@ HudPanel::HudPanel()
 		else
 			filledPowerMelterSprite.push_back(sprites->Get(HUD_SPRITE_POWERMELTER_FILLED_LIGHT));
 	}
-
-	powerMelterStack = mario->GetLevelSpeedUp();
-	coin = mario->GetCoinCounter();
-	score = mario->GetScore();
-	life_count = mario->GetLifeCounter();
+	
+	powerMelterStack = 0;
+	coin = 0;
+	score = 0;
+	life_count =0;
 	
 
 
@@ -68,19 +67,34 @@ void HudPanel::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	
 	CGame *game = CGame::GetInstance();
-	this->SetPosition(game->GetCamPosX() , game->GetCamPosY() + 250);
+	this->SetPosition(game->GetCamPosX() , game->GetCamPosY() + 310);
 	CMario* mario = ((CPlayScene*)game->GetCurrentScene())->GetPlayer();
-	if (mario->GetState() == MARIO_STATE_DIE) return;
-	//update new info
-	powerMelterStack = mario->GetLevelSpeedUp();
-	coin = mario->GetCoinCounter();
-	score = mario->GetScore();
-	life_count = mario->GetLifeCounter();
+	if (mario == NULL)
+	{
+		DebugOut(L"[INFO] NULL thật\n");
+		powerMelterStack = 0;
+		coin = 0;
+		score = 0;
+		life_count = 0;
+		game_time = 0;
+		
+	}
+	else
+	{
+		DebugOut(L"[INFO] Đéo null\n");
+		if (mario->GetState() == MARIO_STATE_DIE) return;
+		//update new info
+		powerMelterStack = mario->GetLevelSpeedUp();
+		coin = mario->GetCoinCounter();
+		score = mario->GetScore();
+		life_count = mario->GetLifeCounter();
 
-	time += dt;
-	game_time = 300 - time / 1000;
-	if (game_time ==0)  
-		mario->SetState(MARIO_STATE_DIE);
+		time += dt;
+		game_time = 300 - time / 1000;
+		if (game_time == 0)
+			mario->SetState(MARIO_STATE_DIE);
+	}
+	
 	//update sprite value
 	string life_count_str = to_string(life_count);
 	while (life_count_str.length() < 2) life_count_str = "0" + life_count_str;
@@ -96,19 +110,21 @@ void HudPanel::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	string coin_str = to_string(coin);
 	coinSprite = StringToSprite(coin_str);
+	
 }
 void HudPanel::Render()
 {
 	
 	//draw a black background
-	background->Draw(x, y-78);
+	/*background->Draw(x, y-78);*/
+	
 	//draw info
 	hudInfo->Draw( x + 40, y - 78);
 	
 	hudItem->Draw( x + 220, y - 78);
-
-	playertypeSprite->Draw( x + 44, y - 63);
 	
+	playertypeSprite->Draw( x + 44, y - 63);
+
 	worldSprite->Draw( x + 77, y - 71);
 	
 	for (unsigned int i = 0; i < lifecountSprite.size(); i++)
@@ -126,21 +142,21 @@ void HudPanel::Render()
 	{
 		scoreSprite[i]->Draw( x + 92 + 8 * i, y - 63);
 	}
-
+	
 	for (unsigned int i = 0; i < coinSprite.size(); i++)
 	{
 		coinSprite[i]->Draw( x + 172 + 8 * i, y - 71);
 	}
-	
+
 	for (unsigned int i = 0; i < powerMelterSprite.size(); i++)
 	{
 		powerMelterSprite[i]->Draw( x + 92 + 8 * i, y - 71);
 	}
-
-	for (int i = 0; i < powerMelterStack; i++)
+	
+	/*for (int i = 0; i < powerMelterStack; i++)
 	{
 		filledPowerMelterSprite[i]->Draw( x + 92 + 8 * i, y - 71);
-	}
+	}*/
 	
 }
 void HudPanel::GetBoundingBox(float &l, float &t, float &r, float &b)

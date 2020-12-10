@@ -3,6 +3,7 @@
 #include <fstream>
 #include "Game.h"
 #include"Utils.h"
+#include "HudPanels.h"
 using namespace std;
 
 
@@ -12,6 +13,7 @@ CWorldMap::CWorldMap(int id, LPCWSTR filePath) :
 {
 	key_handler = new CWorldMapKeyHandler(this);
 
+	
 }
 
 CWorldMap::~CWorldMap()
@@ -185,6 +187,7 @@ void CWorldMap::_ParseSection_OBJECTS(string line)
 		obj->SetAnimationSet(ani_set);
 		objects.push_back(obj);
 	}
+	
 
 }
 
@@ -257,6 +260,10 @@ void CWorldMap::Load()
 	}
 
 	f.close();
+	//add hud at the last 
+	CGameObject *obj = new HudPanel();
+	obj = HudPanel::GetInstance();
+	objects.push_back(obj);
 
 	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 
@@ -277,7 +284,7 @@ void CWorldMap::Update(DWORD dt)
 	{
 		objects[i]->Update(dt, &coObjects);
 	}
-
+	
 	//if (current_node->GetNodeId() == 1)
 	//{
 	//	for (size_t i = 0; i < Nodes.size(); i++)

@@ -1,4 +1,6 @@
 #include "WorldMapObjects.h"
+#include "WorldMap.h"
+#include "Game.h"
 
 CWorldMapObjects::CWorldMapObjects(int ctype)
 {
@@ -60,6 +62,8 @@ void CWorldMapObjects::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				SetState(MARIO_STATE_CANT_MOVE);
 				mario_move_start = 0;
 				mario_move_control = true;
+				CWorldMap* world_map_scene = (CWorldMap*)CGame::GetInstance()->GetCurrentScene();
+				/*world_map_scene->*/
 			}
 			else
 			{
