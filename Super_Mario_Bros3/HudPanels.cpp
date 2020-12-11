@@ -13,7 +13,9 @@
 #include "Sprites.h"
 #include "Mario.h"
 #include "GameObject.h"
+#include "Scence.h"
 #include <string>
+#include "PlayScence.h"
 HudPanel * HudPanel::__instance = NULL;
 HudPanel::HudPanel()
 {
@@ -43,12 +45,9 @@ HudPanel::HudPanel()
 	}
 	
 	powerMelterStack = 0;
-	coin = 0;
-	score = 0;
-	life_count =0;
-	
-
-
+	coin = game->GetCoinCounter();
+	score = game->GetScore();
+	life_count = game->GetLifeCounter();
 }
 
 
@@ -69,19 +68,10 @@ void HudPanel::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	CGame *game = CGame::GetInstance();
 	this->SetPosition(game->GetCamPosX() , game->GetCamPosY() + 310);
 	CMario* mario = ((CPlayScene*)game->GetCurrentScene())->GetPlayer();
-	if (mario == NULL)
+	CScene* scene = game->GetCurrentScene();
+	if (dynamic_cast<CPlayScene*>(scene)) //if it's playscence and not Worldmap
 	{
-		DebugOut(L"[INFO] NULL thật\n");
-		powerMelterStack = 0;
-		coin = 0;
-		score = 0;
-		life_count = 0;
-		game_time = 0;
 		
-	}
-	else
-	{
-		DebugOut(L"[INFO] Đéo null\n");
 		if (mario->GetState() == MARIO_STATE_DIE) return;
 		//update new info
 		powerMelterStack = mario->GetLevelSpeedUp();
@@ -93,6 +83,10 @@ void HudPanel::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		game_time = 300 - time / 1000;
 		if (game_time == 0)
 			mario->SetState(MARIO_STATE_DIE);
+		//update GAME info
+		game->SetCoinCounter(coin) ;
+		game->SetLifeCounter(life_count);
+		game->SetScore(score);
 	}
 	
 	//update sprite value

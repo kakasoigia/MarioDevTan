@@ -48,6 +48,10 @@ class CGame
 	void _ParseSection_SCENES(string line);
 	int game_time = 300;
 	DWORD time_counter = 0;
+	int coin = 0;
+	long score = 0;
+	int life_count = 0;
+	int mario_level = 0;
 public:
 	void InitKeyboard();
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; }
@@ -91,6 +95,12 @@ public:
 	int GetCurrentLevel();
 	int GetGameTime() { return game_time; };
 	~CGame();
+	int GetCoinCounter() { return coin; };
+	long GetScore() { return score; };
+	int GetLifeCounter() { return life_count; };
+	void SetCoinCounter(int coin) { this->coin = coin; };
+	void SetScore(int score) { this->score = score; };
+	void SetLifeCounter(int life_count) { this->life_count = life_count; };
 };
 
 

@@ -1062,44 +1062,10 @@ void CMario::StartFlying()
 		}
 	}
 }
-void CMario::IncScore(int score,long pos_x, long pos_y)
-{ 
-	
-	Score += score; 
-	/*CGameObject *scoreSprite = new CNoCollisionObjects();
-	CSprites * sprites = CSprites::GetInstance();
-	scoreSprite->SetPosition(pos_x, pos_y);
-	
-	CNoCollisionObjects *scoreSprite2 = dynamic_cast<CNoCollisionObjects *>(scoreSprite);
-	switch (score)
-	{
-		
-	case 100:
-		scoreSprite2->SetSprite (sprites->Get(MARIO_SPRITE_SCORE_UP_100));
-		break;
-	case 200:
-		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_200));
-		break;
-	case 400:
-		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_400));
-	case 800:
-		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_800));
-	case 1000:
-		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_1000));
-	case 2000:
-		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_2000));
-		break;
-	case 4000:
-		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_4000));
-		break;
-	case 8000:
-		scoreSprite2->SetSprite(sprites->Get(MARIO_SPRITE_SCORE_UP_8000));
-		break;
-
-	}
-	scoreSpawn_list.push_back(scoreSprite);
-	DebugOut(L"[INFO]Add\n");
-*/
-
+void CMario::IncScore(int score, long pos_x, long pos_y)
+{
+	Score += score;
 
 }
+
+
