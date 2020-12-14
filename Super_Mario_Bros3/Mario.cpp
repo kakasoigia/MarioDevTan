@@ -524,6 +524,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					AddItem(SPECIAL_ITEM_STATE_MUSHROOM_IDLE);
 					break;
 				}
+				isAutoWalk = true;
+				/*vx = MARIO_WALKING_SPEED;
+				nx = 1;
+				state = MARIO_STATE_WALKING_RIGHT;*/
+				SetState(MARIO_STATE_WALKING_RIGHT);
+
 			}
 		
 		}
@@ -544,10 +550,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	float camX = 0;
 	float camY = 0;
 	if (x > (game->GetScreenWidth() / 2)) camX = cx;
-	if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true || y < -200)
+	if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true || y < -100)
 		if (y <= (game->GetScreenHeight() / 2)) camY = cy;
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY -70);
-
+	if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450,-50);
+		 
 }
 
 void CMario::Render()
@@ -1036,6 +1043,7 @@ void CMario::SpeedDown()
 }
 bool CMario::SpeedInertia()
 {
+	if (isAutoWalk) return false;
 	if (vx*nx < 0) // ngược hướng
 	{
 		{

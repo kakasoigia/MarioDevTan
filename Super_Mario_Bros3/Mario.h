@@ -196,6 +196,7 @@ protected:
 	bool canFly = false;
 	bool isLanding = false;
 	bool isHoldAni = false;
+	bool isAutoWalk = false;
 	int current_level_speed_up;
 	DWORD turning_start = 0;
 	
@@ -307,6 +308,14 @@ public:
 	 void SetIsHoldAni(bool isHoldAni)
 	 {
 		this->isHoldAni = isHoldAni;
+	 }
+	 bool GetAutoWalk()
+	 {
+		 return isAutoWalk;
+	 }
+	 void SetAutoWalk(bool isAutoWalk)
+	 {
+		 this->isAutoWalk = isAutoWalk;
 	 }
 	 // HUD 
 	 int GetCoinCounter() { return CoinCounter; };
