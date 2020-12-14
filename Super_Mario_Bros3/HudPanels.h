@@ -74,6 +74,7 @@ private:
 	vector<LPSPRITE> gameTimeSprites;
 	vector<LPSPRITE> powerMelterSprite;
 	vector<LPSPRITE> filledPowerMelterSprite;
+	vector<LPSPRITE> itemSprite;
 	int life_count = 4;
 	int game_time = 0;
 	int score = 0;
@@ -85,7 +86,7 @@ private:
 public:
 
 	HudPanel();
-	static HudPanel * GetInstance();
+	static HudPanel* GetInstance();
 	virtual void Render();
 	virtual void GetBoundingBox(float &l, float &t, float &r, float &b);
 	void reset();

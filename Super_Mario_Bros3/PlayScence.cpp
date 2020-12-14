@@ -13,6 +13,7 @@
 #include "MushRoom.h"
 #include "HudPanels.h"
 #include "HudSubPanels.h"
+#include "SpecialItem.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
@@ -61,6 +62,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_BELL	24
 #define OBJECT_TYPE_COIN_CAN_TOSS	26
 #define OBJECT_TYPE_HUD	27
+#define OBJECT_TYPE_SPECIAL_ITEM	28
 #define OBJECT_TYPE_PORTAL	50
  
 #define MAX_SCENE_LINE 1024
@@ -211,7 +213,20 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BREAKABLE_BRICK_NORMAL: obj = new CBreakableBrick(BREAKABLE_BRICK_NORMAL); break;
 	case OBJECT_TYPE_BREAKABLE_BRICK_BELL: obj = new CBreakableBrick(BREAKABLE_BRICK_BELL); break;
 	case OBJECT_TYPE_BELL: obj = new CBell(); break;
-	case OBJECT_TYPE_HUD: obj = new HudPanel(); break;
+	case OBJECT_TYPE_SPECIAL_ITEM: obj = new CSpecialItem(); break;
+	case OBJECT_TYPE_HUD: 
+	{
+		obj = HudPanel::GetInstance();
+		if (obj != NULL)
+		{
+			obj = new HudPanel();
+			objects.push_back(obj);
+			return;
+		}
+	
+		
+	}
+
 	case OBJECT_TYPE_PORTAL:
 	{
 		double r = atof(tokens[4].c_str());
@@ -417,6 +432,12 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		}
 
 		break;
+	case DIK_P:
+	{
+			CGame::GetInstance()->SwitchScene(2);
+		     break;
+	}
+		
 	}
 }
 void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)

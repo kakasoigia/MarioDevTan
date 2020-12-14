@@ -163,6 +163,7 @@
     <ClInclude Include="QuestionBrick.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="ScoreSpawnable.h" />
+    <ClInclude Include="SpecialItem.h" />
     <ClInclude Include="StartScene.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Game.h" />
@@ -202,6 +203,7 @@
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Scence.cpp" />
     <ClCompile Include="ScoreSpawnable.cpp" />
+    <ClCompile Include="SpecialItem.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />

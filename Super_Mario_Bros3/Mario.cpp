@@ -14,7 +14,7 @@
 #include "QuestionBrick.h"
 #include "Leaf.h"
 #include "MushRoom.h"
-
+#include "SpecialItem.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
 	
@@ -497,6 +497,23 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					AddLifeCounter();
 				}
 			}
+			else if (dynamic_cast<CSpecialItem *>(e->obj))
+			{
+				CSpecialItem *special_item = dynamic_cast<CSpecialItem *>(e->obj);
+				int special_item_state = special_item->GetState();
+				switch (special_item_state)
+				{
+				case 100:
+					special_item->SetState(400);
+					break;
+				case 200:
+					special_item->SetState(500);
+					break;
+				case 300:
+					special_item->SetState(600);
+					break;
+				}
+			}
 		
 		}
 
@@ -518,7 +535,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (x > (game->GetScreenWidth() / 2)) camX = cx;
 	if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true || y < 0)
 		if (y <= (game->GetScreenHeight() / 2)) camY = cy;
-	CGame::GetInstance()->SetCamPos((int)camX, (int)camY -60);
+	CGame::GetInstance()->SetCamPos((int)camX, (int)camY -70);
 
 }
 

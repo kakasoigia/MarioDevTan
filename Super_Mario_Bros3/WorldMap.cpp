@@ -1,4 +1,4 @@
-#include "WorldMap.h"
+﻿#include "WorldMap.h"
 #include <iostream>
 #include <fstream>
 #include "Game.h"
@@ -261,10 +261,15 @@ void CWorldMap::Load()
 
 	f.close();
 	//add hud at the last 
-	CGameObject *obj = new HudPanel();
-	obj = HudPanel::GetInstance();
-	objects.push_back(obj);
-
+	CGameObject *obj = HudPanel::GetInstance();
+	if (obj != NULL)
+	{
+		obj = new HudPanel();
+		objects.push_back(obj);
+		return;
+	}
+	
+	DebugOut(L"[INFO] Push HUD vô r  \n");
 	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
@@ -272,51 +277,37 @@ void CWorldMap::Load()
 
 void CWorldMap::Update(DWORD dt)
 {
-
+	
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
 	}
-
+	//
+	
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
-		objects[i]->Update(dt, &coObjects);
+		
+	
+			DebugOut(L"[INFO] Vô đây rồi  \n");
+			objects[i]->Update(dt, &coObjects);
+		
 	}
 	
-	//if (current_node->GetNodeId() == 1)
-	//{
-	//	for (size_t i = 0; i < Nodes.size(); i++)
-	//	{
-	//		if (Nodes[i]->GetType() == 200)
-	//		{
-	//			if (i % 2 == 0)
-	//			{
-	//				Nodes[i]->SetTop(1);
-	//			}
-	//			else
-	//			{
-	//				Nodes[i]->SetBottom(1);
-	//			}
-	//		}
-	//	}
-	//}
-
-
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 
 	CGame::GetInstance()->SetCamPos(0, 0);
-
+	
 }
 
 void CWorldMap::Render()
 {
+	DebugOut(L"[INFO] Vô đây rồi \n");
 	if (map)
 	{
 		this->map->Render();
 	}
-
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
 }
@@ -393,7 +384,7 @@ void CWorldMapKeyHandler::OnKeyDown(int KeyCode)
 
 		}
 		break;
-	case DIK_G:
+	case DIK_W:
 		if (world_map_scene->GetCurrentNode()->GetNodeId() == 2)
 			CGame::GetInstance()->SwitchScene(3);
 		break;
