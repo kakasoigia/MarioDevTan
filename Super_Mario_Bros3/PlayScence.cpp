@@ -369,7 +369,11 @@ void CPlayScene::Render()
 void CPlayScene::Unload()
 {
 	for (unsigned int i = 0; i < objects.size(); i++)
+	{
+		if(!dynamic_cast<HudPanel *>(objects[i]))
 		delete objects[i];
+	}
+		
 
 	objects.clear();
 	player = NULL;

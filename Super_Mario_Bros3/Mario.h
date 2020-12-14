@@ -179,7 +179,9 @@ class CMario : public CGameObject
 	int CoinCounter = 0;
 	long Score = 0;
 	int life_counter = 4;
+
 	int Mario_Level = 0;
+	vector <int> itemList;
 	float start_x;			// initial position of Mario at scene
 	float start_y;
 protected:
@@ -313,4 +315,8 @@ public:
 	 void IncScore(int score,long pos_x,long pos_y);
 	 void AddLifeCounter() { life_counter++; };
 	 int GetLifeCounter() { return life_counter; };
+	 void AddItem(int item_type) { if (itemList.size() <= 3) itemList.push_back(item_type); };
+	 vector<int> GetItemList() { return itemList; };
+	 
+
 };

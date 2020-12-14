@@ -261,14 +261,14 @@ void CWorldMap::Load()
 
 	f.close();
 	//add hud at the last 
-	CGameObject *obj = HudPanel::GetInstance();
+	HudPanel *obj = HudPanel::GetInstance();
 	if (obj != NULL)
 	{
 		obj = new HudPanel();
 		objects.push_back(obj);
 		return;
 	}
-	
+	objects.push_back(obj);
 	DebugOut(L"[INFO] Push HUD vô r  \n");
 	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 

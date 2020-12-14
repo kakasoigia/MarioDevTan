@@ -16,7 +16,8 @@
 #include "Scence.h"
 #include <string>
 #include "PlayScence.h"
-HudPanel * HudPanel::__instance = NULL;
+#include "SpecialItem.h"
+HudPanel* HudPanel::__instance = NULL;
 HudPanel::HudPanel()
 {
 
@@ -43,11 +44,16 @@ HudPanel::HudPanel()
 		else
 			filledPowerMelterSprite.push_back(sprites->Get(HUD_SPRITE_POWERMELTER_FILLED_LIGHT));
 	}
-
+	for (int i = 0; i < 3; i++)
+	{
+			itemSprite.push_back(sprites->Get(HUD_SPRITE_EMPTY_CARD));
+	}
 	powerMelterStack = 0;
 	coin = game->GetCoinCounter();
 	score = game->GetScore();
 	life_count = game->GetLifeCounter();
+	itemList = game->GetItemList();
+	
 }
 
 
@@ -67,7 +73,7 @@ void HudPanel::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	DebugOut(L"[INFO] Vô đây UPDATE r  \n");
 	CGame *game = CGame::GetInstance();
 	this->SetPosition(game->GetCamPosX(), game->GetCamPosY() + 310);
-	
+
 	CScene* scene = game->GetCurrentScene();
 	if (dynamic_cast<CPlayScene*>(scene)) //if it's playscence and not Worldmap
 	{
@@ -78,7 +84,7 @@ void HudPanel::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		coin = mario->GetCoinCounter();
 		score = mario->GetScore();
 		life_count = mario->GetLifeCounter();
-
+		itemList = mario->GetItemList();
 		time += dt;
 		game_time = 300 - time / 1000;
 		if (game_time == 0)
@@ -87,10 +93,11 @@ void HudPanel::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		game->SetCoinCounter(coin);
 		game->SetLifeCounter(life_count);
 		game->SetScore(score);
+		game->SetItemList(itemList);
 	}
 	else // worldmap
 	{
-		
+
 	}
 
 	//update sprite value
@@ -108,18 +115,20 @@ void HudPanel::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	string coin_str = to_string(coin);
 	coinSprite = StringToSprite(coin_str);
+	//update list sprite 
+	itemSprite = ItemToSprite(itemList);
 
 }
 void HudPanel::Render()
 {
 
 	//draw a black background
-	background->Draw(x, y-78);
+	background->Draw(x, y - 78);
 
 	//draw info
 	hudInfo->Draw(x + 40, y - 78);
 
-	hudItem->Draw(x + 220, y - 78);
+	/*hudItem->Draw(x + 220, y - 78);*/
 
 	playertypeSprite->Draw(x + 44, y - 63);
 
@@ -150,11 +159,15 @@ void HudPanel::Render()
 	{
 		powerMelterSprite[i]->Draw(x + 92 + 8 * i, y - 71);
 	}
-
-	/*for (int i = 0; i < powerMelterStack; i++)
+	
+	for (int i = 0; i < powerMelterStack; i++)
 	{
 		filledPowerMelterSprite[i]->Draw( x + 92 + 8 * i, y - 71);
-	}*/
+	}
+	for (unsigned int i = 0; i < itemSprite.size(); i++)
+	{
+		itemSprite[i]->Draw(x + 220+25*i, y - 78);
+	}
 
 }
 void HudPanel::GetBoundingBox(float &l, float &t, float &r, float &b)
@@ -201,35 +214,45 @@ LPSPRITE HudPanel::GetSprite(char a)
 		break;
 	}
 }
-vector<LPSPRITE> HudPanel::StringToSprite(string str)
-{
-	vector<LPSPRITE> sprites;
-	LPSPRITE sprite;
-	char c;
-	for (int i = 0; i < str.size(); i++)
-	{
-		c = (char)str[i];
-		sprite = GetSprite(c);
-		if (sprite != NULL)
-			sprites.push_back(sprite);
-	}
-	return sprites;
-}
-vector<LPSPRITE> HudPanel::StringToSprite(string str)
-{
-	vector<LPSPRITE> sprites;
-	LPSPRITE sprite;
-	char c;
-	for (int i = 0; i < str.size(); i++)
-	{
-		c = (char)str[i];
-		sprite = GetSprite(c);
-		if (sprite != NULL)
-			sprites.push_back(sprite);
-	}
-	return sprites;
-}
 
+vector<LPSPRITE> HudPanel::StringToSprite(string str)
+{
+	vector<LPSPRITE> sprites;
+	LPSPRITE sprite;
+	char c;
+	for (int i = 0; i < str.size(); i++)
+	{
+		c = (char)str[i];
+		sprite = GetSprite(c);
+		if (sprite != NULL)
+			sprites.push_back(sprite);
+	}
+	return sprites;
+}
+vector<LPSPRITE> HudPanel::ItemToSprite(vector<int> itemList)
+{
+	CSprites* sprites = CSprites::GetInstance();
+	
+	
+	for (int i = 0; i < itemList.size(); i++)
+	{
+		switch (itemList[i])
+		{
+		case SPECIAL_ITEM_STATE_FLOWER_IDLE:
+			itemSprite[i]=(sprites->Get(HUD_SPRITE_FLOWER_CARD));
+			break;
+		case SPECIAL_ITEM_STATE_MUSHROOM_IDLE:
+			itemSprite[i] = (sprites->Get(HUD_SPRITE_MUSHROOM_CARD));
+			break;
+		case SPECIAL_ITEM_STATE_STAR_IDLE:
+			itemSprite[i] = (sprites->Get(HUD_SPRITE_STAR_CARD));
+			break;
+
+		}
+	}
+	return itemSprite;
+	
+}
 HudPanel *HudPanel::GetInstance()
 {
 	if (__instance == NULL) __instance = new HudPanel();

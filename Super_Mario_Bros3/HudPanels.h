@@ -82,7 +82,7 @@ private:
 	int world = 1;
 	int time = 0;
 	int powerMelterStack = 0;
-
+	vector <int> itemList;
 public:
 
 	HudPanel();
@@ -93,4 +93,5 @@ public:
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
 	LPSPRITE GetSprite(char a);
 	vector<LPSPRITE> StringToSprite(string str);
+	vector<LPSPRITE>  ItemToSprite(vector<int> itemList);
 };

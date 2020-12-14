@@ -50,8 +50,9 @@ class CGame
 	DWORD time_counter = 0;
 	int coin = 0;
 	long score = 0;
-	int life_count = 0;
-	int mario_level = 0;
+	int life_count = 4;
+	int mario_level = 1;
+	vector<int> itemList;
 public:
 	void InitKeyboard();
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; }
@@ -92,15 +93,17 @@ public:
 	float GetCamPosY() { return cam_y; };
 	
 	static CGame * GetInstance();
-	int GetCurrentLevel();
+	int GetCurrentLevel() { return mario_level; };
 	int GetGameTime() { return game_time; };
 	~CGame();
 	int GetCoinCounter() { return coin; };
 	long GetScore() { return score; };
 	int GetLifeCounter() { return life_count; };
+	vector<int> GetItemList() { return itemList; };
 	void SetCoinCounter(int coin) { this->coin = coin; };
 	void SetScore(int score) { this->score = score; };
 	void SetLifeCounter(int life_count) { this->life_count = life_count; };
+	void SetItemList(vector<int> itemList) { this->itemList = itemList; };
 };
 
 

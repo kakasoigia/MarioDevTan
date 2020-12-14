@@ -15,9 +15,15 @@
 #include "Leaf.h"
 #include "MushRoom.h"
 #include "SpecialItem.h"
+#include "HudPanels.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
-	
+	CGame *game = CGame::GetInstance();
+	CoinCounter = game->GetCoinCounter();
+	Score = game->GetScore();
+	life_counter = game->GetLifeCounter();
+	itemList = game->GetItemList();
+
 	level = MARIO_LEVEL_BIG;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
@@ -27,6 +33,7 @@ CMario::CMario(float x, float y) : CGameObject()
 	this->x = x;
 	this->y = y;
 	current_level_speed_up = 0;
+
 }
 void CMario::FilterCollision(vector<LPCOLLISIONEVENT> &coEvents, vector<LPCOLLISIONEVENT> &coEventsResult, float &min_tx, float &min_ty, float &nx, float &ny, float &rdx, float &rdy)
 {
@@ -499,18 +506,22 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else if (dynamic_cast<CSpecialItem *>(e->obj))
 			{
+				
 				CSpecialItem *special_item = dynamic_cast<CSpecialItem *>(e->obj);
 				int special_item_state = special_item->GetState();
 				switch (special_item_state)
 				{
-				case 100:
-					special_item->SetState(400);
+				case SPECIAL_ITEM_STATE_FLOWER_IDLE:
+					special_item->SetState(SPECIAL_ITEM_STATE_FLOWER_UP); 
+					AddItem(SPECIAL_ITEM_STATE_FLOWER_IDLE);
 					break;
-				case 200:
-					special_item->SetState(500);
+				case SPECIAL_ITEM_STATE_MUSHROOM_IDLE:
+					special_item->SetState(SPECIAL_ITEM_STATE_MUSHROOM_UP);
+					AddItem(SPECIAL_ITEM_STATE_MUSHROOM_IDLE);
 					break;
-				case 300:
-					special_item->SetState(600);
+				case SPECIAL_ITEM_STATE_STAR_IDLE:
+					special_item->SetState(SPECIAL_ITEM_STATE_STAR_UP);
+					AddItem(SPECIAL_ITEM_STATE_MUSHROOM_IDLE);
 					break;
 				}
 			}
@@ -533,7 +544,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	float camX = 0;
 	float camY = 0;
 	if (x > (game->GetScreenWidth() / 2)) camX = cx;
-	if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true || y < 0)
+	if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true || y < -200)
 		if (y <= (game->GetScreenHeight() / 2)) camY = cy;
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY -70);
 
