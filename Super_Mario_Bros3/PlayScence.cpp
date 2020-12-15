@@ -326,8 +326,8 @@ void CPlayScene::Update(DWORD dt)
 		CGame *game = CGame::GetInstance();
 		float rangeXleft = player->x - game->GetScreenHeight() - 100;
 		float rangeXright = player->x + game->GetScreenHeight() + 100;
-		if (objects[i]-> x>rangeXleft && 
-			objects[i]->x< rangeXright)
+		if ((objects[i]-> x>rangeXleft && 
+			objects[i]->x< rangeXright)|| dynamic_cast<HudPanel *>(objects[i]))
 		objects[i]->Update(dt, &coObjects);
 	}
 
@@ -358,6 +358,11 @@ void CPlayScene::Render()
 	
 	for (unsigned int i = 1; i < objects.size(); i++)
 	{
+		CGame *game = CGame::GetInstance();
+		float rangeXleft = player->x - game->GetScreenHeight() - 200;
+		float rangeXright = player->x + game->GetScreenHeight() + 200;
+		if ((objects[i]->x > rangeXleft &&
+			objects[i]->x < rangeXright) )
 			objects[i]->Render();
 	}
 		

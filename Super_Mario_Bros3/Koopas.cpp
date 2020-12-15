@@ -121,8 +121,17 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				vx = -vx;
 			isHolding = false;
 			mario->SetIsHolding(false);
+			reviveRender = false;
 		}
 		reviveStart = 0;
+	}
+	else
+	{
+		if (GetTickCount() - reviveStart >= KOOPAS_TIME_ABOUT_TO_REVIVE)
+		{
+			reviveRender = true;
+			
+		}
 	}
 	
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -381,6 +390,8 @@ void CKoopas::Render()
 		{
 		case 1 /*KOOPAS_TYPE_GREEN_WALK */:
 		{
+			if (reviveRender) ani = KOOPAS_XANH_ANI_REVIVING;
+			else 
 			ani = KOOPAS_ANI_GREEN_SHELL_PRONE;
 		}
 		break;

@@ -50,6 +50,16 @@
 #define KOOPAS_ANI_RED_SHELL_PRONE	8
 #define KOOPAS_ANI_GREEN_SPINNING  9
 #define KOOPAS_ANI_RED_ANI_SPINNING	  10
+#define KOOPAS_XANH_ANI_REVIVING	  11	
+#define KOOPAS_RED_ANI_REVIVING		  12
+#define KOOPAS_RED_MAI_ANI_NGUA		  13
+#define KOOPAS_XANH_ANI_REVIVING_NGUA			14
+#define KOOPAS_RED_ANI_REVIVING_NGUA			15
+#define KOOPAS_BLACK_UP							16
+#define KOOPAS_BLACK_NGUA						17
+#define KOOPAS_XANH_ANI_WALKING_RIGHT_FASTER	18
+#define KOOPAS_XANH_MAI_ANI_SPINNING_NGUA		19
+#define KOOPAS_RED_MAI_ANI_SPINNING_NGUA		20
 
 #define KOOPAS_DIE_DEFLECT_SPEED 0.75f
 #define KOOPAS_FLY_DEFLECT_SPEED 0.4f
@@ -59,6 +69,7 @@
 #define	KOOPAS_NOT_HOLDING 0
 
 #define KOOPAS_TIME_REVIVE 5000
+#define KOOPAS_TIME_ABOUT_TO_REVIVE 3000
 class CKoopas : public CGameObject
 {
 
@@ -66,6 +77,7 @@ class CKoopas : public CGameObject
 	int Type;
 	bool isHolding = false;
 	int flying_start;
+	bool reviveRender = false;
 	bool canTurn = false;
 	DWORD reviveStart= 0;
 	bool CanPullBack = false;
