@@ -433,7 +433,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		}
 
 		break;
-	case DIK_Z:
+	case DIK_A:
 		if (mario->GetLevel() == MARIO_LEVEL_TAIL || mario->GetIsTurning() == true)
 		{
 			mario->SetIsTurning(true);
