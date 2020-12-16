@@ -1,4 +1,9 @@
 #include "Pipe.h"
+CPipe::CPipe(int ctype)
+{
+	type = ctype;
+}
+
 
 void CPipe::Render()
 {

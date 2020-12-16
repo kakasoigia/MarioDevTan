@@ -104,6 +104,8 @@ public:
 	void SetScore(int score) { this->score = score; };
 	void SetLifeCounter(int life_count) { this->life_count = life_count; };
 	void SetItemList(vector<int> itemList) { this->itemList = itemList; };
+	int GetMarioLevel() { return mario_level; };
+	void SetMarioLevel(int level) { mario_level = level; };
 };
 
 

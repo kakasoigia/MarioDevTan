@@ -40,7 +40,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_KOOPAS_GREEN_WALK	3
 #define OBJECT_TYPE_RECTANGLE	5
 #define OBJECT_TYPE_NO_COLLISION_OBJECTS 4
-#define OBJECT_TYPE_PIPE 6
+#define OBJECT_TYPE_PIPE_NORMAL 6
 #define OBJECT_TYPE_KOOPAS_GREEN_FLY	7
 #define OBJECT_TYPE_KOOPAS_RED_WALK	8
 #define OBJECT_TYPE_KOOPAS_RED_FLY	9
@@ -63,6 +63,8 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_COIN_CAN_TOSS	26
 #define OBJECT_TYPE_HUD	27
 #define OBJECT_TYPE_SPECIAL_ITEM	28
+#define OBJECT_TYPE_PIPE_CAN_SLIDE_DOWN 29
+#define OBJECT_TYPE_PIPE_CAN_SLIDE_UP 30
 #define OBJECT_TYPE_PORTAL	50
  
 #define MAX_SCENE_LINE 1024
@@ -198,7 +200,9 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_NO_COLLISION_OBJECTS:obj = new CNoCollisionObjects(); break;
 	case OBJECT_TYPE_COIN_NORMAL:obj = new CCoin(COIN_NORMAL); break;
 	case OBJECT_TYPE_COIN_CAN_TOSS:obj = new CCoin(COIN_CAN_TOSS); break;
-	case OBJECT_TYPE_PIPE:obj = new CPipe(); break;
+	case OBJECT_TYPE_PIPE_NORMAL:obj = new CPipe(PIPE_TYPE_NORMAL); break;
+	case OBJECT_TYPE_PIPE_CAN_SLIDE_DOWN:obj = new CPipe(PIPE_TYPE_DOWN); break;
+	case OBJECT_TYPE_PIPE_CAN_SLIDE_UP:obj = new CPipe(PIPE_TYPE_UP); break;
 	case OBJECT_TYPE_FIRE_BULLET:obj = new CFireBullet(); break;
 	case OBJECT_TYPE_FLOWER_RED:	  obj = new CFlower(100); break;
 	case OBJECT_TYPE_FLOWER_GREEN:	  obj = new CFlower(200); break;
@@ -373,6 +377,14 @@ void CPlayScene::Render()
 */
 void CPlayScene::Unload()
 {
+	CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	//save GAME info
+	CGame *game = CGame::GetInstance();
+	game->SetCoinCounter(mario->GetCoinCounter());
+	game->SetLifeCounter(mario->GetLifeCounter());
+	game->SetScore(mario->GetScore());
+	game->SetItemList(mario->GetItemList());
+	game->SetMarioLevel(mario->GetLevel());
 	for (unsigned int i = 0; i < objects.size(); i++)
 	{
 		if(!dynamic_cast<HudPanel *>(objects[i]))
@@ -424,16 +436,19 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_T:
 		mario->SetLevel(MARIO_LEVEL_TAIL);
 		break;
-	case DIK_SPACE:
+
+		
+	case DIK_A:
+		mario->SetIsHolding(true);
 		if (mario->GetLevel() == MARIO_LEVEL_FIRE)
 		{
 			mario->Fire();
 			mario->SetIsFiring(true);
+			break;
 			/*mario->StartFiring();*/
 		}
 
-		break;
-	case DIK_A:
+		
 		if (mario->GetLevel() == MARIO_LEVEL_TAIL || mario->GetIsTurning() == true)
 		{
 			mario->SetIsTurning(true);
@@ -460,11 +475,11 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_A:
 		mario->SetIsHolding(false);
 		mario->SetIsHoldAni(false);
+		mario->SetIsFiring(false);
+		/*mario->StartFiring();*/
 		break;
-	case DIK_SPACE:
-		
-			mario->SetIsFiring(false);
-			/*mario->StartFiring();*/
+	
+			
 		
 
 		break;
@@ -486,7 +501,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 		{
 			mario->SetState(MARIO_STATE_RUNNING_RIGHT);
 			SetLevelSpeedUp(mario);
-			mario->SetIsHolding(1);
+			
 		}
 		else
 		{
@@ -531,7 +546,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 		}
 	}
 
-	if (game->IsKeyDown(DIK_X))
+	if (game->IsKeyDown(DIK_S))
 	{
 		if ( mario->GetLevel() == MARIO_LEVEL_TAIL) // fly
 		{
@@ -544,10 +559,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 
 				}
 			}
-			else if (mario->GetIsJumping() || mario->GetIsLanding()) // on air
-			{
-				mario->SetState(MARIO_STATE_FALL_DOWN);
-			}
+			//
 			
 				
 		}
@@ -560,6 +572,13 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 		//	}
 		//}
 
+	}
+	else if (game->IsKeyDown(DIK_X))
+	{
+		if (mario->GetLevel() == MARIO_LEVEL_TAIL)
+			if (mario->GetIsJumping() || mario->GetIsLanding()) // on air
+		mario->SetState(MARIO_STATE_FALL_DOWN);
+	
 	}
 
 }

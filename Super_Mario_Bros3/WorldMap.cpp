@@ -83,7 +83,7 @@ void CWorldMap::_ParseSection_ANIMATIONS(string line)
 
 	if (tokens.size() < 3) return; // skip invalid lines - an animation must at least has 1 frame and 1 frame time
 
-	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+	
 
 	LPANIMATION ani = new CAnimation();
 
@@ -129,7 +129,7 @@ void CWorldMap::_ParseSection_OBJECTS(string line)
 
 	vector<string> tokens = split(line);
 
-	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+	
 
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 
@@ -269,7 +269,7 @@ void CWorldMap::Load()
 		return;
 	}
 	objects.push_back(obj);
-	DebugOut(L"[INFO] Push HUD vô r  \n");
+
 	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
@@ -290,7 +290,7 @@ void CWorldMap::Update(DWORD dt)
 	{
 		
 	
-			DebugOut(L"[INFO] Vô đây rồi  \n");
+			
 			objects[i]->Update(dt, &coObjects);
 		
 	}
@@ -303,7 +303,7 @@ void CWorldMap::Update(DWORD dt)
 
 void CWorldMap::Render()
 {
-	DebugOut(L"[INFO] Vô đây rồi \n");
+	
 	if (map)
 	{
 		this->map->Render();
@@ -389,7 +389,7 @@ void CWorldMapKeyHandler::OnKeyDown(int KeyCode)
 			CGame::GetInstance()->SwitchScene(3);
 		break;
 	}
-	DebugOut(L"id node hien tai la: %d \n", ((CWorldMap*)scence)->GetCurrentNode()->GetNodeId());
+
 }
 void CWorldMapKeyHandler::OnKeyUp(int KeyCode)
 {

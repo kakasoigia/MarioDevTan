@@ -29,7 +29,8 @@
 #define MARIO_STATE_SPEEDING_DOWN	1600
 #define MARIO_STATE_TURNING_TAIL	1700
 #define MARIO_STATE_FALL_DOWN	1800
-
+#define	MARIO_STATE_PIPE_SLIDE_DOWN 1900
+#define MARIO_STATE_PIPE_SLIDE_UP	2000
 
 
 
@@ -126,6 +127,10 @@
 #define MARIO_ANI_FALLING_RIGHT			89
 
 #define MARIO_ANI_DIE					90
+#define MARIO_ANI_BIG_PIPE						91
+#define MARIO_ANI_SMALL_PIPE					92
+#define MARIO_ANI_TAIL_PIPE						93
+#define MARIO_ANI_FIRE_PIPE						94
 
 #define	MARIO_LEVEL_BIG		2
 #define	MARIO_LEVEL_SMALL	1
@@ -142,6 +147,7 @@
 #define MARIO_KICK_TIME 300
 #define MARIO_TURNING_TIME		 500
 #define MARIO_FLYING_TIME		 3500
+#define MARIO_TIME_BACK_TO_WORLDMAP	2000
 #define	MARIO_DIFFERENCE_HEIGHT	12
 
 #define MARIO_BIG_BBOX_WIDTH  15
@@ -168,6 +174,7 @@
 #define MARIO_SPRITE_SCORE_UP_4000	60156
 #define MARIO_SPRITE_SCORE_UP_8000	60157
 #define MARIO_SPRITE_SCORE_UP_LV_UP	60158
+
 
 class CMario : public CGameObject
 {
@@ -197,10 +204,17 @@ protected:
 	bool isLanding = false;
 	bool isHoldAni = false;
 	bool isAutoWalk = false;
+	DWORD start_time_die_back_to_worldmap = 0;
 	int current_level_speed_up;
 	DWORD turning_start = 0;
-	
-	
+
+	bool canPipeSlideDown = false;
+	bool canPipeSlideUp = false;
+
+	bool isAtTunnel = false;
+	bool setPositionOutOfTunnel = false;
+	DWORD pipe_slide_down_start = 0;
+	DWORD pipe_slide_up_start = 0;
 public:
 	CMario(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
@@ -229,7 +243,7 @@ public:
 	 {
 		 return isHolding;
 	 }
-	 void SetIsHolding(int isHolding)
+	 void SetIsHolding(bool isHolding)
 	 {
 		 this->isHolding = isHolding;
 	 }
@@ -317,6 +331,42 @@ public:
 	 {
 		 this->isAutoWalk = isAutoWalk;
 	 }
+	 //pipe tunnel
+	 void StartPipeSlideDown()
+	 {
+		 if (pipe_slide_down_start == 0)
+			 pipe_slide_down_start = GetTickCount();
+	 }
+	 void StartPipeSlideUp()
+	 {
+		 if (pipe_slide_up_start == 0)
+			 pipe_slide_up_start = GetTickCount();
+	 }
+	
+	 bool GetIsAtTunnel()
+	 {
+		 return isAtTunnel;
+	 }
+	 void SetIsAtTunnel(bool isAtTheTunnelBool)
+	 {
+		 this->isAtTunnel = isAtTheTunnelBool;
+	 }
+	 bool GetCanPipeSlideDown()
+	 {
+		 return canPipeSlideDown;
+	 }
+	 void SetCanPipeSlideDown(bool canPipeSlideDown)
+	 {
+		 this->canPipeSlideDown = canPipeSlideDown;
+	 }
+	 bool GetCanPipeSlideUp()
+	 {
+		 return canPipeSlideUp;
+	 }
+	 void SetCanPipeSlideUp(bool canPipeSlideUp)
+	 {
+		 this->canPipeSlideUp = canPipeSlideUp;
+	 }
 	 // HUD 
 	 int GetCoinCounter() { return CoinCounter; };
 	 void CoinCounterUp() { CoinCounter++; Score += 50; };
@@ -326,6 +376,6 @@ public:
 	 int GetLifeCounter() { return life_counter; };
 	 void AddItem(int item_type) { if (itemList.size() <= 3) itemList.push_back(item_type); };
 	 vector<int> GetItemList() { return itemList; };
-	 
+	 void StartTimeBackToWorld() { start_time_die_back_to_worldmap = GetTickCount(); };
 
 };
