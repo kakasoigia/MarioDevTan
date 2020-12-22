@@ -148,6 +148,7 @@
 #define MARIO_TURNING_TIME		 500
 #define MARIO_FLYING_TIME		 3500
 #define MARIO_TIME_BACK_TO_WORLDMAP	2000
+#define MARIO_TIME_SLIDE_UP_DOWN 3000
 #define	MARIO_DIFFERENCE_HEIGHT	12
 
 #define MARIO_BIG_BBOX_WIDTH  15
@@ -367,6 +368,7 @@ public:
 	 {
 		 this->canPipeSlideUp = canPipeSlideUp;
 	 }
+
 	 // HUD 
 	 int GetCoinCounter() { return CoinCounter; };
 	 void CoinCounterUp() { CoinCounter++; Score += 50; };

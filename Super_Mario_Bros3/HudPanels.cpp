@@ -97,7 +97,7 @@ void HudPanel::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 
 	//update sprite value
-	DebugOut(L"[ERROR] life count %d\n ", life_count);
+	
 	string life_count_str = to_string(life_count);
 	while (life_count_str.length() < 2) life_count_str = "0" + life_count_str;
 	lifecountSprite = StringToSprite(life_count_str);

@@ -403,7 +403,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	CGame *game = CGame::GetInstance();
 	CMario *mario = ((CPlayScene*)scence)->GetPlayer();
-	if (mario->GetState() == MARIO_STATE_DIE) return;
+	if (mario->GetState() == MARIO_STATE_DIE || mario->GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || mario->GetState() == MARIO_STATE_PIPE_SLIDE_UP) return;
 	switch (KeyCode)
 	{
 	case DIK_S:
@@ -528,9 +528,30 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 	else if (game->IsKeyDown(DIK_DOWN))
 	{
 		SetLevelSpeedDown(mario);
-		mario->SetState(MARIO_STATE_SITDOWN);
+		if (mario->GetLevel() != MARIO_LEVEL_SMALL)
+			mario->SetState(MARIO_STATE_SITDOWN);
+		else
+		{
+			mario->SetState(MARIO_STATE_IDLE);
+		}
+		if (mario->GetCanPipeSlideDown())
+		{
+			mario->SetState(MARIO_STATE_PIPE_SLIDE_DOWN);
+			mario->StartPipeSlideDown();
+			return;
+		}
+
 	}
-	
+	else if (game->IsKeyDown(DIK_UP))
+	{
+		SetLevelSpeedDown(mario);
+		if (mario->GetCanPipeSlideUp())
+		{
+			mario->SetState(MARIO_STATE_PIPE_SLIDE_UP);
+			mario->StartPipeSlideUp();
+			return;
+		}
+	}
 	else // no keystate
 	{
 

@@ -91,7 +91,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	CGameObject::Update(dt);
 
 	// Simple fall down
-	if (state != MARIO_STATE_FLY && state != MARIO_STATE_FALL_DOWN &state != MARIO_STATE_PIPE_SLIDE_DOWN & state != MARIO_STATE_PIPE_SLIDE_UP)
+	if (state != MARIO_STATE_FLY && state != MARIO_STATE_FALL_DOWN & state != MARIO_STATE_PIPE_SLIDE_DOWN & state != MARIO_STATE_PIPE_SLIDE_UP)
 		vy += MARIO_GRAVITY * dt;
 
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -127,6 +127,36 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			CGame::GetInstance()->SwitchScene(2);
 		}
 	}
+	if (state == MARIO_STATE_PIPE_SLIDE_DOWN)
+	{
+		if (GetTickCount() - pipe_slide_down_start >= MARIO_TIME_SLIDE_UP_DOWN)
+		{
+			this->SetPosition(1330, 1050);
+			canPipeSlideDown = false;
+			isAtTunnel = true;
+			SetState(MARIO_STATE_IDLE);
+		}
+	}
+
+	if (state == MARIO_STATE_PIPE_SLIDE_UP)
+	{
+		if (GetTickCount() - pipe_slide_up_start >= MARIO_TIME_SLIDE_UP_DOWN)
+		{
+			isAtTunnel = false;
+			if (!setPositionOutOfTunnel)
+			{
+				this->SetPosition(2330, 122);
+				setPositionOutOfTunnel = true;
+			}
+		}
+
+		if (GetTickCount() - pipe_slide_up_start >= 6350)
+		{
+			canPipeSlideUp = false;
+			SetState(MARIO_STATE_IDLE);
+		}
+	}
+
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
 	{
@@ -327,7 +357,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					}
 					else
 					{
-						
+
 						if (untouchable == 0)
 						{
 							if (koopas->GetState() != KOOPAS_STATE_DIE)
@@ -529,7 +559,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					leaf->SetIsAppear(false);
 
-					
+
 				}
 				IncScore(1000, leaf->x, leaf->y);
 			}
@@ -585,6 +615,33 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				SetState(MARIO_STATE_WALKING_RIGHT);
 
 			}
+			if (dynamic_cast<CPipe *>(e->obj))
+			{
+				CPipe* pipe = dynamic_cast<CPipe *>(e->obj);
+				if (pipe->GetType() == PIPE_TYPE_DOWN)
+				{
+					if ((pipe->x + 2) <= this->x && this->x <= (pipe->x + 16))
+					{
+						this->canPipeSlideDown = true;
+					}
+					else
+					{
+						this->canPipeSlideDown = false;
+					}
+				}
+				else if (pipe->GetType() == PIPE_TYPE_UP)
+				{
+					if ((pipe->x + 2) <= this->x && this->x <= (pipe->x + 16))
+					{
+						this->canPipeSlideUp = true;
+					}
+					else
+					{
+						this->canPipeSlideUp = false;
+					}
+				}
+			}
+
 
 		}
 
@@ -604,8 +661,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	float camX = 0;
 	float camY = 0;
 	if (x > (game->GetScreenWidth() / 2)) camX = cx;
-	if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true || y < -100)
-		if (y <= (game->GetScreenHeight() / 2)) camY = cy+20;
+	/*if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true 
+		|| y < -100 || GetState() == MARIO_STATE_PIPE_SLIDE_DOWN  || GetState() == MARIO_STATE_PIPE_SLIDE_UP)*/
+		/*if (y <= (game->GetScreenHeight() / 2))*/ camY = cy + 20;
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY - 70);
 	if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);
 
@@ -613,9 +671,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 void CMario::Render()
 {
+
+	DebugOut(L" state %d,", state);
 	int ani = -1;
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
+
 	else if (state == MARIO_STATE_FLY)
 	{
 
@@ -634,7 +695,6 @@ void CMario::Render()
 			if (nx > 0) ani = MARIO_ANI_FALLING_RIGHT;
 			else ani = MARIO_ANI_FALLING_LEFT;
 		}
-
 	}
 	else if (isTurning)
 	{
@@ -713,9 +773,6 @@ void CMario::Render()
 		}
 	}
 
-
-
-	
 	else if (state == MARIO_STATE_RUNNING_RIGHT)
 	{
 		if ((nx < 0 && vx > -MARIO_MAX_SPEED) || (nx > 0 && vx < MARIO_MAX_SPEED)) // normal run
@@ -840,51 +897,29 @@ void CMario::Render()
 		}
 	}
 
-	else if (state == MARIO_STATE_IDLE)
+
+	else if (isBraking)
 	{
 		if (level == MARIO_LEVEL_BIG)
 		{
-			if (nx > 0) ani = MARIO_ANI_BIG_IDLE_RIGHT;
-			else ani = MARIO_ANI_BIG_IDLE_LEFT;
+			if (nx > 0) ani = MARIO_ANI_BIG_BRAKING_RIGHT;
+			else ani = MARIO_ANI_BIG_BRAKING_LEFT;
 		}
 		else if (level == MARIO_LEVEL_SMALL)
 		{
-			if (nx > 0) ani = MARIO_ANI_SMALL_IDLE_RIGHT;
-			else ani = MARIO_ANI_SMALL_IDLE_LEFT;
+			if (nx > 0) ani = MARIO_ANI_SMALL_BRAKING_RIGHT;
+			else ani = MARIO_ANI_SMALL_BRAKING_LEFT;
 		}
 		else if (level == MARIO_LEVEL_TAIL)
 		{
-			if (nx > 0) ani = MARIO_ANI_TAIL_IDLE_RIGHT;
-			else ani = MARIO_ANI_TAIL_IDLE_LEFT;
+			if (nx > 0) ani = MARIO_ANI_TAIL_BRAKING_RIGHT;
+			else ani = MARIO_ANI_TAIL_BRAKING_LEFT;
 		}
 		else if (level == MARIO_LEVEL_FIRE)
 		{
-			if (nx > 0) ani = MARIO_ANI_FIRE_IDLE_RIGHT;
-			else ani = MARIO_ANI_FIRE_IDLE_LEFT;
+			if (nx > 0) ani = MARIO_ANI_FIRE_BRAKING_RIGHT;
+			else ani = MARIO_ANI_FIRE_BRAKING_LEFT;
 		}
-	}
-	else if (isBraking)
-	{
-	if (level == MARIO_LEVEL_BIG)
-	{
-		if (nx > 0) ani = MARIO_ANI_BIG_BRAKING_RIGHT;
-		else ani = MARIO_ANI_BIG_BRAKING_LEFT;
-	}
-	else if (level == MARIO_LEVEL_SMALL)
-	{
-		if (nx > 0) ani = MARIO_ANI_SMALL_BRAKING_RIGHT;
-		else ani = MARIO_ANI_SMALL_BRAKING_LEFT;
-	}
-	else if (level == MARIO_LEVEL_TAIL)
-	{
-		if (nx > 0) ani = MARIO_ANI_TAIL_BRAKING_RIGHT;
-		else ani = MARIO_ANI_TAIL_BRAKING_LEFT;
-	}
-	else if (level == MARIO_LEVEL_FIRE)
-	{
-		if (nx > 0) ani = MARIO_ANI_FIRE_BRAKING_RIGHT;
-		else ani = MARIO_ANI_FIRE_BRAKING_LEFT;
-	}
 	}
 	else if (state == MARIO_STATE_SITDOWN)
 	{
@@ -909,7 +944,30 @@ void CMario::Render()
 			else ani = MARIO_ANI_SMALL_IDLE_RIGHT;
 		}
 	}
-	if (state == MARIO_STATE_PIPE_SLIDE_UP || state == MARIO_STATE_PIPE_SLIDE_DOWN)
+	else if (state == MARIO_STATE_IDLE)
+	{
+		if (level == MARIO_LEVEL_BIG)
+		{
+			if (nx > 0) ani = MARIO_ANI_BIG_IDLE_RIGHT;
+			else ani = MARIO_ANI_BIG_IDLE_LEFT;
+		}
+		else if (level == MARIO_LEVEL_SMALL)
+		{
+			if (nx > 0) ani = MARIO_ANI_SMALL_IDLE_RIGHT;
+			else ani = MARIO_ANI_SMALL_IDLE_LEFT;
+		}
+		else if (level == MARIO_LEVEL_TAIL)
+		{
+			if (nx > 0) ani = MARIO_ANI_TAIL_IDLE_RIGHT;
+			else ani = MARIO_ANI_TAIL_IDLE_LEFT;
+		}
+		else if (level == MARIO_LEVEL_FIRE)
+		{
+			if (nx > 0) ani = MARIO_ANI_FIRE_IDLE_RIGHT;
+			else ani = MARIO_ANI_FIRE_IDLE_LEFT;
+		}
+	}
+	else if (state == MARIO_STATE_PIPE_SLIDE_UP || state == MARIO_STATE_PIPE_SLIDE_DOWN)
 	{
 		if (level == MARIO_LEVEL_BIG)
 		{
@@ -976,7 +1034,7 @@ void CMario::Render()
 	}
 	int alpha = 255;
 	if (untouchable) alpha = 128;
-
+	DebugOut(L" ani %d,", ani);
 	animation_set->at(ani)->Render(x, y, alpha);
 
 	/*RenderBoundingBox();*/
@@ -1062,7 +1120,6 @@ void CMario::SetState(int state)
 	case MARIO_STATE_DIE:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
 		life_counter--;
-		DebugOut(L"[ERROR] life count %d\n ", life_counter);
 		StartTimeBackToWorld();
 		break;
 	case MARIO_STATE_SPEEDING_DOWN:
