@@ -403,7 +403,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	CGame *game = CGame::GetInstance();
 	CMario *mario = ((CPlayScene*)scence)->GetPlayer();
-	if (mario->GetState() == MARIO_STATE_DIE || mario->GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || mario->GetState() == MARIO_STATE_PIPE_SLIDE_UP) return;
+	if (mario->GetState() == MARIO_STATE_DIE || mario->GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || mario->GetState() == MARIO_STATE_PIPE_SLIDE_UP || mario->GetAutoWalk()) return;
 	switch (KeyCode)
 	{
 	case DIK_S:
@@ -419,6 +419,19 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	break;
 	case DIK_Q:
 		mario->Reset();
+		break;
+		/*case DIK_A:
+			if (game->IsKeyDown(DIK_RIGHT))
+			{
+				mario->SetState(MARIO_STATE_RUNNING_RIGHT);
+			}
+			else if (game->IsKeyDown(DIK_LEFT))
+			{
+				mario->SetState(MARIO_STATE_RUNNING_LEFT);
+			}
+			break;*/
+	case DIK_L:
+		mario->SetOnTopTunnel();
 		break;
 		/*case DIK_A:
 			if (game->IsKeyDown(DIK_RIGHT))
@@ -492,7 +505,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 	CMario *mario = ((CPlayScene*)scence)->GetPlayer();
 
 	// disable control key when Mario die 
-	if (mario->GetState() == MARIO_STATE_DIE || mario->GetAutoWalk()) return;
+	if (mario->GetState() == MARIO_STATE_DIE || mario->GetAutoWalk() || mario->GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || mario->GetState() == MARIO_STATE_PIPE_SLIDE_UP) return;
 	
 	if (game->IsKeyDown(DIK_RIGHT))
 	{

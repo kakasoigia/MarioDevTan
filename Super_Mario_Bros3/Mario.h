@@ -127,8 +127,8 @@
 #define MARIO_ANI_FALLING_RIGHT			89
 
 #define MARIO_ANI_DIE					90
-#define MARIO_ANI_BIG_PIPE						91
-#define MARIO_ANI_SMALL_PIPE					92
+#define MARIO_ANI_SMALL_PIPE		91
+#define MARIO_ANI_BIG_PIPE			92
 #define MARIO_ANI_TAIL_PIPE						93
 #define MARIO_ANI_FIRE_PIPE						94
 
@@ -235,7 +235,7 @@ public:
 	void StartTurning() { turning_start = GetTickCount(); }
 	bool GetJumpingState() { return isJumping; };
 	void SetJumpingState(bool state) { isJumping = state; };
-	void Reset();
+	void Reset(); void SetOnTopTunnel();
 	void SpeedDown();
 	void Fire();
 	bool SpeedInertia();
