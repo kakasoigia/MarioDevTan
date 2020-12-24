@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animations.h" />
+    <ClInclude Include="BackGroundStage.h" />
     <ClInclude Include="Bell.h" />
     <ClInclude Include="BreakableBrick.h" />
     <ClInclude Include="Brick.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="HudPanels.h" />
     <ClInclude Include="Leaf.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="MenuGame.h" />
     <ClInclude Include="MushRoom.h" />
     <ClInclude Include="NoCollisionObjects.h" />
     <ClInclude Include="Node.h" />
@@ -163,6 +165,7 @@
     <ClInclude Include="QuestionBrick.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="ScoreSpawnable.h" />
+    <ClInclude Include="ScrollingStage.h" />
     <ClInclude Include="SpecialItem.h" />
     <ClInclude Include="StartScene.h" />
     <ClInclude Include="Utils.h" />
@@ -181,6 +184,7 @@
     <ClInclude Include="WorldMapObjects.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BackGroundStage.cpp" />
     <ClCompile Include="Bell.cpp" />
     <ClCompile Include="BreakableBrick.cpp" />
     <ClCompile Include="Brick.cpp" />
@@ -193,6 +197,7 @@
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="Leaf.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MenuGame.cpp" />
     <ClCompile Include="MushRoom.cpp" />
     <ClCompile Include="NoCollisionObjects.cpp" />
     <ClCompile Include="Node.cpp" />
@@ -203,7 +208,9 @@
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Scence.cpp" />
     <ClCompile Include="ScoreSpawnable.cpp" />
+    <ClCompile Include="ScrollingStage.cpp" />
     <ClCompile Include="SpecialItem.cpp" />
+    <ClCompile Include="StartScene.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />

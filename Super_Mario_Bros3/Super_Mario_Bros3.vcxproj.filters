@@ -99,9 +99,6 @@
     <ClInclude Include="ScoreSpawnable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StartScene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WorldMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -115,6 +112,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpecialItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StartScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollingStage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BackGroundStage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -216,6 +225,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpecialItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StartScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollingStage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BackGroundStage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

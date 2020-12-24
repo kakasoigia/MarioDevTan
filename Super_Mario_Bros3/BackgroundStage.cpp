@@ -1,5 +1,5 @@
-#include "BackgroundStage.h"
-
+#include "BackGroundStage.h"
+#include "StartScene.h"
 
 
 CBackGroundStage::CBackGroundStage(int ctype)
@@ -13,12 +13,12 @@ CBackGroundStage::CBackGroundStage(int ctype)
 
 
 
-void CBackGroundStage::GetBoundingBox(float &l, float &t, float &r, float &b)
+void CBackGroundStage::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
 	l = t = r = b = 0;
 }
 
-void CBackGroundStage::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
+void CBackGroundStage::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
 
@@ -29,7 +29,7 @@ void CBackGroundStage::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	StartShowing();
 
-	if (GetTickCount() - time_showing >= 4300)
+	if (GetTickCount() - time_showing >= 2000)
 	{
 		if (type == BACKGROUND_STAGE_TYPE_COLOR)
 		{
@@ -38,7 +38,7 @@ void CBackGroundStage::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		}
 	}
 
-	if (GetTickCount() - time_showing >= 7000)
+	if (GetTickCount() - time_showing >= 5000)
 	{
 		if (type == BACKGROUND_STAGE_TYPE_FINAL)
 		{
@@ -46,6 +46,10 @@ void CBackGroundStage::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		}
 	}
 
+	if (GetTickCount() - time_showing >= 7000)
+	{
+		((CStartScene*)CGame::GetInstance()->GetCurrentScene())->SetMenuGame(true);
+	}
 
 	if (type == BACKGROUND_STAGE_TYPE_COLOR && isAppear)
 	{
@@ -73,7 +77,7 @@ void CBackGroundStage::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		StartShake();
 		if (GetTickCount() - time_shake >= 25)
 		{
-			this->vy = 0.2f *shakeDirection;
+			this->vy = 0.2f * shakeDirection;
 			shakeDirection = -shakeDirection;
 			time_shake = 0;
 		}
@@ -154,3 +158,4 @@ void CBackGroundStage::SetState(int state)
 		break;
 	}
 }
+

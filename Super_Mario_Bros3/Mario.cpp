@@ -91,7 +91,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	CGameObject::Update(dt);
 
 	// Simple fall down
-	if (state != MARIO_STATE_FLY && state != MARIO_STATE_FALL_DOWN & state != MARIO_STATE_PIPE_SLIDE_DOWN & state != MARIO_STATE_PIPE_SLIDE_UP)
+	if (state != MARIO_STATE_FLY && state != MARIO_STATE_FALL_DOWN & state != MARIO_STATE_PIPE_SLIDE_DOWN & state != MARIO_STATE_PIPE_SLIDE_UP &&!isTransforming)
 		vy += MARIO_GRAVITY * dt;
 
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -159,6 +159,47 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			setPositionOutOfTunnel = false;
 		}
 	}
+	if (isTransforming)
+	{
+		vx = 0;
+	}
+	if (transforming_start != 0)
+	{
+		if (GetTickCount() - transforming_start >= 2000)
+		{
+			isTransforming = false;
+			transforming_start = 0;
+			int id = CGame::GetInstance()->GetCurrentScene()->GetId();
+			if (id == 1)
+			{
+				if (level == MARIO_LEVEL_TAIL)
+				{
+					SetLevel(MARIO_LEVEL_SMALL);
+				}
+				else if (level == MARIO_LEVEL_BIG)
+				{
+					SetLevel(MARIO_LEVEL_TAIL);
+				}
+			}
+			else
+			{
+				if (!transformRecog)
+				{
+					if (level == MARIO_LEVEL_TAIL)
+					{
+						SetLevel(MARIO_LEVEL_BIG);
+					}
+					else
+					{
+						SetLevel(MARIO_LEVEL_SMALL);
+					}
+				}
+			}
+
+		}
+		
+	}
+
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
@@ -247,20 +288,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					{
 						if (goomba->GetState() != GOOMBA_STATE_DIE)
 						{
-							if (level == MARIO_LEVEL_BIG)
-							{
-								level = MARIO_LEVEL_SMALL;
-								isFiring = false;
-								StartUntouchable();
-							}
-							else if (level == MARIO_LEVEL_TAIL || level == MARIO_LEVEL_FIRE)
-							{
-								level = MARIO_LEVEL_BIG;
-								isFiring = false;
-								StartUntouchable();
-							}
-							else
-								SetState(MARIO_STATE_DIE);
+							SetLevelAfterCollision();
 						}
 					}
 
@@ -341,20 +369,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						{
 							if (koopas->GetState() != KOOPAS_STATE_DIE)
 							{
-								if (level == MARIO_LEVEL_BIG)
-								{
-									level = MARIO_LEVEL_SMALL;
-									isFiring = false;
-									StartUntouchable();
-								}
-								else if (level == MARIO_LEVEL_TAIL || level == MARIO_LEVEL_FIRE)
-								{
-									level = MARIO_LEVEL_BIG;
-									isFiring = false;
-									StartUntouchable();
-								}
-								else
-									SetState(MARIO_STATE_DIE);
+								SetLevelAfterCollision();
 							}
 						}
 					}
@@ -365,20 +380,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						{
 							if (koopas->GetState() != KOOPAS_STATE_DIE)
 							{
-								if (level == MARIO_LEVEL_BIG)
-								{
-									level = MARIO_LEVEL_SMALL;
-									isFiring = false;
-									StartUntouchable();
-								}
-								else if (level == MARIO_LEVEL_TAIL || level == MARIO_LEVEL_FIRE)
-								{
-									level = MARIO_LEVEL_BIG;
-									isFiring = false;
-									StartUntouchable();
-								}
-								else
-									SetState(MARIO_STATE_DIE);
+								SetLevelAfterCollision();
 							}
 						}
 					}
@@ -400,20 +402,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				if (untouchable == 0)
 				{
-					if (level == MARIO_LEVEL_BIG)
-					{
-						level = MARIO_LEVEL_SMALL;
-						isFiring = false;
-						StartUntouchable();
-					}
-					else if (level == MARIO_LEVEL_TAIL || level == MARIO_LEVEL_FIRE)
-					{
-						level = MARIO_LEVEL_BIG;
-						isFiring = false;
-						StartUntouchable();
-					}
-					else
-						SetState(MARIO_STATE_DIE);
+					SetLevelAfterCollision();
 
 				}
 			}
@@ -421,20 +410,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				if (untouchable == 0)
 				{
-					if (level == MARIO_LEVEL_BIG)
-					{
-						level = MARIO_LEVEL_SMALL;
-						isFiring = false;
-						StartUntouchable();
-					}
-					else if (level == MARIO_LEVEL_TAIL || level == MARIO_LEVEL_FIRE)
-					{
-						level = MARIO_LEVEL_BIG;
-						isFiring = false;
-						StartUntouchable();
-					}
-					else
-						SetState(MARIO_STATE_DIE);
+					SetLevelAfterCollision();;
 
 				}
 			}
@@ -664,9 +640,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	float camX = 0;
 	float camY = 0;
 	if (x > (game->GetScreenWidth() / 2)) camX = cx;
-	/*if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true
-		|| y < -100 || GetState() == MARIO_STATE_PIPE_SLIDE_DOWN  || GetState() == MARIO_STATE_PIPE_SLIDE_UP)*/
-	/*if (y <= (game->GetScreenHeight() / 2))*/ camY = cy + 20;
+	if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true
+		|| y < -100 || GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || GetState() == MARIO_STATE_PIPE_SLIDE_UP )
+	{
+		/*if (y <= (game->GetScreenHeight() / 2))*/ camY = cy + 20;
+	}
+	
 	CGame::GetInstance()->SetCamPos((int)camX, (int)camY - 70);
 	if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);
 	if (isAtTunnel)
@@ -1041,6 +1020,37 @@ void CMario::Render()
 			ani = MARIO_ANI_FIRE_WALKING_LEFT;
 		}
 	}
+	if (isTransforming)
+	{
+		if (level == MARIO_LEVEL_BIG || level == MARIO_LEVEL_SMALL)
+		{
+			
+				if (nx > 0) ani = MARIO_TRANSFORM_RIGHT;
+				else ani = MARIO_TRANSFORM_LEFT;
+			
+
+		}
+		else if (level == MARIO_LEVEL_TAIL)
+		{
+			
+				if (nx > 0)	ani = MARIO_SMOKE_TRANSFORM_RIGHT;
+				else ani = MARIO_SMOKE_TRANSFORM_LEFT;
+			
+		}
+	}
+	else
+	{
+		if (level == MARIO_LEVEL_BIG)
+		{
+				ani = MARIO_SMOKE_TRANSFORM_LEFT;
+		}
+		else if (level == MARIO_LEVEL_TAIL)
+		{
+				ani = MARIO_TRANSFORM_RIGHT;
+		}
+	}
+
+	
 	int alpha = 255;
 	if (untouchable) alpha = 128;
 	DebugOut(L" ani %d,", ani);
@@ -1169,6 +1179,8 @@ void CMario::SetOnTopTunnel()
 {
 	SetState(MARIO_STATE_IDLE);
 	SetLevel(MARIO_LEVEL_BIG);
+	isAtTunnel = false;
+
 	SetPosition(2256, -190);
 	SetSpeed(0, 0);
 }
@@ -1258,6 +1270,18 @@ void CMario::IncScore(int score, long pos_x, long pos_y)
 {
 	Score += score;
 
+}
+void CMario::SetLevelAfterCollision()
+{
+	if (level > MARIO_LEVEL_SMALL)
+	{
+		transformRecog = false;
+		StartTransforming();
+		isFiring = false;
+		StartUntouchable();
+	}
+	else
+		SetState(MARIO_STATE_DIE);
 }
 
 

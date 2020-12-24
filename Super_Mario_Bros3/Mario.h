@@ -132,6 +132,12 @@
 #define MARIO_ANI_TAIL_PIPE						93
 #define MARIO_ANI_FIRE_PIPE						94
 
+#define MARIO_TRANSFORM_LEFT					95
+#define MARIO_TRANSFORM_RIGHT					96
+
+#define MARIO_SMOKE_TRANSFORM_LEFT				97
+#define MARIO_SMOKE_TRANSFORM_RIGHT				98
+
 #define	MARIO_LEVEL_BIG		2
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_TAIL	3
@@ -205,9 +211,12 @@ protected:
 	bool isLanding = false;
 	bool isHoldAni = false;
 	bool isAutoWalk = false;
+	bool isTransforming = false;
+	bool transformRecog = false;
 	DWORD start_time_die_back_to_worldmap = 0;
 	int current_level_speed_up;
 	DWORD turning_start = 0;
+	DWORD transforming_start = 0;
 
 	bool canPipeSlideDown = false;
 	bool canPipeSlideUp = false;
@@ -239,6 +248,7 @@ public:
 	void SpeedDown();
 	void Fire();
 	bool SpeedInertia();
+	void SetLevelAfterCollision();
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	 int GetIsHolding()
 	 {
@@ -368,7 +378,27 @@ public:
 	 {
 		 this->canPipeSlideUp = canPipeSlideUp;
 	 }
-
+	 bool GetIsTransforming()
+	 {
+		 return isTransforming;
+	 }
+	 void SetIsTransforming(bool isTransformingBool)
+	 {
+		 isTransforming = isTransformingBool;
+	 }
+	 bool GetTransformRecog()
+	 {
+		 return transformRecog;
+	 }
+	 void SetTransformRecog(bool transformRecogBool)
+	 {
+		 transformRecog = transformRecogBool;
+	 }
+	 void StartTransforming()
+	 {
+		 if (transforming_start == 0)
+			 transforming_start = GetTickCount();
+	 }
 	 // HUD 
 	 int GetCoinCounter() { return CoinCounter; };
 	 void CoinCounterUp() { CoinCounter++; Score += 50; };

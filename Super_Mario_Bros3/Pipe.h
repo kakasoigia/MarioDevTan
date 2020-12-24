@@ -1,8 +1,12 @@
 #pragma once
 #include "GameObject.h"
 
-#define BRICK_BBOX_WIDTH  16
-#define BRICK_BBOX_HEIGHT 16
+#define PIPE_BBOX_WIDTH  32
+#define PIPE_BBOX_HEIGHT 16
+
+#define PIPE_BBOX_WIDTH_NORMAL	16
+
+
 #define PIPE_TYPE_NORMAL	100
 #define PIPE_TYPE_DOWN		200
 #define PIPE_TYPE_UP		300

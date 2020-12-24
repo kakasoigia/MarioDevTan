@@ -1,7 +1,7 @@
 [SETTINGS]
-start	2
+start	1
 #scene list
 [SCENES]
-1	start_scene
+1	start_scene.txt
 2	world_map.txt
 3	scene-1.txt

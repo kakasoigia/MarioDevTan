@@ -340,9 +340,13 @@ void CGame::_ParseSection_SCENES(string line)
 	int id = atoi(tokens[0].c_str());
 	LPCWSTR path = ToLPCWSTR(tokens[1]);
 	LPSCENE scene;
-	/*if (id == 1)
+	if (id == 1)
+	{
 		scene = new CStartScene(id, path);
-	else*/ if (id == 2)
+		SetCamPos(0,-50);
+	}
+		
+	else if (id == 2)
 	{
 		scene = new CWorldMap(id, path);
 	}
