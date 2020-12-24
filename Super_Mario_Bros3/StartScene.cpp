@@ -226,7 +226,7 @@ void CStartScene::Load()
 void CStartScene::Update(DWORD dt)
 {
 	StartTimeCount();
-
+	
 
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 0; i < objects.size(); i++)

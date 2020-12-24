@@ -317,7 +317,7 @@ void CPlayScene::Update(DWORD dt)
 {
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
 	// TO-DO: This is a "dirty" way, need a more organized way 
-
+	bool isTransform = player->GetIsTransforming();
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 0; i < objects.size(); i++)
 	{
@@ -330,9 +330,19 @@ void CPlayScene::Update(DWORD dt)
 		CGame *game = CGame::GetInstance();
 		float rangeXleft = player->x - game->GetScreenHeight() - 100;
 		float rangeXright = player->x + game->GetScreenHeight() + 100;
-		if ((objects[i]-> x>rangeXleft && 
-			objects[i]->x< rangeXright)|| dynamic_cast<HudPanel *>(objects[i]))
-		objects[i]->Update(dt, &coObjects);
+		if ((objects[i]->x > rangeXleft &&
+			objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]) )
+		{
+			if (dynamic_cast<CMario*>(objects[i]))
+			{
+				objects[i]->Update(dt, &coObjects);
+			}
+			else if (!isTransform)
+			{
+				objects[i]->Update(dt, &coObjects);
+			}
+		}
+		
 	}
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
@@ -340,19 +350,6 @@ void CPlayScene::Update(DWORD dt)
 	// chống đi lùi màn hình
 	if (player->x < 0) player->x = 0;
 	//// Update camera to follow mario
-	//float cx, cy;
-	//player->GetPosition(cx, cy);
-
-	//CGame *game = CGame::GetInstance();
-	//cx -= game->GetScreenWidth() / 2;
-	//cy -= game->GetScreenHeight() / 2;
-
-	//float camX = 0;
-	//float camY = 0;
-	//if (player->x > (game->GetScreenWidth() / 2)) camX = cx;
-	//if (player->GetState()== MARIO_STATE_FLY || player->GetState() == MARIO_STATE_FALL_DOWN || player-> GetIsLanding()==true || player->y<10)
-	//	if (player->y <= (game->GetScreenHeight() / 2)) camY =cy;
-	//CGame::GetInstance()->SetCamPos((int)camX, (int)camY);
 
 
 }
@@ -403,7 +400,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	CGame *game = CGame::GetInstance();
 	CMario *mario = ((CPlayScene*)scence)->GetPlayer();
-	if (mario->GetState() == MARIO_STATE_DIE || mario->GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || mario->GetState() == MARIO_STATE_PIPE_SLIDE_UP || mario->GetAutoWalk()) return;
+	if (mario->GetState() == MARIO_STATE_DIE || mario->GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || mario->GetState() == MARIO_STATE_PIPE_SLIDE_UP || mario->GetAutoWalk() ||mario->GetIsTransforming()) return;
 	switch (KeyCode)
 	{
 	case DIK_S:
@@ -445,9 +442,12 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			break;*/
 	case DIK_F:
 		mario->SetLevel(MARIO_LEVEL_FIRE);
+		
 		break;
 	case DIK_T:
+		
 		mario->SetLevel(MARIO_LEVEL_TAIL);
+		
 		break;
 
 		
@@ -505,7 +505,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 	CMario *mario = ((CPlayScene*)scence)->GetPlayer();
 
 	// disable control key when Mario die 
-	if (mario->GetState() == MARIO_STATE_DIE || mario->GetAutoWalk() || mario->GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || mario->GetState() == MARIO_STATE_PIPE_SLIDE_UP) return;
+	if (mario->GetState() == MARIO_STATE_DIE || mario->GetAutoWalk() || mario->GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || mario->GetState() == MARIO_STATE_PIPE_SLIDE_UP || mario->GetIsTransforming()) return;
 	
 	if (game->IsKeyDown(DIK_RIGHT))
 	{

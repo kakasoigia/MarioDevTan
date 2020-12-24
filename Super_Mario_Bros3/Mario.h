@@ -149,12 +149,14 @@
 #define MARIO_SMALL_BBOX_WIDTH  13
 #define MARIO_SMALL_BBOX_HEIGHT 15
 
-#define MARIO_UNTOUCHABLE_TIME 3000
+#define MARIO_UNTOUCHABLE_TIME 1000
 #define MARIO_KICK_TIME 300
 #define MARIO_TURNING_TIME		 500
 #define MARIO_FLYING_TIME		 3500
 #define MARIO_TIME_BACK_TO_WORLDMAP	2000
 #define MARIO_TIME_SLIDE_UP_DOWN 3000
+#define MARIO_TIME_TRANSFORM 1000
+#define MARIO_TIME_FIRING 200
 #define	MARIO_DIFFERENCE_HEIGHT	12
 
 #define MARIO_BIG_BBOX_WIDTH  15
@@ -212,11 +214,12 @@ protected:
 	bool isHoldAni = false;
 	bool isAutoWalk = false;
 	bool isTransforming = false;
-	bool transformRecog = false;
+	bool transformUpLevel = false;
 	DWORD start_time_die_back_to_worldmap = 0;
 	int current_level_speed_up;
 	DWORD turning_start = 0;
 	DWORD transforming_start = 0;
+	DWORD firing_start = 0;
 
 	bool canPipeSlideDown = false;
 	bool canPipeSlideUp = false;
@@ -248,7 +251,8 @@ public:
 	void SpeedDown();
 	void Fire();
 	bool SpeedInertia();
-	void SetLevelAfterCollision();
+	void SetTransformingDown();
+	void SetTransformingUp(int type);
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	 int GetIsHolding()
 	 {
@@ -386,13 +390,13 @@ public:
 	 {
 		 isTransforming = isTransformingBool;
 	 }
-	 bool GetTransformRecog()
+	 bool GetIsTransFormUpLevel()
 	 {
-		 return transformRecog;
+		 return transformUpLevel;
 	 }
-	 void SetTransformRecog(bool transformRecogBool)
+	 void SetIsTransFormUpLevel(bool transformRecogBool)
 	 {
-		 transformRecog = transformRecogBool;
+		 transformUpLevel = transformRecogBool;
 	 }
 	 void StartTransforming()
 	 {
