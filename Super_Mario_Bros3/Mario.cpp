@@ -527,9 +527,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				}
 				else
 				{
+					//SetTransformingUp(2); // tail
 					leaf->SetIsAppear(false);
-
-
 				}
 				IncScore(1000, leaf->x, leaf->y);
 			}
@@ -579,10 +578,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					break;
 				}
 				isAutoWalk = true;
-				/*vx = MARIO_WALKING_SPEED;
-				nx = 1;
-				state = MARIO_STATE_WALKING_RIGHT;*/
 				SetState(MARIO_STATE_WALKING_RIGHT);
+				StartTimeBackToWorld();
 
 			}
 			if (dynamic_cast<CPipe *>(e->obj))
@@ -636,13 +633,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		/*if (y <= (game->GetScreenHeight() / 2))*/ camY = cy + 20;
 	}
-
-	CGame::GetInstance()->SetCamPos((int)camX, (int)camY - 70);
-	if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);
-	if (isAtTunnel)
+	if (state != MARIO_STATE_DIE)
 	{
-		CGame::GetInstance()->SetCamPos(1300, 980);
+		CGame::GetInstance()->SetCamPos((int)camX, (int)camY - 70);
+		if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);
+		if (isAtTunnel)
+		{
+			CGame::GetInstance()->SetCamPos(1300, 980);
+		}
 	}
+	
 
 }
 
@@ -1046,7 +1046,7 @@ void CMario::Render()
 }
 void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
-
+	if (state == MARIO_STATE_DIE) left = top = right = bottom = 0;
 	left = x;
 	top = y;
 	if (level == MARIO_LEVEL_BIG)
@@ -1123,6 +1123,8 @@ void CMario::SetState(int state)
 		vx = 0;
 		break;
 	case MARIO_STATE_DIE:
+		y -= 3;
+		vx = 0;
 		vy = -MARIO_DIE_DEFLECT_SPEED;
 		life_counter--;
 		StartTimeBackToWorld();
@@ -1161,14 +1163,35 @@ void CMario::Reset()
 	SetPosition(start_x, start_y);
 	SetSpeed(0, 0);
 }
-void CMario::SetOnTopTunnel()
+void CMario::SetOnSpecialPosition(int place)
 {
+	switch (place)
+	{
+	case 1: // place  red goomba
+		SetPosition(392, 117);
+		SetSpeed(0, 0);
+		break;
+	case 2: // place 3 koopas
+		SetPosition(630, 80);
+		SetSpeed(0, 0);
+		break;
+	case 3: //place breakable brick
+		SetPosition(2200, 80);
+		SetSpeed(0, 0);
+		break;
+	case 4: //place breakable brick
+		SetPosition(2256, -190);
+		SetSpeed(0, 0);
+		break;
+	default:
+		break;
+	}
 	SetState(MARIO_STATE_IDLE);
-	SetLevel(MARIO_LEVEL_BIG);
 	isAtTunnel = false;
+	
+	
 
-	SetPosition(2256, -190);
-	SetSpeed(0, 0);
+	
 }
 
 void CMario::SetLevel(int l)

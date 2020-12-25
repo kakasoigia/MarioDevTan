@@ -149,7 +149,7 @@
 #define MARIO_SMALL_BBOX_WIDTH  13
 #define MARIO_SMALL_BBOX_HEIGHT 15
 
-#define MARIO_UNTOUCHABLE_TIME 1000
+#define MARIO_UNTOUCHABLE_TIME 3000
 #define MARIO_KICK_TIME 300
 #define MARIO_TURNING_TIME		 500
 #define MARIO_FLYING_TIME		 3500
@@ -247,7 +247,7 @@ public:
 	void StartTurning() { turning_start = GetTickCount(); }
 	bool GetJumpingState() { return isJumping; };
 	void SetJumpingState(bool state) { isJumping = state; };
-	void Reset(); void SetOnTopTunnel();
+	void Reset(); void SetOnSpecialPosition(int place);
 	void SpeedDown();
 	void Fire();
 	bool SpeedInertia();

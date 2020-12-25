@@ -428,18 +428,17 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			}
 			break;*/
 	case DIK_L:
-		mario->SetOnTopTunnel();
+		mario->SetOnSpecialPosition(4);
 		break;
-		/*case DIK_A:
-			if (game->IsKeyDown(DIK_RIGHT))
-			{
-				mario->SetState(MARIO_STATE_RUNNING_RIGHT);
-			}
-			else if (game->IsKeyDown(DIK_LEFT))
-			{
-				mario->SetState(MARIO_STATE_RUNNING_LEFT);
-			}
-			break;*/
+	case DIK_H:
+		mario->SetOnSpecialPosition(1);
+		break;
+	case DIK_J:
+		mario->SetOnSpecialPosition(2);
+		break;
+	case DIK_K:
+		mario->SetOnSpecialPosition(3);
+		break;
 	case DIK_F:
 		mario->SetLevel(MARIO_LEVEL_FIRE);
 		
@@ -449,7 +448,14 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		mario->SetLevel(MARIO_LEVEL_TAIL);
 		
 		break;
+	case DIK_B:
 
+		mario->SetLevel(MARIO_LEVEL_BIG);
+
+		break;
+	case DIK_M:
+		mario->SetLevel(MARIO_LEVEL_SMALL);
+		break;
 		
 	case DIK_A:
 		mario->SetIsHolding(true);
@@ -479,10 +485,11 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 }
 void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 {
-	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	CGame *game = CGame::GetInstance();
 	CMario *mario = ((CPlayScene*)scence)->GetPlayer();
-	if (mario->GetState() == MARIO_STATE_DIE) return;
+	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
+	if (mario->GetState() == MARIO_STATE_DIE || mario->GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || mario->GetState() == MARIO_STATE_PIPE_SLIDE_UP || mario->GetAutoWalk() || mario->GetIsTransforming()) return;
+	
 	switch (KeyCode)
 	{
 	case DIK_A:

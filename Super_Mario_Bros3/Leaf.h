@@ -4,8 +4,10 @@
 #include "Mario.h"
 #include "PlayScence.h"
 
-#define LEAF_BBOX_WIDTH		16
-#define LEAF_BBOX_HEIGHT	14
+//#define LEAF_BBOX_WIDTH		16
+//#define LEAF_BBOX_HEIGHT	14
+#define LEAF_BBOX_WIDTH		18
+#define LEAF_BBOX_HEIGHT	16
 
 #define LEAF_STATE_IDLE		150
 #define LEAF_STATE_UP		100
