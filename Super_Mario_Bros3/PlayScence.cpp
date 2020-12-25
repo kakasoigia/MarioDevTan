@@ -167,8 +167,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 
 	int object_type = atoi(tokens[0].c_str());
-	double x = atof(tokens[1].c_str());
-	double y = atof(tokens[2].c_str());
+	float x = atof(tokens[1].c_str());
+	float y = atof(tokens[2].c_str());
 
 	int ani_set_id = atoi(tokens[3].c_str());
 
@@ -233,8 +233,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	case OBJECT_TYPE_PORTAL:
 	{
-		double r = atof(tokens[4].c_str());
-		double b = atof(tokens[5].c_str());
+		float r = atof(tokens[4].c_str());
+		float b = atof(tokens[5].c_str());
 		int scene_id = atoi(tokens[6].c_str());
 		obj = new CPortal(x, y, r, b, scene_id);
 	}

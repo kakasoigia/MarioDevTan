@@ -44,7 +44,7 @@ HudPanel::HudPanel()
 		else
 			filledPowerMelterSprite.push_back(sprites->Get(HUD_SPRITE_POWERMELTER_FILLED_LIGHT));
 	}
-	for (int i = 0; i < 3; i++)
+	for (unsigned int i = 0; i < 3; i++)
 	{
 			itemSprite.push_back(sprites->Get(HUD_SPRITE_EMPTY_CARD));
 	}
@@ -157,7 +157,7 @@ void HudPanel::Render()
 		powerMelterSprite[i]->Draw(x + 92 + 8 * i, y - 71);
 	}
 	
-	for (int i = 0; i < powerMelterStack; i++)
+	for (unsigned int i = 0; i < powerMelterStack; i++)
 	{
 		filledPowerMelterSprite[i]->Draw( x + 92 + 8 * i, y - 71);
 	}
@@ -217,7 +217,7 @@ vector<LPSPRITE> HudPanel::StringToSprite(string str)
 	vector<LPSPRITE> sprites;
 	LPSPRITE sprite;
 	char c;
-	for (int i = 0; i < str.size(); i++)
+	for (unsigned int i = 0; i < str.size(); i++)
 	{
 		c = (char)str[i];
 		sprite = GetSprite(c);
@@ -231,7 +231,7 @@ vector<LPSPRITE> HudPanel::ItemToSprite(vector<int> itemList)
 	CSprites* sprites = CSprites::GetInstance();
 	
 	
-	for (int i = 0; i < itemList.size(); i++)
+	for (unsigned int i = 0; i < itemList.size(); i++)
 	{
 		switch (itemList[i])
 		{

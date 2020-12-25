@@ -318,7 +318,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				}
 				if (e->ny < 0 && brick->GetIsBouncing() )
 				{
-					this->state == KOOPAS_STATE_SHELL;
+					this->state = KOOPAS_STATE_SHELL;
 					vy -= 0.1f;
 				}
 			}

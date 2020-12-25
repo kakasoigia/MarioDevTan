@@ -91,7 +91,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	CGameObject::Update(dt);
 
 	// Simple fall down
-	if (state != MARIO_STATE_FLY && state != MARIO_STATE_FALL_DOWN & state != MARIO_STATE_PIPE_SLIDE_DOWN & state != MARIO_STATE_PIPE_SLIDE_UP && !isTransforming)
+	if (state != MARIO_STATE_FLY && state != MARIO_STATE_FALL_DOWN && state != MARIO_STATE_PIPE_SLIDE_DOWN && state != MARIO_STATE_PIPE_SLIDE_UP && !isTransforming)
 		vy += MARIO_GRAVITY * dt;
 
 	vector<LPCOLLISIONEVENT> coEvents;
