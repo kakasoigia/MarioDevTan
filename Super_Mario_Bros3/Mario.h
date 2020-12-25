@@ -148,7 +148,7 @@
 
 #define MARIO_SMALL_BBOX_WIDTH  13
 #define MARIO_SMALL_BBOX_HEIGHT 15
-
+#define MARIO_TURNING_BONUS_HEIGHT 8
 #define MARIO_UNTOUCHABLE_TIME 3000
 #define MARIO_KICK_TIME 300
 #define MARIO_TURNING_TIME		 500
@@ -407,7 +407,7 @@ public:
 	 int GetCoinCounter() { return CoinCounter; };
 	 void CoinCounterUp() { CoinCounter++; Score += 50; };
 	 long GetScore() { return Score; };
-	 void IncScore(int score,long pos_x,long pos_y);
+	 void IncScore(int score,float pos_x, float pos_y);
 	 void AddLifeCounter() { life_counter++; };
 	 int GetLifeCounter() { return life_counter; };
 	 void AddItem(int item_type) { if (itemList.size() <= 3) itemList.push_back(item_type); };

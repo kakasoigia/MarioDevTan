@@ -19,6 +19,7 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 	if (state == KOOPAS_STATE_SHELL || state == KOOPAS_STATE_SPINNING)
 	{
 		bottom = y + KOOPAS_BBOX_HEIGHT_SHELL;
+		right = x + KOOPAS_BBOX_WIDTH-3;
 	}
 	else if (state == KOOPAS_STATE_DIE)
 		bottom = y + KOOPAS_BBOX_HEIGHT_DIE;
@@ -155,6 +156,8 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		CalcPotentialCollisions(coObjects, coEvents);
 	}
+	// block 
+	
 	if (isHolding == true)
 	{
 		if (!mario->GetIsHolding())
@@ -221,6 +224,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
 	{
+
 		x += dx;
 		y += dy;
 		if (CanPullBack && Type == KOOPAS_TYPE_RED_WALK)
@@ -239,6 +243,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	else
 	{
+
 		// land ...fly
 		float min_tx, min_ty, nx = 0, ny;
 		float rdx = 0;
@@ -246,7 +251,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
 		if (!isHolding)
-			x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
+			x += min_tx * dx + nx * 0.5f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
 		/*y += min_ty * dy + ny * 0.4f;*/
 
 		if (ny != 0) vy = 0;
@@ -310,7 +315,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			else if (dynamic_cast<CBreakableBrick *>(e->obj))
 			{
 				CBreakableBrick *brick = dynamic_cast<CBreakableBrick *>(e->obj);
-				if (e->nx != 0 && ny == 0 && this->state == KOOPAS_STATE_SPINNING)
+				if (e->nx != 0 /*&& ny == 0*/ && this->state == KOOPAS_STATE_SPINNING )
 				{
 					this->vx = -this->vx;
 					brick->SetState(BREAKABLE_STATE_BROKEN);

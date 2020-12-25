@@ -469,7 +469,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					}
 					if (e->nx != 0)
 					{
-						if (isTurning == true)
+						if (isTurning && (brick->y >= this->y + MARIO_TURNING_BONUS_HEIGHT))
 						{
 							if (brick->GetType() == BREAKABLE_BRICK_NORMAL)
 							{
@@ -640,6 +640,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		if (isAtTunnel)
 		{
 			CGame::GetInstance()->SetCamPos(1300, 980);
+		}
+		if (isAutoWalk)
+		{
+			CGame::GetInstance()->SetCamPos(2500, -62);
 		}
 	}
 	
@@ -1279,7 +1283,7 @@ void CMario::StartFlying()
 		}
 	}
 }
-void CMario::IncScore(int score, long pos_x, long pos_y)
+void CMario::IncScore(int score, float pos_x, float pos_y)
 {
 	Score += score;
 

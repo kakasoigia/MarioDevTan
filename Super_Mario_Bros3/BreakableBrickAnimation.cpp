@@ -69,20 +69,20 @@ void CBreakableBrickAnimation::SetState(int state)
 		switch (type)
 		{
 		case BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP:
-			vx = -0.04f;
-			vy = -0.1f;
+			vx = -0.1f;
+			vy = -0.2f;
 			break;
 		case BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_BOTTOM:
-			vx = -0.04f;
-			vy = -0.05f;
-			break;
-		case BREAKABLE_BRICK_ANIMATION_TYPE_RIGHT_TOP:
-			vx = 0.04f;
+			vx = -0.1f;
 			vy = -0.1f;
 			break;
+		case BREAKABLE_BRICK_ANIMATION_TYPE_RIGHT_TOP:
+			vx = 0.1f;
+			vy = -0.2f;
+			break;
 		case BREAKABLE_BRICK_ANIMATION_TYPE_RIGHT_BOTTOM:
-			vx = 0.04f;
-			vy = -0.05f;
+			vx = 0.1f;
+			vy = -0.1f;
 			break;
 		}
 		break;
