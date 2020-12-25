@@ -13,6 +13,7 @@
 #define BREAKABLE_STATE_BROKEN	555
 #define BREAKABLE_STATE_EMPTY_BOX	666
 #define BREAKABLE_STATE_COIN	777
+#define BREAKABLE_STATE_DISAPPEAR 888
 
 #define BREAKABLE_ANI_NORMAL 0
 #define BREAKABLE_ANI_EMPTY_BOX 1
@@ -30,6 +31,8 @@ public:
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
 	virtual void GetBoundingBox(float &l, float &t, float &r, float &b);
 	CBreakableBrick(int type);
+	virtual void SetState(int state);
+	void CallBrickPieces();
 	int GetType()
 	{
 		return Type;

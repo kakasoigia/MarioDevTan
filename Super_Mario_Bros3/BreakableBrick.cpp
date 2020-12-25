@@ -1,5 +1,6 @@
 #include "BreakableBrick.h"
 #include "Utils.h"
+#include "BreakableBrickAnimation.h"
 CBreakableBrick::CBreakableBrick(int type)
 {
 	Type = type;
@@ -12,6 +13,8 @@ void CBreakableBrick::Render()
 	{
 		case BREAKABLE_STATE_BROKEN:
 			return; 
+		case BREAKABLE_STATE_DISAPPEAR:
+			return;
 		case BREAKABLE_STATE_COIN:
 			ani = BREAKABLE_ANI_COIN; break;
 		case BREAKABLE_STATE_SHOW:
@@ -27,7 +30,7 @@ void CBreakableBrick::Render()
 
 void CBreakableBrick::GetBoundingBox(float &l, float &t, float &r, float &b)
 {
-	if (state == BREAKABLE_STATE_BROKEN)
+	if (state == BREAKABLE_STATE_BROKEN || state == BREAKABLE_STATE_DISAPPEAR)
 	{
 		l = 0;
 		t = 0;
@@ -81,3 +84,83 @@ void CBreakableBrick::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 
 }
+void CBreakableBrick::SetState(int state)
+{
+	CGameObject::SetState(state);
+	switch (state)
+	{
+	case	BREAKABLE_STATE_BROKEN:
+		CallBrickPieces();
+		break;
+	}
+}
+void CBreakableBrick::CallBrickPieces()
+{
+	vector<LPGAMEOBJECT> objects = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->Get_objects();
+	unsigned int i = 0;
+	for ( i; i < objects.size(); i++) // find breakable brick free
+	{
+		if (dynamic_cast<CBreakableBrickAnimation *>(objects[i]))
+		{
+			CBreakableBrickAnimation *brick_piece = dynamic_cast<CBreakableBrickAnimation *>(objects[i]);
+			if (!brick_piece->GetIsUsed() && brick_piece->GetType() == BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP)
+			{
+				brick_piece->SetIsUsed(true);
+				brick_piece->StartTiming();
+				brick_piece->SetState(BREAKABLE_BRICK_ANIMATION_STATE_MOVE);
+				brick_piece->SetPosition(x+ BRICK_BBOX_WIDTH/2,y+ BRICK_BBOX_HEIGHT/2);
+				break;
+			}
+		}
+		;
+	}
+	for (i; i < objects.size(); i++) // find breakable brick free
+	{
+		if (dynamic_cast<CBreakableBrickAnimation *>(objects[i]))
+		{
+			CBreakableBrickAnimation *brick_piece = dynamic_cast<CBreakableBrickAnimation *>(objects[i]);
+			if (!brick_piece->GetIsUsed() && brick_piece->GetType() == BREAKABLE_BRICK_ANIMATION_TYPE_RIGHT_TOP)
+			{
+				brick_piece->SetIsUsed(true);
+				brick_piece->StartTiming();
+				brick_piece->SetState(BREAKABLE_BRICK_ANIMATION_STATE_MOVE);
+				brick_piece->SetPosition(x + BRICK_BBOX_WIDTH / 2, y + BRICK_BBOX_HEIGHT / 2);
+				break;
+			}
+		}
+		;
+	}
+	for (i; i < objects.size(); i++) // find breakable brick free
+	{
+		if (dynamic_cast<CBreakableBrickAnimation *>(objects[i]))
+		{
+			CBreakableBrickAnimation *brick_piece = dynamic_cast<CBreakableBrickAnimation *>(objects[i]);
+			if (!brick_piece->GetIsUsed() && brick_piece->GetType() == BREAKABLE_BRICK_ANIMATION_TYPE_RIGHT_BOTTOM)
+			{
+				brick_piece->SetIsUsed(true);
+				brick_piece->StartTiming();
+				brick_piece->SetState(BREAKABLE_BRICK_ANIMATION_STATE_MOVE);
+				brick_piece->SetPosition(x + BRICK_BBOX_WIDTH / 2, y + BRICK_BBOX_HEIGHT / 2);
+				break;
+			}
+		}
+		;
+	}
+	for (i; i < objects.size(); i++) // find breakable brick free
+	{
+		if (dynamic_cast<CBreakableBrickAnimation *>(objects[i]))
+		{
+			CBreakableBrickAnimation *brick_piece = dynamic_cast<CBreakableBrickAnimation *>(objects[i]);
+			if (!brick_piece->GetIsUsed() && brick_piece->GetType() == BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_BOTTOM)
+			{
+				brick_piece->SetIsUsed(true);
+				brick_piece->StartTiming();
+				brick_piece->SetState(BREAKABLE_BRICK_ANIMATION_STATE_MOVE);
+				brick_piece->SetPosition(x + BRICK_BBOX_WIDTH / 2, y + BRICK_BBOX_HEIGHT / 2);
+				break;
+			}
+		}
+		;
+	}
+}
+

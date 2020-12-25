@@ -426,7 +426,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				CBreakableBrick *brick = dynamic_cast<CBreakableBrick *>(e->obj);
 				if (brick->GetState() == BREAKABLE_STATE_COIN) // if COIN ..
 				{
-					brick->SetState(BREAKABLE_STATE_BROKEN);
+					brick->SetState(BREAKABLE_STATE_DISAPPEAR);
 					CoinCounterUp();
 
 				}

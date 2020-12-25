@@ -332,6 +332,10 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					else canTurn = false;
 				}*/
 			}
+			else if (e->nx != 0)
+			{
+				this->vx = -this->vx;
+			}
 		}
 	}
 	/*if (Type == KOOPAS_TYPE_RED_WALK)

@@ -39,6 +39,7 @@ public:
 	
 	CMario * GetPlayer() { return player; }
 	vector<LPGAMEOBJECT> Get_cartridge_clip() { return cartridge_clip; };
+	vector<LPGAMEOBJECT> Get_objects() { return objects; };
 	//friend class CPlayScenceKeyHandler;
 };
 
