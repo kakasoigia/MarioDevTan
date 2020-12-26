@@ -413,5 +413,6 @@ public:
 	 void AddItem(int item_type) { if (itemList.size() <= 3) itemList.push_back(item_type); };
 	 vector<int> GetItemList() { return itemList; };
 	 void StartTimeBackToWorld() { start_time_die_back_to_worldmap = GetTickCount(); };
+	 DWORD GetTimeBackToWorld() { return start_time_die_back_to_worldmap; };
 
 };

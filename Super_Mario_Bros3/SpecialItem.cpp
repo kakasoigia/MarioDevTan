@@ -53,7 +53,12 @@ void CSpecialItem::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	if (isAppear)
 		CalcPotentialCollisions(coObjects, coEvents);
-
+	CMario* player = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (player->GetTimeBackToWorld() != 0)
+	{
+		if (GetTickCount() - player->GetTimeBackToWorld() > MARIO_TIME_BACK_TO_WORLDMAP - 1500)
+			isShowYouGotACard = true;
+	}
 
 
 
@@ -126,6 +131,8 @@ void CSpecialItem::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 void CSpecialItem::Render()
 {
+	CSprites* sprites = CSprites::GetInstance();
+	LPSPRITE sprite = sprites->Get(60108);;
 	int ani = -1;
 
 	if (isAppear)
@@ -134,6 +141,7 @@ void CSpecialItem::Render()
 		{
 		case SPECIAL_ITEM_STATE_FLOWER_IDLE:
 			ani = SPECIAL_ITEM_STATE_FLOWER_IDLE_ANI;
+			
 			break;
 		case SPECIAL_ITEM_STATE_MUSHROOM_IDLE:
 			ani = SPECIAL_ITEM_STATE_MUSHROOM_IDLE_ANI;
@@ -143,17 +151,29 @@ void CSpecialItem::Render()
 			break;
 		case SPECIAL_ITEM_STATE_FLOWER_UP:
 			ani = SPECIAL_ITEM_STATE_FLOWER_UP_ANI;
+			sprite = sprites->Get(60110);
 			break;
 		case SPECIAL_ITEM_STATE_MUSHROOM_UP:
 			ani = SPECIAL_ITEM_STATE_MUSHROOM_UP_ANI;
+			sprite = sprites->Get(60109);
 			break;
 		case SPECIAL_ITEM_STATE_STAR_UP:
 			ani = SPECIAL_ITEM_STATE_STAR_UP_ANI;
+			sprite = sprites->Get(60111);
 			break;
 		}
 	}
 	else return;
 	animation_set->at(ani)->Render(x, y);
+	if (isShowYouGotACard)
+	{
+		sprite->Draw(2750,20);
+		 sprite = sprites->Get(80200);
+		sprite->Draw(2648,0);
+		sprite = sprites->Get(80201);
+		sprite->Draw(2628, 30);
+		
+	}
 
 	//RenderBoundingBox();
 }

@@ -31,7 +31,7 @@ class CSpecialItem : public CGameObject
 	bool isAppear = true;
 	DWORD upping_start = 0;
 	DWORD switching_state_start = 0;
-
+	bool isShowYouGotACard;
 public:
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);

@@ -23,6 +23,7 @@
 270	textures\mairuanguahoisinh.png	0	255	255
 280	textures\mario_transform_left.png	68	145	190
 290	textures\mario_transform_right.png	68	145	190
+300	textures\end_scene1.png	0	0	0
 # id	left	top	right	bottom	texture_id
 [SPRITES]
 1001	6	0	20	16	0
@@ -663,6 +664,12 @@
 80103	29	255	45	271	270
 80104	50	256	66	272	270
 80105	71	256	87	272	270
+
+#==== WORDS END SCENE 1
+#====COURSE CLEAR
+80200	44	18	159	25	300
+#====YOU GOT A CARD
+80201	27	42	144	50	300
 #SECTION 1 END
 
 #SECTION 2

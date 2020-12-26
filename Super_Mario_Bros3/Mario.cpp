@@ -641,10 +641,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			CGame::GetInstance()->SetCamPos(1300, 980);
 		}
-		if (isAutoWalk)
+		if (isAutoWalk )
 		{
 			CGame::GetInstance()->SetCamPos(2500, -62);
 		}
+
+	/*	else if (x >)
+		{
+
+		}*/
 	}
 	
 
