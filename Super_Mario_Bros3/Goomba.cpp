@@ -33,14 +33,14 @@ void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &botto
 		right = x + GOOMBA_NORMAL_BBOX_WIDTH;
 		bottom = y + GOOMBA_NORMAL_BBOX_HEIGHT;
 	}
-	else if (state == GOOMBA_STATE_WALKING)
+	else if (state == GOOMBA_STATE_WALKING || state == GOOMBA_STATE_GEARING || state == GOOMBA_STATE_FLYING)
 	{
 		if (Type == GOOMBA_TYPE_ORANGE || Type == GOOMBA_TYPE_RED_WALK)
 		{
 			right = x + GOOMBA_NORMAL_BBOX_WIDTH;
 			bottom = y + GOOMBA_NORMAL_BBOX_HEIGHT;
 		}
-		else
+		else // bay 
 		{
 			right = x + GOOMBA_BBOX_FLY_WIDTH;
 			bottom = y + GOOMBA_BBOX_FLY_HEIGHT_EAR_DOWN;
@@ -73,12 +73,25 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	if (state != GOOMBA_STATE_DIE)
 	vy += GOOMBA_GRAVITY * dt;
-	if (this->state == GOOMBA_STATE_WALKING && this->Type == GOOMBA_TYPE_RED_FLY)
+	if ( this->Type == GOOMBA_TYPE_RED_FLY)
 	{
-		if (GetTickCount() - jumping_start > GOOMBA_PERIODIC_TIME_JUMPING)
+		if (GetTickCount() - jumping_start > GOOMBA_TIME_FLYING)
 		{
-			vy = -GOOMBA_JUMP_DEFLECT_SPEED;
+			if (state == GOOMBA_STATE_GEARING)
+				SetState(GOOMBA_STATE_FLYING);
 				jumping_start = GetTickCount();
+		}
+		else if (GetTickCount() - jumping_start > GOOMBA_TIME_GEARING)
+		{
+			if (state == GOOMBA_STATE_WALKING)
+				SetState(GOOMBA_STATE_GEARING);
+			
+		}
+		else if (GetTickCount() - jumping_start > GOOMBA_TIME_WALKING)
+		{
+			if (state == GOOMBA_STATE_FLYING)
+				SetState(GOOMBA_STATE_WALKING);
+		
 		}
 	}
 	if (state == GOOMBA_STATE_DIE )
@@ -230,6 +243,14 @@ void CGoomba::Render()
 	{
 		return;
 	}
+	else if (state == GOOMBA_STATE_GEARING)
+	{
+		ani = GOOMBA_ANI_RED_GEARING;
+	}
+	else if (state == GOOMBA_STATE_FLYING)
+	{
+		ani = GOOMBA_ANI_RED_FLYING;
+	}
 
 	animation_set->at(ani)->Render(x, y);
 	/*RenderBoundingBox();*/
@@ -254,6 +275,12 @@ void CGoomba::SetState(int state)
 
 	case GOOMBA_STATE_WALKING:
 		vx = -GOOMBA_WALKING_SPEED;
+		break;
+	case GOOMBA_STATE_GEARING:
+		vy = -GOOMBA_JUMP_DEFLECT_SPEED/2;
+		break;
+	case GOOMBA_STATE_FLYING:
+		vy = -GOOMBA_JUMP_DEFLECT_SPEED;;
 		break;
 	}
 }
