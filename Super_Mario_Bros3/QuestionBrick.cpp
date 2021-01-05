@@ -203,6 +203,7 @@ void CQuestionBrick::SetState(int state, vector<LPGAMEOBJECT> *coObjects)
 						coin->SetState(COIN_STATE_UP);
 						CMario* player = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 						player->CoinCounterUp();
+						player->IncScore(100, x, y);
 						return;
 					}
 				}

@@ -165,7 +165,7 @@
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="QuestionBrick.h" />
     <ClInclude Include="Rectangle.h" />
-    <ClInclude Include="ScoreSpawnable.h" />
+    <ClInclude Include="ScoreUp.h" />
     <ClInclude Include="ScrollingStage.h" />
     <ClInclude Include="SpecialItem.h" />
     <ClInclude Include="StartScene.h" />
@@ -209,7 +209,7 @@
     <ClCompile Include="QuestionBrick.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Scence.cpp" />
-    <ClCompile Include="ScoreSpawnable.cpp" />
+    <ClCompile Include="ScoreUp.cpp" />
     <ClCompile Include="ScrollingStage.cpp" />
     <ClCompile Include="SpecialItem.cpp" />
     <ClCompile Include="StartScene.cpp" />

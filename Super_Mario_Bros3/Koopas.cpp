@@ -263,6 +263,8 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		// Collision logic with Goombas
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
+			CMario* player = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+			
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (!dynamic_cast<CMario *>(e->obj) && nx == 0)
 			{
@@ -276,10 +278,12 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					this->vx = -this->vx;
 					goomba->vx = -goomba->vx;
+					
 				}
 				else if (e->nx != 0 && (this->state == KOOPAS_STATE_SPINNING || isHolding == true))
 				{
 					goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
+					player->IncScore(100, x, y);
 				}
 
 			}
@@ -309,6 +313,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (nx != 0 && (this->state == KOOPAS_STATE_SPINNING || isHolding == true))
 				{
 					koopas->SetState(KOOPAS_STATE_DIE);
+					player->IncScore(100, x, y);
 				}
 				
 			}

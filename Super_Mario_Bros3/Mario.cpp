@@ -14,6 +14,7 @@
 #include "QuestionBrick.h"
 #include "Leaf.h"
 #include "MushRoom.h"
+#include "ScoreUp.h"
 #include "SpecialItem.h"
 #include "HudPanels.h"
 CMario::CMario(float x, float y) : CGameObject()
@@ -98,7 +99,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
-
+	//out of screen ->die
+	if (y >= CGame::GetInstance()->GetScreenHeight() && state != MARIO_STATE_DIE)
+	{
+		SetState(MARIO_STATE_DIE);
+	}
 	// turn off collision when die 
 	if (state != MARIO_STATE_DIE && state != MARIO_STATE_PIPE_SLIDE_DOWN && state != MARIO_STATE_PIPE_SLIDE_UP)
 		CalcPotentialCollisions(coObjects, coEvents);
@@ -387,6 +392,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				CCoin *coin = dynamic_cast<CCoin *>(e->obj);
 				coin->SetIsAppear(false);
+				IncScore(100,coin->x,coin->y);
 				CoinCounterUp();
 			}
 			else if (dynamic_cast<CFlower *>(e->obj))
@@ -542,6 +548,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					{
 						SetTransformingUp(1); // BIG
 						mushroom->SetIsAppear(false);
+						IncScore(1000, mushroom->x, mushroom->y);
 					}
 					else
 					{
@@ -555,6 +562,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					mushroom->SetIsAppear(false);
 					AddLifeCounter();
+					IncScore(SCORE_TYPE_1LIFE, mushroom->x, mushroom->y);
 				}
 			}
 			else if (dynamic_cast<CSpecialItem *>(e->obj))
@@ -1290,7 +1298,22 @@ void CMario::StartFlying()
 }
 void CMario::IncScore(int score, float pos_x, float pos_y)
 {
+	if(score != SCORE_TYPE_1LIFE)
 	Score += score;
+	vector<LPGAMEOBJECT> objects = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->Get_score_list();
+	for (unsigned i = 0; i < objects.size(); i++) // find score free
+	{
+			CScoreUp *scoreUp = dynamic_cast<CScoreUp *>(objects[i]);
+			if (!scoreUp->GetIsUsed())
+			{
+				scoreUp->SetIsUsed(true);
+				scoreUp->SetPosition(pos_x, pos_y -10);
+				scoreUp->SetValue(score);
+				scoreUp->SetState(SCORE_STATE_UP);
+				scoreUp->StartTiming();
+				return;
+			}
+	}
 
 }
 void CMario::SetTransformingDown()

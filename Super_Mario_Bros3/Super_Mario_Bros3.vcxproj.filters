@@ -96,9 +96,6 @@
     <ClInclude Include="HudPanels.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScoreSpawnable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WorldMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -127,6 +124,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BreakableBrickAnimation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreUp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -212,9 +212,6 @@
     <ClCompile Include="HudPanels.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ScoreSpawnable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="WorldMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -243,6 +240,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BreakableBrickAnimation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoreUp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

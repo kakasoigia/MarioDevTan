@@ -21,6 +21,7 @@ protected:
 
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> cartridge_clip;
+	vector<LPGAMEOBJECT> score_list;
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -40,6 +41,7 @@ public:
 	CMario * GetPlayer() { return player; }
 	vector<LPGAMEOBJECT> Get_cartridge_clip() { return cartridge_clip; };
 	vector<LPGAMEOBJECT> Get_objects() { return objects; };
+	vector<LPGAMEOBJECT> Get_score_list() { return score_list; };
 	//friend class CPlayScenceKeyHandler;
 };
 

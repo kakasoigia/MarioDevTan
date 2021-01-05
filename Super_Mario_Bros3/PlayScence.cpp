@@ -14,6 +14,7 @@
 #include "HudPanels.h"
 #include "HudSubPanels.h"
 #include "SpecialItem.h"
+#include "ScoreUp.h"
 #include "BreakableBrickAnimation.h"
 using namespace std;
 
@@ -70,6 +71,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_RIGHT_TOP			32
 #define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_RIGHT_BOTTOM			33
 #define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_BOTTOM			34
+#define OBJECT_TYPE_SCORE_AND_1LV		35
 #define OBJECT_TYPE_PORTAL	50
  
 #define MAX_SCENE_LINE 1024
@@ -223,6 +225,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BREAKABLE_BRICK_BELL: obj = new CBreakableBrick(BREAKABLE_BRICK_BELL); break;
 	case OBJECT_TYPE_BELL: obj = new CBell(); break;
 	case OBJECT_TYPE_SPECIAL_ITEM: obj = new CSpecialItem(); break;
+	case OBJECT_TYPE_SCORE_AND_1LV: obj = new CScoreUp(); break;
 	case OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP:
 		obj = new CBreakableBrickAnimation(BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP);
 		break;
@@ -274,6 +277,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	if (dynamic_cast<CFireBullet *>(obj))
 	{
 		cartridge_clip.push_back(obj);
+	}
+	if (dynamic_cast<CScoreUp *>(obj))
+	{
+		score_list.push_back(obj);
 	}
 
 }
