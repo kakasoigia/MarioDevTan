@@ -9,7 +9,7 @@ protected:
 	CKeyEventHandler * key_handler;
 	int id;
 	LPCWSTR sceneFilePath;
-
+	bool CamCanMove = false;
 public:
 	CScene(int id, LPCWSTR filePath);
 
@@ -19,6 +19,8 @@ public:
 	virtual void Update(DWORD dt) = 0;
 	virtual void Render() = 0;
 	int GetId() { return id; }
+	void SetCamCanMove(bool camCanMove) { CamCanMove = camCanMove; };
+	bool GetCamCanMove() { return CamCanMove; };
 };
 typedef CScene * LPSCENE;
 

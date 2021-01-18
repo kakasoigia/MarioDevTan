@@ -17,6 +17,7 @@
 #include "ScoreUp.h"
 #include "SpecialItem.h"
 #include "HudPanels.h"
+#include "FloatingWood.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
 	CGame *game = CGame::GetInstance();
@@ -100,7 +101,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	coEvents.clear();
 	//out of screen ->die
-	if (y >= CGame::GetInstance()->GetScreenHeight() && state != MARIO_STATE_DIE)
+	if (y >= CGame::GetInstance()->GetScreenHeight() * 3 && state != MARIO_STATE_DIE)
 	{
 		SetState(MARIO_STATE_DIE);
 	}
@@ -117,7 +118,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (GetTickCount() - firing_start > MARIO_TIME_FIRING)
 	{
 		firing_start = 0;
-		isFiring  = false;
+		isFiring = false;
 	}
 	if (GetTickCount() - kicking_start > MARIO_KICK_TIME)
 	{
@@ -173,7 +174,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		vx = 0;
 	}
-	if (transforming_start != 0 )
+	if (transforming_start != 0)
 	{
 		if (GetTickCount() - transforming_start >= MARIO_TIME_TRANSFORM)
 		{
@@ -392,7 +393,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				CCoin *coin = dynamic_cast<CCoin *>(e->obj);
 				coin->SetIsAppear(false);
-				IncScore(100,coin->x,coin->y);
+				IncScore(100, coin->x, coin->y);
 				CoinCounterUp();
 			}
 			else if (dynamic_cast<CFlower *>(e->obj))
@@ -475,6 +476,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					}
 					if (e->nx != 0)
 					{
+						DebugOut(L"[INFO] Vô đây r nè\n");
 						if (isTurning && (brick->y >= this->y + MARIO_TURNING_BONUS_HEIGHT))
 						{
 							if (brick->GetType() == BREAKABLE_BRICK_NORMAL)
@@ -616,6 +618,32 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					}
 				}
 			}
+			// map 1-4
+			else if (dynamic_cast<CFloatingWood *>(e->obj))
+			{
+				CFloatingWood *floating_wood = dynamic_cast<CFloatingWood *>(e->obj);
+				if (e->ny < 0)
+				{
+					
+					if (floating_wood->GetState() == FLOATING_WOOD_STATE_NORMAL)
+					{
+						floating_wood->SetState(FLOATING_WOOD_STATE_DOWN);
+					}
+					/*if (level != MARIO_LEVEL_SMALL)
+					{
+						y = this->y - 27;
+					}
+					else
+					{
+						y = this->y - 15;
+					}*/
+				
+				}
+			/*	else if (nx != 0 && ny == 0)
+				{
+					controlMarioColliWithMovingRec = true;
+				}*/
+			}
 
 
 		}
@@ -635,37 +663,61 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	float camX = 0;
 	float camY = 0;
-	if (x > (game->GetScreenWidth() / 2)) camX = cx;
-	if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true
-		|| y < -100 || GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || GetState() == MARIO_STATE_PIPE_SLIDE_UP)
+	bool camcanmove = (CPlayScene*)CGame::GetInstance()->GetCurrentScene()->GetCamCanMove();
+	if (!camcanmove)
 	{
-		/*if (y <= (game->GetScreenHeight() / 2))*/ camY = cy + 20;
+		if (x > (game->GetScreenWidth() / 2)) camX = cx;
+		if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true
+			|| y < -100 || GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || GetState() == MARIO_STATE_PIPE_SLIDE_UP)
+		{
+			/*if (y <= (game->GetScreenHeight() / 2))*/ camY = cy + 20;
+		}
+		if (state != MARIO_STATE_DIE)
+		{
+			CGame::GetInstance()->SetCamPos((int)camX, (int)camY - 70);
+			if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);
+			if (isAtTunnel)
+			{
+				CGame::GetInstance()->SetCamPos(1300, 980);
+			}
+			if (isAutoWalk)
+			{
+				CGame::GetInstance()->SetCamPos(2500, -62);
+			}
+		}
+		
+		/*	else if (x >)
+			{
+
+			}*/
 	}
-	if (state != MARIO_STATE_DIE)
+	else
 	{
-		CGame::GetInstance()->SetCamPos((int)camX, (int)camY - 70);
-		if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);
-		if (isAtTunnel)
-		{
-			CGame::GetInstance()->SetCamPos(1300, 980);
-		}
-		if (isAutoWalk )
-		{
-			CGame::GetInstance()->SetCamPos(2500, -62);
-		}
+		if (x > (game->GetScreenWidth() / 2)) camX = cx;
+		
+		CGame::GetInstance()->SetCamPos((int)camX, cy);
 
-	/*	else if (x >)
-		{
 
+		/*int current_pos = CGame::GetInstance()->GetCamPosX();
+		CGame::GetInstance()->SetCamX((int)current_pos+1);
+		if (this->x <= current_pos + 3.0f)
+		{
+			x = current_pos + 3.0f;
+			this->isCamPushed = true;
+		}
+		else
+		{
+			this->isCamPushed = false;
 		}*/
 	}
-	
+
+
 
 }
 
 void CMario::Render()
 {
-
+	DebugOut(L" level la %d,", level);
 	DebugOut(L" state %d,", state);
 	int ani = -1;
 	if (state == MARIO_STATE_DIE)
@@ -711,8 +763,8 @@ void CMario::Render()
 	}
 	else if (isTurning)
 	{
-		if (nx < 0) ani = MARIO_ANI_TAIL_TURNING_RIGHT;
-		else ani = MARIO_ANI_TAIL_TURNING_LEFT;
+		if (nx < 0) ani = MARIO_ANI_TAIL_TURNING_LEFT;
+		else ani = MARIO_ANI_TAIL_TURNING_RIGHT;
 	}
 
 	else if (isHoldAni)
@@ -813,8 +865,8 @@ void CMario::Render()
 	}
 	else if (isFiring)
 	{
-	if (nx < 0) ani = MARIO_ANI_FIRE_FIRING_BULLET_LEFT;
-	else ani = MARIO_ANI_FIRE_FIRING_BULLET_RIGHT;
+		if (nx < 0) ani = MARIO_ANI_FIRE_FIRING_BULLET_LEFT;
+		else ani = MARIO_ANI_FIRE_FIRING_BULLET_RIGHT;
 	}
 	else if (state == MARIO_STATE_IDLE)
 	{
@@ -822,21 +874,93 @@ void CMario::Render()
 		{
 			if (nx > 0) ani = MARIO_ANI_BIG_IDLE_RIGHT;
 			else ani = MARIO_ANI_BIG_IDLE_LEFT;
+			if (nx > 0)
+			{
+				if (isCamPushed)
+				{
+					ani = MARIO_ANI_BIG_WALKING_RIGHT;
+				}
+				else
+					ani = MARIO_ANI_BIG_IDLE_RIGHT;
+			}
+			else
+			{
+				if (isCamPushed)
+				{
+					ani = MARIO_ANI_BIG_WALKING_LEFT;
+				}
+				else
+					ani = MARIO_ANI_BIG_IDLE_LEFT;
+			}
 		}
 		else if (level == MARIO_LEVEL_SMALL)
 		{
 			if (nx > 0) ani = MARIO_ANI_SMALL_IDLE_RIGHT;
 			else ani = MARIO_ANI_SMALL_IDLE_LEFT;
+			if (nx > 0)
+			{
+				if (isCamPushed)
+				{
+					ani = MARIO_ANI_SMALL_WALKING_RIGHT;
+				}
+				else
+					ani = MARIO_ANI_SMALL_IDLE_RIGHT;
+			}
+			else
+			{
+				if (isCamPushed)
+				{
+					ani = MARIO_ANI_SMALL_WALKING_LEFT;
+				}
+				else
+					ani = MARIO_ANI_SMALL_IDLE_LEFT;
+			}
 		}
 		else if (level == MARIO_LEVEL_TAIL)
 		{
 			if (nx > 0) ani = MARIO_ANI_TAIL_IDLE_RIGHT;
 			else ani = MARIO_ANI_TAIL_IDLE_LEFT;
+			if (nx > 0)
+			{
+				if (isCamPushed)
+				{
+					ani = MARIO_ANI_TAIL_WALKING_RIGHT;
+				}
+				else
+					ani = MARIO_ANI_TAIL_IDLE_RIGHT;
+			}
+			else
+			{
+				if (isCamPushed)
+				{
+					ani = MARIO_ANI_TAIL_WALKING_LEFT;
+				}
+				else
+					ani = MARIO_ANI_TAIL_IDLE_LEFT;
+			}
 		}
 		else if (level == MARIO_LEVEL_FIRE)
 		{
 			if (nx > 0) ani = MARIO_ANI_FIRE_IDLE_RIGHT;
 			else ani = MARIO_ANI_FIRE_IDLE_LEFT;
+			if (nx > 0)
+			{
+				if (isCamPushed)
+				{
+					ani = MARIO_ANI_FIRE_WALKING_RIGHT;
+				}
+				else
+					ani = MARIO_ANI_FIRE_IDLE_RIGHT;
+			}
+			else
+			{
+				if (isCamPushed)
+				{
+					ani = MARIO_ANI_FIRE_WALKING_LEFT;
+				}
+				else
+					ani = MARIO_ANI_FIRE_IDLE_LEFT;
+			}
 		}
 	}
 
@@ -958,7 +1082,7 @@ void CMario::Render()
 			}
 		}
 	}
-	
+
 	else if (state == MARIO_STATE_SITDOWN)
 	{
 		if (level == MARIO_LEVEL_BIG)
@@ -1033,7 +1157,7 @@ void CMario::Render()
 
 	if (isTransforming)
 	{
-		
+
 		if (level == MARIO_LEVEL_BIG || level == MARIO_LEVEL_SMALL)
 		{
 
@@ -1049,15 +1173,16 @@ void CMario::Render()
 			else ani = MARIO_SMOKE_TRANSFORM_LEFT;
 
 		}
-		
+
 	}
-	
+
 
 
 	int alpha = 255;
 	if (untouchable) alpha = 128;
-	DebugOut(L" ani %d,", ani);
+	DebugOut(L" ani %d,\n", ani);
 	animation_set->at(ani)->Render(x, y, alpha);
+	DebugOut(L" Render đk Mario nhé,\n", ani);
 
 	/*RenderBoundingBox();*/
 }
@@ -1205,16 +1330,16 @@ void CMario::SetOnSpecialPosition(int place)
 	}
 	SetState(MARIO_STATE_IDLE);
 	isAtTunnel = false;
-	
-	
 
-	
+
+
+
 }
 
 void CMario::SetLevel(int l)
 {
-	DebugOut(L"[INFO] Vô Setlevl r %d\n",l);
-	
+	DebugOut(L"[INFO] Vô Setlevl r %d\n", l);
+
 	int oldlevel = this->level;
 	this->level = l;
 	if (level == MARIO_LEVEL_SMALL)
@@ -1298,21 +1423,22 @@ void CMario::StartFlying()
 }
 void CMario::IncScore(int score, float pos_x, float pos_y)
 {
-	if(score != SCORE_TYPE_1LIFE)
-	Score += score;
+	if (score != SCORE_TYPE_1LIFE)
+		Score += score;
+	if (score == 10) return;
 	vector<LPGAMEOBJECT> objects = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->Get_score_list();
 	for (unsigned i = 0; i < objects.size(); i++) // find score free
 	{
-			CScoreUp *scoreUp = dynamic_cast<CScoreUp *>(objects[i]);
-			if (!scoreUp->GetIsUsed())
-			{
-				scoreUp->SetIsUsed(true);
-				scoreUp->SetPosition(pos_x, pos_y -10);
-				scoreUp->SetValue(score);
-				scoreUp->SetState(SCORE_STATE_UP);
-				scoreUp->StartTiming();
-				return;
-			}
+		CScoreUp *scoreUp = dynamic_cast<CScoreUp *>(objects[i]);
+		if (!scoreUp->GetIsUsed())
+		{
+			scoreUp->SetIsUsed(true);
+			scoreUp->SetPosition(pos_x, pos_y - 10);
+			scoreUp->SetValue(score);
+			scoreUp->SetState(SCORE_STATE_UP);
+			scoreUp->StartTiming();
+			return;
+		}
 	}
 
 }

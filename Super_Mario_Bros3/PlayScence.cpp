@@ -16,12 +16,19 @@
 #include "SpecialItem.h"
 #include "ScoreUp.h"
 #include "BreakableBrickAnimation.h"
+#include "Camera.h"
+#include "FloatingWood.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
 {
 	key_handler = new CPlayScenceKeyHandler(this);
+	if (id == 4)
+	{
+		CamCanMove = true;
+		CGame::GetInstance()->SetCamPos(0, 220);
+	}
 }
 
 /*
@@ -35,6 +42,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define SCENE_SECTION_ANIMATIONS 4
 #define SCENE_SECTION_ANIMATION_SETS	5
 #define SCENE_SECTION_OBJECTS	6
+#define SCENE_SECTION_MAP	7
 
 #define OBJECT_TYPE_MARIO	0
 #define OBJECT_TYPE_BRICK	1
@@ -72,7 +80,12 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_RIGHT_BOTTOM			33
 #define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_BOTTOM			34
 #define OBJECT_TYPE_SCORE_AND_1LV		35
-#define OBJECT_TYPE_PORTAL	50
+#define OBJECT_TYPE_CAMERA		36
+#define OBJECT_TYPE_BREAKABLE_BRICK_MULTI_COIN		48
+#define OBJECT_TYPE_FLOATING_WOOD		49
+#define OBJECT_TYPE_BOOMERANG											50
+#define OBJECT_TYPE_BOOMERANG_ENEMY										51
+#define OBJECT_TYPE_PORTAL	100
  
 #define MAX_SCENE_LINE 1024
 #define MAX_POWER_SPEED_UP 7
@@ -165,6 +178,25 @@ void CPlayScene::_ParseSection_ANIMATION_SETS(string line)
 /*
 	Parse a line in section [OBJECTS]
 */
+void CPlayScene::_ParseSection_MAP(string line)
+{
+	vector<string> tokens = split(line);
+
+	if (tokens.size() < 7) return; // skip invalid lines
+
+	int idTileSet = atoi(tokens[0].c_str());
+	int totalRowsTileSet = atoi(tokens[1].c_str());
+	int totalColumnsTileSet = atoi(tokens[2].c_str());
+	int totalRowsMap = atoi(tokens[3].c_str());
+	int totalColumnsMap = atoi(tokens[4].c_str());
+	int totalTiles = atoi(tokens[5].c_str());
+	wstring file_path = ToWSTR(tokens[6]);
+
+	map = new Map(idTileSet, totalRowsTileSet, totalColumnsTileSet, totalRowsMap, totalColumnsMap, totalTiles);
+	map->LoadMap(file_path.c_str());
+	map->ExtractTileFromTileSet();
+}
+
 void CPlayScene::_ParseSection_OBJECTS(string line)
 {
 	vector<string> tokens = split(line);
@@ -226,6 +258,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BELL: obj = new CBell(); break;
 	case OBJECT_TYPE_SPECIAL_ITEM: obj = new CSpecialItem(); break;
 	case OBJECT_TYPE_SCORE_AND_1LV: obj = new CScoreUp(); break;
+	case OBJECT_TYPE_CAMERA: 
+	{
+		camera = new CCamera(x, y, ani_set_id);
+		cameras.push_back(camera);
+		break;
+	}
 	case OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP:
 		obj = new CBreakableBrickAnimation(BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP);
 		break;
@@ -238,6 +276,24 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_BOTTOM:
 		obj = new CBreakableBrickAnimation(BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_BOTTOM);
 		break;
+	/*case OBJECT_TYPE_BREAKABLE_BRICK_MULTI_COIN:
+		obj = new CQuestionBrick(BREAKABLE_BRICK_MULTI_COIN);
+		break;*/
+	case OBJECT_TYPE_FLOATING_WOOD:
+	{
+		int floating_wood_id = atof(tokens[4].c_str());
+		obj = new CFloatingWood(floating_wood_id);
+	}
+	break;
+	/*case OBJECT_TYPE_BOOMERANG_ENEMY:
+		obj = new CBoomerangEnemy();
+		break;
+	case OBJECT_TYPE_BOOMERANG:
+	{
+		int boomerang_id = atof(tokens[4].c_str());
+		obj = new CBoomerang(boomerang_id);
+	}*/
+	break;
 	case OBJECT_TYPE_HUD: 
 	{
 		obj = HudPanel::GetInstance();
@@ -265,11 +321,13 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 
 	// General object setup
-	obj->SetPosition(x, y);
-
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-
-	obj->SetAnimationSet(ani_set);
+	if (!dynamic_cast<CCamera*>(obj))
+	{
+		obj->SetPosition(x, y);
+		obj->SetAnimationSet(ani_set);
+	}
+	
 
 
 	objects.push_back(obj);
@@ -282,6 +340,25 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		score_list.push_back(obj);
 	}
+
+}
+float CPlayScene::UpdateCamMoveX(DWORD dt)
+{
+
+	float cam_x_end_temp = cameras.at(0)->GetEndCamX();
+
+	float cam_x_game = CGame::GetInstance()->GetCamPosX();
+
+	if (cam_x_game < cam_x_end_temp)
+	{
+		cam_x_game += MOVE_CAM_X_VX * dt;
+		return cam_x_game;
+	}
+	else
+	{
+		return cam_x_end_temp;
+	}
+
 
 }
 
@@ -301,7 +378,7 @@ void CPlayScene::Load()
 		string line(str);
 
 		if (line[0] == '#') continue;	// skip comment lines	
-
+		if (line == "[MAP]") { section = SCENE_SECTION_MAP; continue; }
 		if (line == "[TEXTURES]") { section = SCENE_SECTION_TEXTURES; continue; }
 		if (line == "[SPRITES]") {
 			section = SCENE_SECTION_SPRITES; continue;
@@ -327,6 +404,7 @@ void CPlayScene::Load()
 		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
 		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
 		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
+		case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
 		}
 	}
 
@@ -380,7 +458,10 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
-	
+	if (map)
+	{
+		this->map->Render();
+	}
 	for (unsigned int i = 1; i < objects.size(); i++)
 	{
 		CGame *game = CGame::GetInstance();
@@ -398,21 +479,32 @@ void CPlayScene::Render()
 */
 void CPlayScene::Unload()
 {
+	DebugOut(L"[INFO] Vô undload nè\n");
 	CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	
 	//save GAME info
 	CGame *game = CGame::GetInstance();
-	game->SetCoinCounter(mario->GetCoinCounter());
-	game->SetLifeCounter(mario->GetLifeCounter());
-	game->SetScore(mario->GetScore());
-	game->SetItemList(mario->GetItemList());
-	game->SetMarioLevel(mario->GetLevel());
+	if (mario != NULL)
+	{
+		game->SetCoinCounter(mario->GetCoinCounter());
+
+		game->SetLifeCounter(mario->GetLifeCounter());
+		game->SetScore(mario->GetScore());
+		game->SetItemList(mario->GetItemList());
+		game->SetMarioLevel(mario->GetLevel());
+
+	}
+	
 	for (unsigned int i = 0; i < objects.size(); i++)
 	{
 		if(!dynamic_cast<HudPanel *>(objects[i]))
 		delete objects[i];
 	}
-		
-
+	
+	delete map;
+	
+	map = nullptr;
+	
 	objects.clear();
 	player = NULL;
 

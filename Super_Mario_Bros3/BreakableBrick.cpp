@@ -1,4 +1,4 @@
-#include "BreakableBrick.h"
+﻿#include "BreakableBrick.h"
 #include "Utils.h"
 #include "BreakableBrickAnimation.h"
 CBreakableBrick::CBreakableBrick(int type)
@@ -25,6 +25,7 @@ void CBreakableBrick::Render()
 	}
 
 	animation_set->at(ani)->Render(x, y);
+	DebugOut(L" render được cục gạch nha \n");
 	//RenderBoundingBox();
 }
 

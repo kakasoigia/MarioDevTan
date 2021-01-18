@@ -215,6 +215,7 @@ protected:
 	bool isAutoWalk = false;
 	bool isTransforming = false;
 	bool transformUpLevel = false;
+	bool isCamPushed = false;
 	DWORD start_time_die_back_to_worldmap = 0;
 	int current_level_speed_up;
 	DWORD turning_start = 0;
@@ -402,6 +403,14 @@ public:
 	 {
 		 if (transforming_start == 0)
 			 transforming_start = GetTickCount();
+	 }
+	 bool GetIsCamPushed()
+	 {
+		 return isCamPushed;
+	 }
+	 void SetIsCamPushed(bool isCamPushed)
+	 {
+		this-> isCamPushed = isCamPushed;
 	 }
 	 // HUD 
 	 int GetCoinCounter() { return CoinCounter; };

@@ -4,6 +4,7 @@
 #include "Game.h"
 #include"Utils.h"
 #include "HudPanels.h"
+#include "PlayScence.h"
 using namespace std;
 
 
@@ -386,7 +387,18 @@ void CWorldMapKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_W:
 		if (world_map_scene->GetCurrentNode()->GetNodeId() == 2)
+		{
 			CGame::GetInstance()->SwitchScene(3);
+			CGame::GetInstance()->SetCamPos(0, -50);
+			
+		}
+		else if (world_map_scene->GetCurrentNode()->GetNodeId() == 8)
+		{
+			CGame::GetInstance()->SwitchScene(4);
+			CGame::GetInstance()->SetCamPos(0, 220);
+			
+		}
+		break;
 		break;
 	}
 

@@ -43,7 +43,7 @@ void CScoreUp::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 void CScoreUp::Render()
 {
 	int ani = -1;
-	if (isUsed  && value != 0)
+	if (isUsed  && value != 0 && value != 10)
 	{
 		switch (value)
 		{

@@ -49,7 +49,7 @@ class CGame
 	int game_time = 300;
 	DWORD time_counter = 0;
 	int coin = 0;
-	long score = 0;
+	long score = 000;
 	int life_count = 4;
 	int mario_level = 1;
 	vector<int> itemList;
@@ -89,6 +89,14 @@ public:
 	LPD3DXSPRITE GetSpriteHandler() { return this->spriteHandler; }
 
 	void SetCamPos(float x, float y) { cam_x = x; cam_y = y; }
+	void SetCamX(float cam_x_FLoat)
+	{
+		cam_x = cam_x_FLoat;
+	}
+	void SetCamY(float cam_y_FLoat)
+	{
+		cam_y = cam_y_FLoat;
+	}
 	float GetCamPosX() { return cam_x; };
 	float GetCamPosY() { return cam_y; };
 	
