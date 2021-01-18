@@ -256,7 +256,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BREAKABLE_BRICK_NORMAL: obj = new CBreakableBrick(BREAKABLE_BRICK_NORMAL); break;
 	case OBJECT_TYPE_BREAKABLE_BRICK_BELL: obj = new CBreakableBrick(BREAKABLE_BRICK_BELL); break;
 	case OBJECT_TYPE_BELL: obj = new CBell(); break;
-	case OBJECT_TYPE_SPECIAL_ITEM: obj = new CSpecialItem(); break;
+	case OBJECT_TYPE_SPECIAL_ITEM: 
+	{
+		obj = new CSpecialItem();
+	}
+	break;
 	case OBJECT_TYPE_SCORE_AND_1LV: obj = new CScoreUp(); break;
 	case OBJECT_TYPE_CAMERA: 
 	{

@@ -3,6 +3,7 @@
 CSpecialItem::CSpecialItem()
 {
 	SetState(SPECIAL_ITEM_STATE_MUSHROOM_IDLE);
+	
 }
 
 void CSpecialItem::CalcPotentialCollisions(vector<LPGAMEOBJECT> *coObjects, vector<LPCOLLISIONEVENT> &coEvents)
@@ -167,11 +168,11 @@ void CSpecialItem::Render()
 	animation_set->at(ani)->Render(x, y);
 	if (isShowYouGotACard)
 	{
-		sprite->Draw(2750,20);
+		sprite->Draw(origin_x +62 , origin_y-62);
 		 sprite = sprites->Get(80200);
-		sprite->Draw(2648,0);
+		sprite->Draw(origin_x-40, origin_y-82);
 		sprite = sprites->Get(80201);
-		sprite->Draw(2628, 30);
+		sprite->Draw(origin_x-60, origin_y-52);
 		
 	}
 
@@ -181,6 +182,7 @@ void CSpecialItem::Render()
 void CSpecialItem::SetState(int state)
 {
 	CGameObject::SetState(state);
+	SetOriginPos(x,y+30);
 	//CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	switch (state)
 	{

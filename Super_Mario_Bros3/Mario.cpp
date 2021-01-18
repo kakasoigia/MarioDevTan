@@ -675,7 +675,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		if (state != MARIO_STATE_DIE)
 		{
 			CGame::GetInstance()->SetCamPos((int)camX, (int)camY - 70);
-			if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);
+			/*if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);*/
 			if (isAtTunnel)
 			{
 				CGame::GetInstance()->SetCamPos(1300, 980);
@@ -709,6 +709,19 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			this->isCamPushed = false;
 		}*/
+		if (state != MARIO_STATE_DIE)
+		{
+			CGame::GetInstance()->SetCamPos((int)camX, (int)cy);
+			if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);
+			if (isAtTunnel)
+			{
+				CGame::GetInstance()->SetCamPos(1300, 980);
+			}
+			if (isAutoWalk)
+			{
+				CGame::GetInstance()->SetCamPos(2243 , 200);
+			}
+		}
 	}
 
 

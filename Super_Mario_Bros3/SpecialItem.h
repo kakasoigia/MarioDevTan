@@ -32,6 +32,8 @@ class CSpecialItem : public CGameObject
 	DWORD upping_start = 0;
 	DWORD switching_state_start = 0;
 	bool isShowYouGotACard;
+	float origin_x;
+	float origin_y;
 public:
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
@@ -49,6 +51,11 @@ public:
 	{
 		if (switching_state_start == 0)
 			switching_state_start = GetTickCount();
+	}
+	void SetOriginPos(float x,float y)
+	{
+		origin_x = x;
+		origin_y = y;
 	}
 
 };
