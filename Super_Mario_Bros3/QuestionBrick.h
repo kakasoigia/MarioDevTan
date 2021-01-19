@@ -19,6 +19,7 @@
 #define QUESTION_BRICK_NORMAL				666
 #define QUESTION_BRICK_HAVE_LEAF			777
 #define QUESTION_BRICK_JUST_HAVE_MUSHROOM	888
+#define QUESTION_BRICK_HAVE_MULTI_COIN	999
 
 
 class CQuestionBrick : public CGameObject
@@ -28,7 +29,16 @@ class CQuestionBrick : public CGameObject
 	bool isUsed = false;
 	int time_Y_Up = 0;
 	bool isUp = false;
+	int life;
+	bool isAllowToShowScore = false;
+	DWORD timing_score;
 
+	bool isAllowQuestionBrickSlide = false;
+
+	
+
+	bool controlMultipleCoin = false;
+	bool isAllowToShowMultipleCoin = false;
 public:
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
@@ -67,5 +77,60 @@ public:
 	void SetIsUp(bool isUpBool)
 	{
 		isUp = isUpBool;
+	}
+	bool GetIsAllowToShowScore()
+	{
+		if (this != NULL)
+			return isAllowToShowScore;
+		else
+		{
+			return false;
+		}
+	}
+	void SetIsAllowToShowScore(bool isAllowToShowScoreBool)
+	{
+		if (this != NULL)
+			isAllowToShowScore = isAllowToShowScoreBool;
+	}
+	void StartTimingScore()
+	{
+		timing_score = GetTickCount();
+	}
+	void SetLifeDown()
+	{
+		if (life >= 0)
+			life--;
+	}
+	int GetLife()
+	{
+		return life;
+	}
+	void SetLife(int lifeInt)
+	{
+		life = lifeInt;
+	}
+	bool GetIsAllowQuestionBrickSlide()
+	{
+		return isAllowQuestionBrickSlide;
+	}
+	void SetIsAllowQuestionBrickSlide(bool isAllowQuestionBrickSlideBool)
+	{
+		isAllowQuestionBrickSlide = isAllowQuestionBrickSlideBool;
+	}
+	bool GetControlMultipleCoin()
+	{
+		return controlMultipleCoin;
+	}
+	void SetControlMultipleCoin(bool controlMultipleCoinBool)
+	{
+		controlMultipleCoin = controlMultipleCoinBool;
+	}
+	bool GetIsAllowToShowMultipleCoin()
+	{
+		return isAllowToShowMultipleCoin;
+	}
+	void SetIsAllowToShowMultipleCoin(bool isAllowToShowMultipleCoinBool)
+	{
+		isAllowToShowMultipleCoin = isAllowToShowMultipleCoinBool;
 	}
 };

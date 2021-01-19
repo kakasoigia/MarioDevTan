@@ -18,6 +18,8 @@
 #include "BreakableBrickAnimation.h"
 #include "Camera.h"
 #include "FloatingWood.h"
+#include "Boomerang.h"
+#include "BoomerangEnemy.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
@@ -81,7 +83,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_BOTTOM			34
 #define OBJECT_TYPE_SCORE_AND_1LV		35
 #define OBJECT_TYPE_CAMERA		36
-#define OBJECT_TYPE_BREAKABLE_BRICK_MULTI_COIN		48
+#define OBJECT_TYPE_QUESTION_BRICK_MULTI_COIN		48
 #define OBJECT_TYPE_FLOATING_WOOD		49
 #define OBJECT_TYPE_BOOMERANG											50
 #define OBJECT_TYPE_BOOMERANG_ENEMY										51
@@ -280,23 +282,23 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_BOTTOM:
 		obj = new CBreakableBrickAnimation(BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_BOTTOM);
 		break;
-	/*case OBJECT_TYPE_BREAKABLE_BRICK_MULTI_COIN:
-		obj = new CQuestionBrick(BREAKABLE_BRICK_MULTI_COIN);
-		break;*/
+	case OBJECT_TYPE_QUESTION_BRICK_MULTI_COIN:
+		obj = new CQuestionBrick(QUESTION_BRICK_HAVE_MULTI_COIN);
+		break;
 	case OBJECT_TYPE_FLOATING_WOOD:
 	{
 		int floating_wood_id = atof(tokens[4].c_str());
 		obj = new CFloatingWood(floating_wood_id);
 	}
 	break;
-	/*case OBJECT_TYPE_BOOMERANG_ENEMY:
+	case OBJECT_TYPE_BOOMERANG_ENEMY:
 		obj = new CBoomerangEnemy();
 		break;
 	case OBJECT_TYPE_BOOMERANG:
 	{
 		int boomerang_id = atof(tokens[4].c_str());
 		obj = new CBoomerang(boomerang_id);
-	}*/
+	}
 	break;
 	case OBJECT_TYPE_HUD: 
 	{
@@ -346,25 +348,25 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 
 }
-float CPlayScene::UpdateCamMoveX(DWORD dt)
-{
-
-	float cam_x_end_temp = cameras.at(0)->GetEndCamX();
-
-	float cam_x_game = CGame::GetInstance()->GetCamPosX();
-
-	if (cam_x_game < cam_x_end_temp)
-	{
-		cam_x_game += MOVE_CAM_X_VX * dt;
-		return cam_x_game;
-	}
-	else
-	{
-		return cam_x_end_temp;
-	}
-
-
-}
+//float CPlayScene::UpdateCamMoveX(DWORD dt)
+//{
+//
+//	float cam_x_end_temp = cameras.at(0)->GetEndCamX();
+//
+//	float cam_x_game = CGame::GetInstance()->GetCamPosX();
+//
+//	if (cam_x_game < cam_x_end_temp)
+//	{
+//		cam_x_game += MOVE_CAM_X_VX * dt;
+//		return cam_x_game;
+//	}
+//	else
+//	{
+//		return cam_x_end_temp;
+//	}
+//
+//
+//}
 
 void CPlayScene::Load()
 {
@@ -434,8 +436,8 @@ void CPlayScene::Update(DWORD dt)
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		CGame *game = CGame::GetInstance();
-		float rangeXleft = player->x - game->GetScreenHeight() - 100;
-		float rangeXright = player->x + game->GetScreenHeight() + 100;
+		float rangeXleft = player->x - game->GetScreenHeight()/2 -100 ;
+		float rangeXright = player->x + game->GetScreenHeight()/2+100 ;
 		if ((objects[i]->x > rangeXleft &&
 			objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]) )
 		{
@@ -510,6 +512,8 @@ void CPlayScene::Unload()
 	map = nullptr;
 	
 	objects.clear();
+	cartridge_clip.clear();
+	score_list.clear();
 	player = NULL;
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
@@ -595,11 +599,24 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		}
 
 		break;
-	case DIK_P:
+	case DIK_N:
 	{
 			CGame::GetInstance()->SwitchScene(2);
 		     break;
 	}
+	case DIK_U:
+		mario->SetOnSpecialPosition(5);
+		break;
+	case DIK_I:
+		mario->SetOnSpecialPosition(6);
+		break;
+	case DIK_O:
+		mario->SetOnSpecialPosition(7);
+		break;
+	case DIK_P:
+		mario->SetOnSpecialPosition(8);
+		break;
+
 		
 	}
 }

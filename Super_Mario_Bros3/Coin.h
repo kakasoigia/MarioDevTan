@@ -4,7 +4,7 @@
 #include "QuestionBrick.h"
 
 #define COIN_BBOX_WIDTH  10
-#define COIN_BBOX_HEIGHT 15
+#define COIN_BBOX_HEIGHT 14
 
 
 #define COIN_STATE_IDLE		0

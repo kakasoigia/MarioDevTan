@@ -3,6 +3,18 @@
 CQuestionBrick::CQuestionBrick(int ctype)
 {
 	type = ctype;
+	int id = CGame::GetInstance()->GetCurrentScene()->GetId();
+	if (id == 4)
+	{
+		if (type == QUESTION_BRICK_HAVE_MULTI_COIN)
+			life = 10;
+		else
+			life = 0;
+	}
+	else
+	{
+		life = 0;
+	}
 }
 
 void CQuestionBrick::CalcPotentialCollisions(vector<LPGAMEOBJECT> *coObjects, vector<LPCOLLISIONEVENT> &coEvents)
@@ -42,40 +54,49 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	coEvents.clear();
 	CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-
+	/*if (life < 0)
+	{
+		isAlive = false;
+		isAllowToShowMultipleCoin = false;
+	}*/
+	int id = CGame::GetInstance()->GetCurrentScene()->GetId();
 	/*CalcPotentialCollisions(coObjects, coEvents);*/
 	// up a bit when being hit
-	if (!isAlive)
+	if (isAllowQuestionBrickSlide)
 	{
-		if (isUp)
+		if ((!isAlive && id == 3) || (isAlive && id == 4 && type == QUESTION_BRICK_HAVE_MULTI_COIN) || (!isAlive && id == 4 && type != QUESTION_BRICK_HAVE_MULTI_COIN))
 		{
-			if (time_Y_Up > 4)
+			if (isUp)
 			{
-				time_Y_Up = 0;
-				isUp = false;
+				if (time_Y_Up > 4)
+				{
+					time_Y_Up = 0;
+					isUp = false;
+				}
+				else
+				{
+					y -= 2;
+					time_Y_Up++;
+					//DebugOut(L"Nhun len \n");
+				}
 			}
 			else
 			{
-				y -= 2;
-				time_Y_Up++;
-				//DebugOut(L"Nhun len \n");
-			}
-		}
-		else
-		{
-			if (time_Y_Up > 4)
-			{
-				
-			}
-			else
-			{
-				y += 2;
-				time_Y_Up++;
-				//DebugOut(L"Nhun xuong \n");
+				if (time_Y_Up > 4)
+				{
+					vy = 0;
+					isAllowQuestionBrickSlide = false;
+					time_Y_Up = 0;
+				}
+				else
+				{
+					y += 2;
+					time_Y_Up++;
+					//DebugOut(L"Nhun xuong \n");
+				}
 			}
 		}
 	}
-
 
 	//// No collision occured, proceed normally
 	//if (coEvents.size() == 0)
@@ -138,7 +159,16 @@ void CQuestionBrick::SetState(int state, vector<LPGAMEOBJECT> *coObjects)
 {
 	if (state == QUESTION_BRICK_STATE_USED)
 	{
-		isAlive = false;
+		if (type == QUESTION_BRICK_HAVE_MULTI_COIN)
+		{
+			if (life <=1)
+				isAlive = false;
+			else life--;
+		}
+		else
+		{
+			isAlive = false;
+		}	
 		CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 		// if just have mushroom 
 		if (type == QUESTION_BRICK_JUST_HAVE_MUSHROOM) // call green mushroom.
@@ -189,7 +219,7 @@ void CQuestionBrick::SetState(int state, vector<LPGAMEOBJECT> *coObjects)
 				}
 			}
 		}
-		else if (type == QUESTION_BRICK_NORMAL) // toss coin
+		else  // toss coin
 		{
 
 			for (UINT i = 0; i < coObjects->size(); i++)

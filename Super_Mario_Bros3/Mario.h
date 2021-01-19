@@ -195,11 +195,12 @@ class CMario : public CGameObject
 	int CoinCounter = 0;
 	long Score = 0;
 	int life_counter = 4;
-
+	int time_cam_count = 0;
 	int Mario_Level = 0;
 	vector <int> itemList;
 	float start_x;			// initial position of Mario at scene
 	float start_y;
+	float camX_update = 0;
 protected:
 	bool isJumping = false;
 	bool isBraking = false;

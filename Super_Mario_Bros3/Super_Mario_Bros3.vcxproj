@@ -148,6 +148,8 @@
     <ClInclude Include="Animations.h" />
     <ClInclude Include="BackGroundStage.h" />
     <ClInclude Include="Bell.h" />
+    <ClInclude Include="Boomerang.h" />
+    <ClInclude Include="BoomerangEnemy.h" />
     <ClInclude Include="BreakableBrick.h" />
     <ClInclude Include="BreakableBrickAnimation.h" />
     <ClInclude Include="Brick.h" />
@@ -189,6 +191,8 @@
   <ItemGroup>
     <ClCompile Include="BackGroundStage.cpp" />
     <ClCompile Include="Bell.cpp" />
+    <ClCompile Include="Boomerang.cpp" />
+    <ClCompile Include="BoomerangEnemy.cpp" />
     <ClCompile Include="BreakableBrick.cpp" />
     <ClCompile Include="BreakableBrickAnimation.cpp" />
     <ClCompile Include="Brick.cpp" />

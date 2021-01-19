@@ -89,6 +89,8 @@ void CMario::FilterCollision(vector<LPCOLLISIONEVENT> &coEvents, vector<LPCOLLIS
 }
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+
+	
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
 
@@ -238,10 +240,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
+			
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			//if (e->ny < 0) isJumping = false; // chạm vật có thể nhảy tiếp
-			if (!dynamic_cast<CPipe *>(e->obj))
-				if (ny != 0) vy = 0;
+			/*if (!dynamic_cast<CPipe *>(e->obj))
+				if (ny != 0) vy = 0;*/
 			if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
 			{
 				CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
@@ -391,10 +394,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else if (dynamic_cast<CCoin *>(e->obj)) // if e->obj is Coin
 			{
+			
 				CCoin *coin = dynamic_cast<CCoin *>(e->obj);
 				coin->SetIsAppear(false);
+				
 				IncScore(100, coin->x, coin->y);
 				CoinCounterUp();
+				
 			}
 			else if (dynamic_cast<CFlower *>(e->obj))
 			{
@@ -417,10 +423,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (e->ny > 0)
 				{
 					CQuestionBrick *question_brick = dynamic_cast<CQuestionBrick *>(e->obj);
-					if (question_brick->GetIsAlive())
+					if (question_brick->GetIsAlive() && !question_brick->GetIsAllowQuestionBrickSlide())
 					{
 						question_brick->SetState(QUESTION_BRICK_STATE_USED, coObjects);
 						question_brick->SetIsUp(true);
+						if (!question_brick->GetIsAllowQuestionBrickSlide())
+							question_brick->SetIsAllowQuestionBrickSlide(true);
 					}
 
 
@@ -476,7 +484,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					}
 					if (e->nx != 0)
 					{
-						DebugOut(L"[INFO] Vô đây r nè\n");
+						
 						if (isTurning && (brick->y >= this->y + MARIO_TURNING_BONUS_HEIGHT))
 						{
 							if (brick->GetType() == BREAKABLE_BRICK_NORMAL)
@@ -508,6 +516,29 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					}
 				}
 
+			}
+			else if (dynamic_cast<CFloatingWood *>(e->obj))
+			{
+
+			CFloatingWood *floating_wood = dynamic_cast<CFloatingWood *>(e->obj);
+			if (e->ny < 0)
+			{
+
+				if (floating_wood->GetState() == FLOATING_WOOD_STATE_NORMAL)
+				{
+					floating_wood->SetState(FLOATING_WOOD_STATE_DOWN);
+				}
+				/*if (level != MARIO_LEVEL_SMALL)
+				{
+					y = this->y - 27;
+				}
+				else
+				{
+					y = this->y - 15;
+				}*/
+
+			}
+			
 			}
 			else if (dynamic_cast<CBell *>(e->obj))
 			{
@@ -584,7 +615,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					break;
 				case SPECIAL_ITEM_STATE_STAR_IDLE:
 					special_item->SetState(SPECIAL_ITEM_STATE_STAR_UP);
-					AddItem(SPECIAL_ITEM_STATE_MUSHROOM_IDLE);
+					AddItem(SPECIAL_ITEM_STATE_STAR_IDLE);
 					break;
 				}
 				isAutoWalk = true;
@@ -592,7 +623,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				StartTimeBackToWorld();
 
 			}
-			if (dynamic_cast<CPipe *>(e->obj))
+			else if (dynamic_cast<CPipe *>(e->obj))
 			{
 				CPipe* pipe = dynamic_cast<CPipe *>(e->obj);
 				if (pipe->GetType() == PIPE_TYPE_DOWN)
@@ -619,33 +650,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				}
 			}
 			// map 1-4
-			else if (dynamic_cast<CFloatingWood *>(e->obj))
-			{
-				CFloatingWood *floating_wood = dynamic_cast<CFloatingWood *>(e->obj);
-				if (e->ny < 0)
-				{
-					
-					if (floating_wood->GetState() == FLOATING_WOOD_STATE_NORMAL)
-					{
-						floating_wood->SetState(FLOATING_WOOD_STATE_DOWN);
-					}
-					/*if (level != MARIO_LEVEL_SMALL)
-					{
-						y = this->y - 27;
-					}
-					else
-					{
-						y = this->y - 15;
-					}*/
-				
-				}
-			/*	else if (nx != 0 && ny == 0)
-				{
-					controlMarioColliWithMovingRec = true;
-				}*/
-			}
+		
+			
 
-
+			DebugOut(L" update xong   \n");
 		}
 
 	}
@@ -695,24 +703,20 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		if (x > (game->GetScreenWidth() / 2)) camX = cx;
 		
-		CGame::GetInstance()->SetCamPos((int)camX, cy);
-
-
-		/*int current_pos = CGame::GetInstance()->GetCamPosX();
-		CGame::GetInstance()->SetCamX((int)current_pos+1);
-		if (this->x <= current_pos + 3.0f)
-		{
-			x = current_pos + 3.0f;
-			this->isCamPushed = true;
-		}
+	
+		if (x < 1870)
+			camX_update += 0.035f * dt;
 		else
 		{
-			this->isCamPushed = false;
-		}*/
-		if (state != MARIO_STATE_DIE)
+			camX_update = camX;
+		}
+			CGame::GetInstance()->SetCamPos((int)camX_update, (int)210);
+		
+		if (x < camX_update)
 		{
-			CGame::GetInstance()->SetCamPos((int)camX, (int)cy);
-			if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);
+			x = camX_update;
+		}
+		
 			if (isAtTunnel)
 			{
 				CGame::GetInstance()->SetCamPos(1300, 980);
@@ -721,11 +725,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				CGame::GetInstance()->SetCamPos(2243 , 200);
 			}
-		}
+		
 	}
 
-
-
+	
+	DebugOut(L" ra tới đây end  \n");
 }
 
 void CMario::Render()
@@ -1338,6 +1342,29 @@ void CMario::SetOnSpecialPosition(int place)
 		SetPosition(2256, -190);
 		SetSpeed(0, 0);
 		break;
+		// map 1-4
+	case 5: //place breakable brick
+		SetPosition(645,300);
+		camX_update =480;
+		SetSpeed(0, 0);
+		break;
+	case 6: //place có nấm LV
+		SetPosition(1000, 368);
+		camX_update = 835;
+		SetSpeed(0, 0);
+		break;
+	case 7: // tiền nhảy
+		SetPosition(1536, 345);
+		camX_update = 1371
+			;
+		SetSpeed(0, 0);
+		break;
+	case 8: // ống cống
+		SetPosition(2080, 332);
+		camX_update = 1915
+			;
+		SetSpeed(0, 0);
+		break;
 	default:
 		break;
 	}
@@ -1436,8 +1463,10 @@ void CMario::StartFlying()
 }
 void CMario::IncScore(int score, float pos_x, float pos_y)
 {
+	
 	if (score != SCORE_TYPE_1LIFE)
 		Score += score;
+	DebugOut(L"[INFO] tính coin %d \n", Score);
 	if (score == 10) return;
 	vector<LPGAMEOBJECT> objects = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->Get_score_list();
 	for (unsigned i = 0; i < objects.size(); i++) // find score free
@@ -1448,8 +1477,10 @@ void CMario::IncScore(int score, float pos_x, float pos_y)
 			scoreUp->SetIsUsed(true);
 			scoreUp->SetPosition(pos_x, pos_y - 10);
 			scoreUp->SetValue(score);
+			
 			scoreUp->SetState(SCORE_STATE_UP);
 			scoreUp->StartTiming();
+			
 			return;
 		}
 	}
@@ -1457,7 +1488,7 @@ void CMario::IncScore(int score, float pos_x, float pos_y)
 }
 void CMario::SetTransformingDown()
 {
-	DebugOut(L"[INFO] Vô Setlevl r %d\n", level);
+	
 
 	if (level > MARIO_LEVEL_SMALL)
 	{

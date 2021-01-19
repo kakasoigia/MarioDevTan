@@ -67,41 +67,40 @@ void CFloatingWood::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}*/
 
 
-	//// No collision occured, proceed normally
-	//if (coEvents.size() == 0)
-	//{
-	//	x += dx;
-	//	y += dy;
-	//}
-	//else
-	//{
+	// No collision occured, proceed normally
+	if (coEvents.size() == 0)
+	{
+		x += dx;
+		y += dy;
+	}
+	else
+	{
 
-	//	float min_tx, min_ty, nx = 0, ny;
-	//	float rdx = 0;
-	//	float rdy = 0;
+		float min_tx, min_ty, nx = 0, ny;
+		float rdx = 0;
+		float rdy = 0;
 
-	//	// TODO: This is a very ugly designed function!!!!
-	//	FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+		// TODO: This is a very ugly designed function!!!!
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-	//	// block 
-	//	//x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
-	//	//y += min_ty * dy +  ny * 0.4f;
+		// block 
+		x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
+		/*y += min_ty * dy +  ny * 0.4f;*/
 
-	//	//if (nx != 0) vx = 0;
-	//	//if (ny != 0) vy = 0;
+		//if (nx != 0) vx = 0;
+		//if (ny != 0) vy = 0;
 
-	//	// Collision logic with the others Goombas
-	//	for (UINT i = 0; i < coEventsResult.size(); i++)
-	//	{
-	//		LPCOLLISIONEVENT e = coEventsResult[i];
-	//	}
-	//}
+		// Collision logic with the others Goombas
+		for (UINT i = 0; i < coEventsResult.size(); i++)
+		{
+			LPCOLLISIONEVENT e = coEventsResult[i];
+		}
+	}
 
 
-	//// clean up collision events
-	//for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-	x += dx;
-	y += dy;
+	// clean up collision events
+	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+	
 }
 
 void CFloatingWood::Render()

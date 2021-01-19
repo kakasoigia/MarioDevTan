@@ -169,8 +169,10 @@ void CSpecialItem::Render()
 	if (isShowYouGotACard)
 	{
 		sprite->Draw(origin_x +62 , origin_y-62);
+
 		 sprite = sprites->Get(80200);
 		sprite->Draw(origin_x-40, origin_y-82);
+
 		sprite = sprites->Get(80201);
 		sprite->Draw(origin_x-60, origin_y-52);
 		
