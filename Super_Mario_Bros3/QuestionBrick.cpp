@@ -143,7 +143,8 @@ void CQuestionBrick::Render()
 
 	if (isAlive)
 	{
-		if (type == QUESTION_BRICK_JUST_HAVE_MUSHROOM)
+		int id = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetId();
+		if (type == QUESTION_BRICK_JUST_HAVE_MUSHROOM || type == QUESTION_BRICK_HAVE_MULTI_COIN || (id ==4 && type == QUESTION_BRICK_HAVE_LEAF))
 			ani = QUESTION_BRICK_ANI_NEW_TYPE;
 		else
 			ani = QUESTION_BRICK_ANI_ALIVE;

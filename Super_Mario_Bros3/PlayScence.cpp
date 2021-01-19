@@ -605,16 +605,22 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		     break;
 	}
 	case DIK_U:
-		mario->SetOnSpecialPosition(5);
-		break;
-	case DIK_I:
 		mario->SetOnSpecialPosition(6);
 		break;
-	case DIK_O:
+	case DIK_I:
 		mario->SetOnSpecialPosition(7);
 		break;
-	case DIK_P:
+	case DIK_O:
 		mario->SetOnSpecialPosition(8);
+		break;
+	case DIK_Y:
+		mario->SetOnSpecialPosition(5);
+		break;
+	case DIK_P:
+		mario->SetOnSpecialPosition(9);
+		break;
+	case DIK_Z:
+		mario->SetOnSpecialPosition(10);
 		break;
 
 		

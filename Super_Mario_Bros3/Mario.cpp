@@ -142,11 +142,23 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	if (state == MARIO_STATE_PIPE_SLIDE_DOWN)
 	{
+		
 		if (GetTickCount() - pipe_slide_down_start >= MARIO_TIME_SLIDE_UP_DOWN)
 		{
-			this->SetPosition(1330, 1050);
-			canPipeSlideDown = false;
-			isAtTunnel = true;
+			int id = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetId();
+			if (id != 4)
+			{
+				this->SetPosition(POS_X_TUNNEL_MAP_1, POS_Y_TUNNEL_MAP_1);
+				canPipeSlideDown = false;
+				isAtTunnel = true;
+			}
+			else
+			{
+				this->SetPosition(POS_X_SCENE_END_MAP_4, POS_Y_SCENE_END_MAP_4);
+				canPipeSlideDown = false;
+				isAtTunnel = false;
+			}
+			
 			SetState(MARIO_STATE_IDLE);
 			pipe_slide_down_start = 0;
 		}
@@ -154,12 +166,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	if (state == MARIO_STATE_PIPE_SLIDE_UP)
 	{
+		
 		if (GetTickCount() - pipe_slide_up_start >= MARIO_TIME_SLIDE_UP_DOWN)
 		{
 			isAtTunnel = false;
 			if (!setPositionOutOfTunnel)
 			{
-				this->SetPosition(2330, 122);
+				this->SetPosition(POS_X_OUT_OF_TUNNEL_MAP_1, POS_Y_OUT_OF_TUNNEL_MAP_1);
 				setPositionOutOfTunnel = true;
 			}
 		}
@@ -420,9 +433,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else if (dynamic_cast<CQuestionBrick *>(e->obj))
 			{
+			CQuestionBrick *question_brick = dynamic_cast<CQuestionBrick *>(e->obj);
 				if (e->ny > 0)
 				{
-					CQuestionBrick *question_brick = dynamic_cast<CQuestionBrick *>(e->obj);
+					
 					if (question_brick->GetIsAlive() && !question_brick->GetIsAllowQuestionBrickSlide())
 					{
 						question_brick->SetState(QUESTION_BRICK_STATE_USED, coObjects);
@@ -431,6 +445,22 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							question_brick->SetIsAllowQuestionBrickSlide(true);
 					}
 
+
+				}
+				if (e->nx != 0)
+				{
+					
+					if (isTurning && (question_brick->y >= this->y + MARIO_TURNING_BONUS_HEIGHT))
+					{
+						
+						if (question_brick->GetIsAlive() && !question_brick->GetIsAllowQuestionBrickSlide())
+						{
+							question_brick->SetState(QUESTION_BRICK_STATE_USED, coObjects);
+							question_brick->SetIsUp(true);
+							if (!question_brick->GetIsAllowQuestionBrickSlide())
+								question_brick->SetIsAllowQuestionBrickSlide(true);
+						}
+					}
 
 				}
 
@@ -710,17 +740,26 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			camX_update = camX;
 		}
-			CGame::GetInstance()->SetCamPos((int)camX_update, (int)210);
+			
 		
 		if (x < camX_update)
 		{
 			x = camX_update;
 		}
+		CGame::GetInstance()->SetCamPos((int)camX_update, (int)210);
+		if (x > (POS_X_EDGE_MAP_4 - game->GetScreenWidth()) && x < POS_X_EDGE_MAP_4-20)
+		{
+			CGame::GetInstance()->SetCamPos((int)POS_X_EDGE_MAP_4- game->GetScreenWidth()-7, (int)210);
+		}
+		else if (x > (POS_X_EDGE_MAP_4) && x < (POS_X_EDGE_MAP_4+ game->GetScreenWidth()) )
+		{
+		CGame::GetInstance()->SetCamPos((int)POS_X_EDGE_MAP_4+8, (int)210);
+		}
 		
-			if (isAtTunnel)
+			/*if (isAtTunnel)
 			{
 				CGame::GetInstance()->SetCamPos(1300, 980);
-			}
+			}*/
 			if (isAutoWalk)
 			{
 				CGame::GetInstance()->SetCamPos(2243 , 200);
@@ -1353,15 +1392,27 @@ void CMario::SetOnSpecialPosition(int place)
 		camX_update = 835;
 		SetSpeed(0, 0);
 		break;
-	case 7: // tiền nhảy
-		SetPosition(1536, 345);
+	case 8: // tiền nhảy
+		SetPosition(1536, 300);
 		camX_update = 1371
 			;
 		SetSpeed(0, 0);
 		break;
-	case 8: // ống cống
+	case 7: // nấm xanh
+		SetPosition(1183, 279);
+		camX_update = 1018
+			;
+		SetSpeed(0, 0);
+		break;
+	case 9: // ống cống
 		SetPosition(2080, 332);
 		camX_update = 1915
+			;
+		SetSpeed(0, 0);
+		break;
+	case 10: // đầu ống
+		SetPosition(1936, 300);
+		camX_update = POS_X_EDGE_MAP_4
 			;
 		SetSpeed(0, 0);
 		break;

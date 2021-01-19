@@ -184,7 +184,13 @@
 #define MARIO_SPRITE_SCORE_UP_8000	60157
 #define MARIO_SPRITE_SCORE_UP_LV_UP	60158
 
-
+#define POS_X_TUNNEL_MAP_1 1330
+#define POS_Y_TUNNEL_MAP_1 1050
+#define POS_X_OUT_OF_TUNNEL_MAP_1 2330
+#define POS_Y_OUT_OF_TUNNEL_MAP_1 122
+#define POS_X_SCENE_END_MAP_4 2200
+#define POS_Y_SCENE_END_MAP_4 300
+#define POS_X_EDGE_MAP_4 2055
 class CMario : public CGameObject
 {
 	int level;
