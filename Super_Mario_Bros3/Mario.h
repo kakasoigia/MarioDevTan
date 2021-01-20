@@ -138,15 +138,6 @@
 #define MARIO_SMOKE_TRANSFORM_LEFT				97
 #define MARIO_SMOKE_TRANSFORM_RIGHT				98
 
-#define MARIO_ANI_BIG_JUMP_MAX_POWER_RIGHT			99
-#define MARIO_ANI_BIG_JUMP_MAX_POWER_LEFT			100
-#define MARIO_ANI_SMALL_JUMP_MAX_POWER_RIGHT		101
-#define MARIO_ANI_SMALL_JUMP_MAX_POWER_LEFT		    102
-#define MARIO_ANI_TAIL_JUMP_MAX_POWER_RIGHT			103
-#define MARIO_ANI_TAIL_JUMP_MAX_POWER_LEFT			104
-#define MARIO_ANI_FIRE_JUMP_MAX_POWER_RIGHT			105
-#define MARIO_ANI_FIRE_JUMP_MAX_POWER_LEFT			106
-
 #define	MARIO_LEVEL_BIG		2
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_TAIL	3
@@ -232,7 +223,6 @@ protected:
 	bool isTransforming = false;
 	bool transformUpLevel = false;
 	bool isCamPushed = false;
-	bool isJumpingMaxStack = false;
 	DWORD start_time_die_back_to_worldmap = 0;
 	int current_level_speed_up;
 	DWORD turning_start = 0;
