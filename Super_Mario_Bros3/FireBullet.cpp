@@ -129,14 +129,13 @@ void  CFireBullet::SetState(int state)
 		CMario *mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 		this->isUsed = true;
 		this->state = BULLET_STATE_FLYING;
-		this->x = mario->x + 10;
+		this->x = mario->x + 5;
 		this->y = mario->y+2;
 		this->nx = mario->nx;
 		if (nx > 0)
 			vx = BULLET_FLYING_SPEED;
 		else
 			vx = -BULLET_FLYING_SPEED;
-		
 		/*vy = BULLET_FLYING_SPEED /5;*/
 	}
 	else if (state == BULLET_STATE_DISAPPEARING)
