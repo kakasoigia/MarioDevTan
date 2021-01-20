@@ -2,24 +2,7 @@
 #include <fstream>
 
 #include "PlayScence.h"
-#include "Utils.h"
-#include "Textures.h"
-#include "Sprites.h"
-#include "Portal.h"
-#include "Coin.h"
-#include "BreakableBrick.h"
-#include "Bell.h"
-#include "Leaf.h"
-#include "MushRoom.h"
-#include "HudPanels.h"
-#include "HudSubPanels.h"
-#include "SpecialItem.h"
-#include "ScoreUp.h"
-#include "BreakableBrickAnimation.h"
-#include "Camera.h"
-#include "FloatingWood.h"
-#include "Boomerang.h"
-#include "BoomerangEnemy.h"
+
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
@@ -37,61 +20,6 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	Load scene resources from scene file (textures, sprites, animations and objects)
 	See scene1.txt, scene2.txt for detail format specification
 */
-
-#define SCENE_SECTION_UNKNOWN -1
-#define SCENE_SECTION_TEXTURES 2
-#define SCENE_SECTION_SPRITES 3
-#define SCENE_SECTION_ANIMATIONS 4
-#define SCENE_SECTION_ANIMATION_SETS	5
-#define SCENE_SECTION_OBJECTS	6
-#define SCENE_SECTION_MAP	7
-
-#define OBJECT_TYPE_MARIO	0
-#define OBJECT_TYPE_BRICK	1
-#define OBJECT_TYPE_GOOMBA	2
-#define OBJECT_TYPE_KOOPAS_GREEN_WALK	3
-#define OBJECT_TYPE_RECTANGLE	5
-#define OBJECT_TYPE_NO_COLLISION_OBJECTS 4
-#define OBJECT_TYPE_PIPE_NORMAL 6
-#define OBJECT_TYPE_KOOPAS_GREEN_FLY	7
-#define OBJECT_TYPE_KOOPAS_RED_WALK	8
-#define OBJECT_TYPE_KOOPAS_RED_FLY	9
-#define OBJECT_TYPE_COIN_NORMAL	10
-#define OBJECT_TYPE_GOOMBA_RED_FLY	11
-#define OBJECT_TYPE_FIRE_BULLET	12
-#define OBJECT_TYPE_FLOWER_RED		13
-#define OBJECT_TYPE_FLOWER_BULLET	14
-#define OBJECT_TYPE_QUESTION_BRICK_NORMAL	15
-#define OBJECT_TYPE_LEAF	16
-#define OBJECT_TYPE_MUSHROOM_RED		17
-#define OBJECT_TYPE_QUESTION_BRICK_HAVE_LEAF	18
-#define OBJECT_TYPE_MUSHROOM_GREEN		19
-#define OBJECT_TYPE_QUESTION_BRICK_JUST_HAVE_MUSHROOM	20
-#define OBJECT_TYPE_FLOWER_GREEN				21
-#define OBJECT_TYPE_FLOWER_GREEN_CAN_SHOOT		22
-#define OBJECT_TYPE_BREAKABLE_BRICK_NORMAL	23
-#define OBJECT_TYPE_BREAKABLE_BRICK_BELL	25
-#define OBJECT_TYPE_BELL	24
-#define OBJECT_TYPE_COIN_CAN_TOSS	26
-#define OBJECT_TYPE_HUD	27
-#define OBJECT_TYPE_SPECIAL_ITEM	28
-#define OBJECT_TYPE_PIPE_CAN_SLIDE_DOWN 29
-#define OBJECT_TYPE_PIPE_CAN_SLIDE_UP 30
-#define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP				31
-#define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_RIGHT_TOP			32
-#define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_RIGHT_BOTTOM			33
-#define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_BOTTOM			34
-#define OBJECT_TYPE_SCORE_AND_1LV		35
-#define OBJECT_TYPE_CAMERA		36
-#define OBJECT_TYPE_QUESTION_BRICK_MULTI_COIN		48
-#define OBJECT_TYPE_FLOATING_WOOD		49
-#define OBJECT_TYPE_BOOMERANG											50
-#define OBJECT_TYPE_BOOMERANG_ENEMY										51
-#define OBJECT_TYPE_PORTAL	100
- 
-#define MAX_SCENE_LINE 1024
-#define MAX_POWER_SPEED_UP 7
-#define	TIME_PER_LEVEL_SPEED_UP 200
 
 
 void CPlayScene::_ParseSection_TEXTURES(string line)
@@ -199,6 +127,28 @@ void CPlayScene::_ParseSection_MAP(string line)
 	map->ExtractTileFromTileSet();
 }
 
+void CPlayScene::_ParseSection_GRID(string line)
+{
+	vector<string> tokens = split(line);
+
+	if (tokens.size() < 1) return;
+
+	wstring file_path = ToWSTR(tokens[0]);
+
+	grid = new CGrid(file_path.c_str());
+}
+bool CPlayScene::IsInUseArea(float Ox, float Oy)
+{
+	float CamX, CamY;
+
+	CamX = CGame::GetInstance()->GetCamPosX();
+
+	CamY = CGame::GetInstance()->GetCamPosY();
+
+	if (((CamX - CAM_X_BONUS < Ox) && (Ox < CamX + IN_USE_WIDTH)) && ((CamY < Oy) && (Oy < CamY + IN_USE_HEIGHT)))
+		return true;
+	return false;
+}
 void CPlayScene::_ParseSection_OBJECTS(string line)
 {
 	vector<string> tokens = split(line);
@@ -328,15 +278,18 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	// General object setup
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-	if (!dynamic_cast<CCamera*>(obj))
+	if (obj != NULL)
 	{
 		obj->SetPosition(x, y);
 		obj->SetAnimationSet(ani_set);
+		obj->SetOrigin(x, y, obj->GetState());
+		obj->SetisOriginObj(true);
+		objects.push_back(obj);
 	}
 	
 
 
-	objects.push_back(obj);
+	
 	//// add 1 cartridge_clip
 	if (dynamic_cast<CFireBullet *>(obj))
 	{
@@ -398,6 +351,9 @@ void CPlayScene::Load()
 		if (line == "[OBJECTS]") {
 			section = SCENE_SECTION_OBJECTS; continue;
 		}
+		if (line == "[GRID]") {
+			section = SCENE_SECTION_GRID; continue;
+		}
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
 
 		//
@@ -411,6 +367,7 @@ void CPlayScene::Load()
 		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
 		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
 		case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
+		case SCENE_SECTION_GRID: _ParseSection_GRID(line); break;
 		}
 	}
 
@@ -427,7 +384,35 @@ void CPlayScene::Update(DWORD dt)
 	// TO-DO: This is a "dirty" way, need a more organized way 
 	bool isTransform = player->GetIsTransforming();
 	vector<LPGAMEOBJECT> coObjects;
+	CGame* game = CGame::GetInstance();
+
+	float cx = game->GetCamPosX();
+
+	float cy = game->GetCamPosY();
+
+	grid->GetObjects(objects, cx, cy);
+
 	for (size_t i = 0; i < objects.size(); i++)
+	{
+		float Ox, Oy;
+		objects[i]->GetPosition(Ox, Oy);
+		if (!IsInUseArea(Ox, Oy) && !objects[i]->GetisOriginObj())
+		{
+			objects[i]->SetActive(false);
+			objects.erase(objects.begin() + i);
+		}
+	}
+
+	//DebugOut1(L"So Luong CooBJ %d \n", objects.size());
+	//DebugOut1(L"So Luong CooBJ %d \n", objects.size());
+
+	for (size_t i = 0; i < objects.size(); i++)
+	{
+		objects[i]->Update(dt, &objects);
+	}
+
+	DebugOut(L"So Luong CooBJ %d \n", objects.size());
+	/*for (size_t i = 0; i < objects.size(); i++)
 	{
 		if (!dynamic_cast<CNoCollisionObjects *>(objects[i]))
 			coObjects.push_back(objects[i]);
@@ -452,7 +437,7 @@ void CPlayScene::Update(DWORD dt)
 		}
 		
 	}
-
+*/
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 	// chống đi lùi màn hình
@@ -468,13 +453,13 @@ void CPlayScene::Render()
 	{
 		this->map->Render();
 	}
-	for (unsigned int i = 1; i < objects.size(); i++)
+	for (unsigned int i = 0; i < objects.size(); i++)
 	{
-		CGame *game = CGame::GetInstance();
+		/*CGame *game = CGame::GetInstance();
 		float rangeXleft = player->x - game->GetScreenHeight() - 200;
 		float rangeXright = player->x + game->GetScreenHeight() + 200;
 		if ((objects[i]->x > rangeXleft &&
-			objects[i]->x < rangeXright) )
+			objects[i]->x < rangeXright) )*/
 			objects[i]->Render();
 	}
 		
