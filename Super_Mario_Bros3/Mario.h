@@ -93,7 +93,7 @@
 #define MARIO_ANI_TAIL_TURNING_RIGHT	58	
 #define MARIO_ANI_TAIL_TURNING_LEFT		59
 
- 
+
 #define MARIO_ANI_FIRE_IDLE_RIGHT		60
 #define MARIO_ANI_FIRE_IDLE_LEFT		61
 #define MARIO_ANI_FIRE_WALKING_RIGHT	62	
@@ -137,6 +137,15 @@
 
 #define MARIO_SMOKE_TRANSFORM_LEFT				97
 #define MARIO_SMOKE_TRANSFORM_RIGHT				98
+
+#define MARIO_ANI_BIG_JUMP_MAX_POWER_RIGHT			99
+#define MARIO_ANI_BIG_JUMP_MAX_POWER_LEFT			100
+#define MARIO_ANI_SMALL_JUMP_MAX_POWER_RIGHT		101
+#define MARIO_ANI_SMALL_JUMP_MAX_POWER_LEFT		    102
+#define MARIO_ANI_TAIL_JUMP_MAX_POWER_RIGHT			103
+#define MARIO_ANI_TAIL_JUMP_MAX_POWER_LEFT			104
+#define MARIO_ANI_FIRE_JUMP_MAX_POWER_RIGHT			105
+#define MARIO_ANI_FIRE_JUMP_MAX_POWER_LEFT			106
 
 #define	MARIO_LEVEL_BIG		2
 #define	MARIO_LEVEL_SMALL	1
@@ -223,6 +232,7 @@ protected:
 	bool isTransforming = false;
 	bool transformUpLevel = false;
 	bool isCamPushed = false;
+	bool isJumpingMaxStack = false;
 	DWORD start_time_die_back_to_worldmap = 0;
 	int current_level_speed_up;
 	DWORD turning_start = 0;
@@ -262,173 +272,173 @@ public:
 	void SetTransformingDown();
 	void SetTransformingUp(int type);
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
-	 int GetIsHolding()
-	 {
-		 return isHolding;
-	 }
-	 void SetIsHolding(bool isHolding)
-	 {
-		 this->isHolding = isHolding;
-	 }
-	 void IncreaseCurrentLevelSpeed()
-	 {
-		 current_level_speed_up++;
-	 }
-	 void DecreaseCurrentLevelSpeed()
-	 {
-		 current_level_speed_up--;
-	 }
-	 int GetLevelSpeedUp()
-	 {
-		 return current_level_speed_up;
-	 }
-	 bool GetIsKicking()
-	 {
-		 return isKicking;
-	 }
-	 void SetIsKicking(bool isKickingBool)
-	 {
-		 this->isKicking = isKickingBool;
-	 }
-	 bool GetIsFiring()
-	 {
-		 return isFiring;
-	 }
-	 void SetIsFiring(bool isFiring)
-	 {
-		 this->isFiring = isFiring;
-	 }
-	 void SetIsTurning(bool isTurningBool)
-	 {
-		 this->isTurning = isTurningBool;
-	 }
-	 bool GetIsTurning()
-	 {
-		 return  isTurning;
-	 }
-	 void SetCanFly(bool canFly)
-	 {
-		 this->canFly = canFly;
-	 }
-	 bool GetCanFly()
-	 {
-		 return  canFly;
-	 }
-	 void SetIsLanding(bool isLanding)
-	 {
-		 this->isLanding = isLanding;
-	 }
-	 bool GetIsLanding()
-	 {
-		 return  isLanding;
-	 }
-	 void SetIsJumping(bool isJumping)
-	 {
-		 this->isJumping = isJumping;
-	 }
-	 bool GetIsJumping()
-	 {
-		 return  isJumping;
-	 }
-	 bool GetIsHitted()
-	 {
-		 return isHitted;
-	 }
-	 void SetIsHitted(bool isHittedBool)
-	 {
-		 isHitted = isHittedBool;
-	 }
-	 bool GetIsHoldAni()
-	 {
-		 return isHoldAni;
-	 }
-	 void SetIsHoldAni(bool isHoldAni)
-	 {
+	int GetIsHolding()
+	{
+		return isHolding;
+	}
+	void SetIsHolding(bool isHolding)
+	{
+		this->isHolding = isHolding;
+	}
+	void IncreaseCurrentLevelSpeed()
+	{
+		current_level_speed_up++;
+	}
+	void DecreaseCurrentLevelSpeed()
+	{
+		current_level_speed_up--;
+	}
+	int GetLevelSpeedUp()
+	{
+		return current_level_speed_up;
+	}
+	bool GetIsKicking()
+	{
+		return isKicking;
+	}
+	void SetIsKicking(bool isKickingBool)
+	{
+		this->isKicking = isKickingBool;
+	}
+	bool GetIsFiring()
+	{
+		return isFiring;
+	}
+	void SetIsFiring(bool isFiring)
+	{
+		this->isFiring = isFiring;
+	}
+	void SetIsTurning(bool isTurningBool)
+	{
+		this->isTurning = isTurningBool;
+	}
+	bool GetIsTurning()
+	{
+		return  isTurning;
+	}
+	void SetCanFly(bool canFly)
+	{
+		this->canFly = canFly;
+	}
+	bool GetCanFly()
+	{
+		return  canFly;
+	}
+	void SetIsLanding(bool isLanding)
+	{
+		this->isLanding = isLanding;
+	}
+	bool GetIsLanding()
+	{
+		return  isLanding;
+	}
+	void SetIsJumping(bool isJumping)
+	{
+		this->isJumping = isJumping;
+	}
+	bool GetIsJumping()
+	{
+		return  isJumping;
+	}
+	bool GetIsHitted()
+	{
+		return isHitted;
+	}
+	void SetIsHitted(bool isHittedBool)
+	{
+		isHitted = isHittedBool;
+	}
+	bool GetIsHoldAni()
+	{
+		return isHoldAni;
+	}
+	void SetIsHoldAni(bool isHoldAni)
+	{
 		this->isHoldAni = isHoldAni;
-	 }
-	 bool GetAutoWalk()
-	 {
-		 return isAutoWalk;
-	 }
-	 void SetAutoWalk(bool isAutoWalk)
-	 {
-		 this->isAutoWalk = isAutoWalk;
-	 }
-	 //pipe tunnel
-	 void StartPipeSlideDown()
-	 {
-		 if (pipe_slide_down_start == 0)
-			 pipe_slide_down_start = GetTickCount();
-	 }
-	 void StartPipeSlideUp()
-	 {
-		 if (pipe_slide_up_start == 0)
-			 pipe_slide_up_start = GetTickCount();
-	 }
-	
-	 bool GetIsAtTunnel()
-	 {
-		 return isAtTunnel;
-	 }
-	 void SetIsAtTunnel(bool isAtTheTunnelBool)
-	 {
-		 this->isAtTunnel = isAtTheTunnelBool;
-	 }
-	 bool GetCanPipeSlideDown()
-	 {
-		 return canPipeSlideDown;
-	 }
-	 void SetCanPipeSlideDown(bool canPipeSlideDown)
-	 {
-		 this->canPipeSlideDown = canPipeSlideDown;
-	 }
-	 bool GetCanPipeSlideUp()
-	 {
-		 return canPipeSlideUp;
-	 }
-	 void SetCanPipeSlideUp(bool canPipeSlideUp)
-	 {
-		 this->canPipeSlideUp = canPipeSlideUp;
-	 }
-	 bool GetIsTransforming()
-	 {
-		 return isTransforming;
-	 }
-	 void SetIsTransforming(bool isTransformingBool)
-	 {
-		 isTransforming = isTransformingBool;
-	 }
-	 bool GetIsTransFormUpLevel()
-	 {
-		 return transformUpLevel;
-	 }
-	 void SetIsTransFormUpLevel(bool transformRecogBool)
-	 {
-		 transformUpLevel = transformRecogBool;
-	 }
-	 void StartTransforming()
-	 {
-		 if (transforming_start == 0)
-			 transforming_start = GetTickCount();
-	 }
-	 bool GetIsCamPushed()
-	 {
-		 return isCamPushed;
-	 }
-	 void SetIsCamPushed(bool isCamPushed)
-	 {
-		this-> isCamPushed = isCamPushed;
-	 }
-	 // HUD 
-	 int GetCoinCounter() { return CoinCounter; };
-	 void CoinCounterUp() { CoinCounter++; Score += 50; };
-	 long GetScore() { return Score; };
-	 void IncScore(int score,float pos_x, float pos_y);
-	 void AddLifeCounter() { life_counter++; };
-	 int GetLifeCounter() { return life_counter; };
-	 void AddItem(int item_type) { if (itemList.size() <= 3) itemList.push_back(item_type); };
-	 vector<int> GetItemList() { return itemList; };
-	 void StartTimeBackToWorld() { start_time_die_back_to_worldmap = GetTickCount(); };
-	 DWORD GetTimeBackToWorld() { return start_time_die_back_to_worldmap; };
+	}
+	bool GetAutoWalk()
+	{
+		return isAutoWalk;
+	}
+	void SetAutoWalk(bool isAutoWalk)
+	{
+		this->isAutoWalk = isAutoWalk;
+	}
+	//pipe tunnel
+	void StartPipeSlideDown()
+	{
+		if (pipe_slide_down_start == 0)
+			pipe_slide_down_start = GetTickCount();
+	}
+	void StartPipeSlideUp()
+	{
+		if (pipe_slide_up_start == 0)
+			pipe_slide_up_start = GetTickCount();
+	}
+
+	bool GetIsAtTunnel()
+	{
+		return isAtTunnel;
+	}
+	void SetIsAtTunnel(bool isAtTheTunnelBool)
+	{
+		this->isAtTunnel = isAtTheTunnelBool;
+	}
+	bool GetCanPipeSlideDown()
+	{
+		return canPipeSlideDown;
+	}
+	void SetCanPipeSlideDown(bool canPipeSlideDown)
+	{
+		this->canPipeSlideDown = canPipeSlideDown;
+	}
+	bool GetCanPipeSlideUp()
+	{
+		return canPipeSlideUp;
+	}
+	void SetCanPipeSlideUp(bool canPipeSlideUp)
+	{
+		this->canPipeSlideUp = canPipeSlideUp;
+	}
+	bool GetIsTransforming()
+	{
+		return isTransforming;
+	}
+	void SetIsTransforming(bool isTransformingBool)
+	{
+		isTransforming = isTransformingBool;
+	}
+	bool GetIsTransFormUpLevel()
+	{
+		return transformUpLevel;
+	}
+	void SetIsTransFormUpLevel(bool transformRecogBool)
+	{
+		transformUpLevel = transformRecogBool;
+	}
+	void StartTransforming()
+	{
+		if (transforming_start == 0)
+			transforming_start = GetTickCount();
+	}
+	bool GetIsCamPushed()
+	{
+		return isCamPushed;
+	}
+	void SetIsCamPushed(bool isCamPushed)
+	{
+		this->isCamPushed = isCamPushed;
+	}
+	// HUD 
+	int GetCoinCounter() { return CoinCounter; };
+	void CoinCounterUp() { CoinCounter++; Score += 50; };
+	long GetScore() { return Score; };
+	void IncScore(int score, float pos_x, float pos_y);
+	void AddLifeCounter() { life_counter++; };
+	int GetLifeCounter() { return life_counter; };
+	void AddItem(int item_type) { if (itemList.size() <= 3) itemList.push_back(item_type); };
+	vector<int> GetItemList() { return itemList; };
+	void StartTimeBackToWorld() { start_time_die_back_to_worldmap = GetTickCount(); };
+	DWORD GetTimeBackToWorld() { return start_time_die_back_to_worldmap; };
 
 };
