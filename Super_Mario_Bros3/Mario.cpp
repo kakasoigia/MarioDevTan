@@ -17,6 +17,7 @@
 #include "ScoreUp.h"
 #include "SpecialItem.h"
 #include "HudPanels.h"
+#include "PlayScence.h"
 #include "FloatingWood.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
@@ -103,7 +104,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	coEvents.clear();
 	//out of screen ->die
-	if (y >= CGame::GetInstance()->GetScreenHeight() * 3 && state != MARIO_STATE_DIE)
+	if (y >= CGame::GetInstance()->GetScreenHeight() * 3 && state != MARIO_STATE_DIE && !isAtTunnel)
 	{
 		SetState(MARIO_STATE_DIE);
 	}
@@ -333,6 +334,19 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						IncScore(100, koopas->x, koopas->y);
 						vy = -2 * MARIO_JUMP_DEFLECT_SPEED;
 					}
+					else
+					{
+						if (e->nx != 0)
+						{
+							if (untouchable == 0)
+							{
+								if (koopas->GetState() != KOOPAS_STATE_DIE)
+								{
+									SetTransformingDown();
+								}
+							}
+						}
+					}
 				}
 				else if (e->nx != 0)
 				{
@@ -388,7 +402,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					}
 					else
 					{
-
+						DebugOut(L" Chuẩn bị lỗi  \n");
 						if (untouchable == 0)
 						{
 							if (koopas->GetState() != KOOPAS_STATE_DIE)
@@ -705,13 +719,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (!camcanmove)
 	{
 		if (x > (game->GetScreenWidth() / 2)) camX = cx;
-		if (GetState() == MARIO_STATE_FLY || GetState() == MARIO_STATE_FALL_DOWN || GetIsLanding() == true
+		if (GetState() == MARIO_STATE_FLY /*|| GetState() == MARIO_STATE_FALL_DOWN*/ || GetIsLanding() == true
 			|| y < -100 || GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || GetState() == MARIO_STATE_PIPE_SLIDE_UP)
 		{
 			/*if (y <= (game->GetScreenHeight() / 2))*/ camY = cy + 20;
 		}
 		if (state != MARIO_STATE_DIE)
 		{
+			if (x > 2649) camX = 2484;
 			CGame::GetInstance()->SetCamPos((int)camX, (int)camY - 70);
 			/*if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);*/
 			if (isAtTunnel)
@@ -723,6 +738,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				CGame::GetInstance()->SetCamPos(2500, -62);
 			}
 		}
+		 
 		
 		/*	else if (x >)
 			{
@@ -751,9 +767,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			CGame::GetInstance()->SetCamPos((int)POS_X_EDGE_MAP_4- game->GetScreenWidth()-7, (int)210);
 		}
-		else if (x > (POS_X_EDGE_MAP_4) && x < (POS_X_EDGE_MAP_4+ game->GetScreenWidth()) )
+		else if (x > (POS_X_EDGE_MAP_4) && x < (POS_X_EDGE_MAP_4+ game->GetScreenWidth()/2) )
 		{
 		CGame::GetInstance()->SetCamPos((int)POS_X_EDGE_MAP_4+8, (int)210);
+		}
+		else if (x> 2408)
+		{
+			CGame::GetInstance()->SetCamPos((int)2243, (int)210);
 		}
 		
 			/*if (isAtTunnel)
@@ -848,52 +868,113 @@ void CMario::Render()
 	}
 	else if (isJumping == true) // đang trên kh ?
 	{
-		if (level == MARIO_LEVEL_BIG)
+		if (current_level_speed_up >= 7)
 		{
-			if (nx > 0)
-			{
-				ani = MARIO_ANI_BIG_JUMPING_RIGHT;
-			}
-			else
-			{
-				ani = MARIO_ANI_BIG_JUMPING_LEFT;
-			}
-		}
-		else if (level == MARIO_LEVEL_SMALL)
-		{
-			if (nx > 0)
-			{
-				ani = MARIO_ANI_SMALL_JUMPING_RIGHT;
-			}
-			else
-			{
-				ani = MARIO_ANI_SMALL_JUMPING_LEFT;
-			}
-		}
-		else if (level == MARIO_LEVEL_TAIL)
-		{
-			if (nx > 0)
-			{
-				ani = MARIO_ANI_TAIL_JUMPING_RIGHT;
-			}
-			else
-			{
-				ani = MARIO_ANI_TAIL_JUMPING_LEFT;
-			}
-		}
-		else if (level == MARIO_LEVEL_FIRE)
-		{
-			if (nx > 0)
-			{
-				ani = MARIO_ANI_FIRE_JUMPING_RIGHT;
-			}
-			else
-			{
-				ani = MARIO_ANI_FIRE_JUMPING_LEFT;
-			}
-		}
-	}
+			isJumpingMaxStack = true;
 
+		}
+		else
+		{
+			isJumpingMaxStack = false;
+		}
+
+		if (isJumpingMaxStack == false)
+		{
+			if (level == MARIO_LEVEL_BIG)
+			{
+				if (nx > 0)
+				{
+					ani = MARIO_ANI_BIG_JUMPING_RIGHT;
+				}
+				else
+				{
+					ani = MARIO_ANI_BIG_JUMPING_LEFT;
+				}
+			}
+			else if (level == MARIO_LEVEL_SMALL)
+			{
+				if (nx > 0)
+				{
+					ani = MARIO_ANI_SMALL_JUMPING_RIGHT;
+				}
+				else
+				{
+					ani = MARIO_ANI_SMALL_JUMPING_LEFT;
+				}
+			}
+			else if (level == MARIO_LEVEL_TAIL)
+			{
+				if (nx > 0)
+				{
+					ani = MARIO_ANI_TAIL_JUMPING_RIGHT;
+				}
+				else
+				{
+					ani = MARIO_ANI_TAIL_JUMPING_LEFT;
+				}
+			}
+			else if (level == MARIO_LEVEL_FIRE)
+			{
+				if (nx > 0)
+				{
+					ani = MARIO_ANI_FIRE_JUMPING_RIGHT;
+				}
+				else
+				{
+					ani = MARIO_ANI_FIRE_JUMPING_LEFT;
+				}
+			}
+			
+		}
+		else // max stack 
+		{
+			if (level == MARIO_LEVEL_BIG)
+			{
+				if (nx > 0)
+				{
+					ani = MARIO_ANI_BIG_JUMP_MAX_POWER_RIGHT;
+				}
+				else
+				{
+					ani = MARIO_ANI_BIG_JUMP_MAX_POWER_LEFT;
+				}
+			}
+			else if (level == MARIO_LEVEL_SMALL)
+			{
+				if (nx > 0)
+				{
+					ani = MARIO_ANI_SMALL_JUMP_MAX_POWER_RIGHT;
+				}
+				else
+				{
+					ani = MARIO_ANI_SMALL_JUMP_MAX_POWER_LEFT;
+				}
+			}
+			else if (level == MARIO_LEVEL_TAIL)
+			{
+				if (nx > 0)
+				{
+					ani = MARIO_ANI_TAIL_JUMP_MAX_POWER_RIGHT;
+				}
+				else
+				{
+					ani = MARIO_ANI_TAIL_JUMP_MAX_POWER_LEFT;
+				}
+			}
+			else if (level == MARIO_LEVEL_FIRE)
+			{
+				if (nx > 0)
+				{
+					ani = MARIO_ANI_FIRE_JUMP_MAX_POWER_RIGHT;
+				}
+				else
+				{
+					ani = MARIO_ANI_FIRE_JUMP_MAX_POWER_LEFT;
+				}
+			}
+		}
+		
+	}
 
 
 	else if (isKicking == true)
