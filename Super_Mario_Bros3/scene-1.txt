@@ -24,6 +24,10 @@
 280	textures\mario_transform_left.png	68	145	190
 290	textures\mario_transform_right.png	68	145	190
 300	textures\end_scene1.png	0	0	0
+310	textures\scene_1_1_bank.png	255	255	255
+#ID	TRTileSet	TCTileSet	TRMap	TCMap	TotalTiles	Matrix_Path
+[MAP]
+310	20	7	20	88	140	textures\scene_1_1_map.txt
 # id	left	top	right	bottom	texture_id
 [SPRITES]
 1001	6	0	20	16	0
@@ -1982,6 +1986,7 @@
 #0	630	80	1
 #0	2200	80	1
 #0	2256	-190	1
+##HUD
 27	27	120	218
 #=====FLOWER BULLET		265	
 14	2000	2265	217

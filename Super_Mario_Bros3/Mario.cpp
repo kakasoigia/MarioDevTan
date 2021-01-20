@@ -722,13 +722,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		if (GetState() == MARIO_STATE_FLY /*|| GetState() == MARIO_STATE_FALL_DOWN*/ || GetIsLanding() == true
 			|| y < -100 || GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || GetState() == MARIO_STATE_PIPE_SLIDE_UP)
 		{
-			/*if (y <= (game->GetScreenHeight() / 2))*/ camY = cy + 20;
+			/*if (y <= (game->GetScreenHeight() / 2))*/ camY = cy ;
 		}
 		if (state != MARIO_STATE_DIE)
 		{
 			if (x > 2649) camX = 2484;
-			/*CGame::GetInstance()->SetCamPos((int)camX, (int)camY - 70);*/
-			CGame::GetInstance()->SetCamPos(0, 220);
+			CGame::GetInstance()->SetCamPos((int)camX, (int)cy);
+			
 			/*if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);*/
 			if (isAtTunnel)
 			{
