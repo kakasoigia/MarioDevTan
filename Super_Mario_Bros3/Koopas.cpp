@@ -1,16 +1,22 @@
 ﻿#include "Koopas.h"
 #include "Brick.h"
 #include "BreakableBrick.h"
+#include "FloatingWood.h"
+#include "Utils.h"
 CKoopas::CKoopas(int type)
 {
 	Type = type;
 	nx = -1;
-	SetState(KOOPAS_STATE_WALKING);
+	if(Type != KOOPAS_TYPE_RED_FLY)
+		SetState(KOOPAS_STATE_WALKING);
+	else 
+		SetState(KOOPAS_STATE_FLYING_UP_DOWN);
 	flying_start = 0;
 }
 
 void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
+	
 	if (state == KOOPAS_STATE_DIE)
 		return;
 	left = x;
@@ -18,8 +24,19 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 	right = x + KOOPAS_BBOX_WIDTH;
 	if (state == KOOPAS_STATE_SHELL || state == KOOPAS_STATE_SPINNING)
 	{
-		bottom = y + KOOPAS_BBOX_HEIGHT_SHELL;
-		right = x + KOOPAS_BBOX_WIDTH-3;
+		
+		int id = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetId();
+		if (id ==4)
+		{ 
+			bottom = y + KOOPAS_BBOX_HEIGHT_SHELL;
+			right = x + KOOPAS_BBOX_WIDTH - 5;
+		}
+		else
+		{
+			bottom = y + KOOPAS_BBOX_HEIGHT_SHELL;
+			right = x + KOOPAS_BBOX_WIDTH - 3;
+		}
+	
 	}
 	else if (state == KOOPAS_STATE_DIE)
 		bottom = y + KOOPAS_BBOX_HEIGHT_DIE;
@@ -56,6 +73,7 @@ void CKoopas::FilterCollision(vector<LPCOLLISIONEVENT> &coEvents, vector<LPCOLLI
 		{
 			ny = -0.01f;
 		}
+		
 	}
 	if (min_ix >= 0) coEventsResult.push_back(coEvents[min_ix]);
 	if (min_iy >= 0) coEventsResult.push_back(coEvents[min_iy]);
@@ -75,7 +93,7 @@ void CKoopas::CalcPotentialCollisions(vector<LPGAMEOBJECT> *coObjects, vector<LP
 		{
 			continue;
 		}
-		if (dynamic_cast<CBreakableBrick *>(coObjects->at(i)))
+		/*if (dynamic_cast<CBreakableBrick *>(coObjects->at(i)))
 		{
 
 			CBreakableBrick *breakable_brick = dynamic_cast<CBreakableBrick *>(coObjects->at(i));
@@ -83,7 +101,12 @@ void CKoopas::CalcPotentialCollisions(vector<LPGAMEOBJECT> *coObjects, vector<LP
 			{
 				continue;
 			}
+		}*/
+		if (dynamic_cast<CFloatingWood *>(coObjects->at(i)))
+		{
+			continue;
 		}
+		
 		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
 
 		if (e->t > 0 && e->t <= 1.0f)
@@ -99,7 +122,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	
 	CGameObject::Update(dt, coObjects);
-	if (!isHolding)
+	if (!isHolding && Type != KOOPAS_TYPE_RED_FLY)
 		vy += KOOPAS_GRAVITY * dt;
 
 	CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
@@ -215,6 +238,40 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		}
 		mario->SetIsHoldAni(true);
 	}
+	 if (Type == KOOPAS_TYPE_RED_FLY)
+	 {
+
+		 if (state == KOOPAS_STATE_FLYING_UP_DOWN)
+		 {
+			 StartSwitchingState();
+			 if (isDown)
+			 {
+				 if (GetTickCount() - switching_state_time >= 2000)
+				 {
+					 isDown = false;
+					 switching_state_time = 0;
+				 }
+				 else
+				 {
+					 //vy += 0.00001f *dt;
+					 vy = 0.06f;
+				 }
+			 }
+			 else
+			 {
+				 if (GetTickCount() - switching_state_time >= 2000)
+				 {
+					 isDown = true;
+					 switching_state_time = 0;
+				 }
+				 else
+				 {
+					 //vy -= 0.00001f *dt;
+					 vy = -0.06f;
+				 }
+			 }
+		 }
+	 }
 
 
 
@@ -229,10 +286,10 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		y += dy;
 		if (CanPullBack && Type == KOOPAS_TYPE_RED_WALK)
 		{
-			if (y - CheckPosition_Y >= 1.0f)
+			if (y - CheckPosition_Y >= 2.0f)
 			{
 
-				y -= 3;
+				y -= 5;
 				if (vx < 0)
 					x += 12;
 				else
@@ -259,94 +316,121 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			vx = 0;
 		}
-	
-		// Collision logic with Goombas
-		for (UINT i = 0; i < coEventsResult.size(); i++)
+		
 		{
-			CMario* player = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-			
-			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (!dynamic_cast<CMario *>(e->obj) && nx == 0)
+			// Collision logic with Goombas
+			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
-				CheckPosition_Y = y;
-				CanPullBack = true;
-			}
-			if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
-			{
-				CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
-				if (this->state == KOOPAS_STATE_WALKING || this->state == KOOPAS_STATE_SHELL)
-				{
-					this->vx = -this->vx;
-					goomba->vx = -goomba->vx;
-					
-				}
-				else if (e->nx != 0 && (this->state == KOOPAS_STATE_SPINNING || isHolding == true))
-				{
-					goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
-					player->IncScore(100, x, y);
-				}
+				CMario* player = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-			}
-			else if (dynamic_cast<CQuestionBrick *>(e->obj))
-			{
-				//if (e->nx != 0/* && ny == 0*/)
-				//{
-
-				CQuestionBrick *question_brick = dynamic_cast<CQuestionBrick *>(e->obj);
-				if (state == KOOPAS_STATE_SPINNING)
+				LPCOLLISIONEVENT e = coEventsResult[i];
+				if (!dynamic_cast<CMario *>(e->obj) && nx == 0)
 				{
-					if (question_brick->GetIsAlive())
+					CheckPosition_Y = y;
+					CanPullBack = true;
+				}
+				else
+				{
+					CanPullBack = true;
+
+				}
+				if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
+				{
+					CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
+					if (this->state == KOOPAS_STATE_WALKING || this->state == KOOPAS_STATE_SHELL)
 					{
-						question_brick->SetState(QUESTION_BRICK_STATE_USED, coObjects);
-						question_brick->SetIsUp(true);
+						this->vx = -this->vx;
+						goomba->vx = -goomba->vx;
+
 					}
+					else if (e->nx != 0 && (this->state == KOOPAS_STATE_SPINNING || isHolding == true))
+					{
+						goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
+						player->IncScore(100, x, y);
+					}
+
+				}
+				else if (dynamic_cast<CQuestionBrick *>(e->obj))
+				{
+					//if (e->nx != 0/* && ny == 0*/)
+					//{
+
+					CQuestionBrick *question_brick = dynamic_cast<CQuestionBrick *>(e->obj);
+					int id = CGame::GetInstance()->GetCurrentScene()->GetId();
+					if (id ==4) // map 4
+					{
+						CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+						CQuestionBrick* question_brick = dynamic_cast<CQuestionBrick *>(coObjects->at(i));
+								if (this->x >= question_brick->x && this->x <= question_brick->x + QUESTION_BRICK_BBOX_WIDTH && question_brick->GetIsUp())
+								{
+									this->SetState(KOOPAS_STATE_SHELL);
+									this->vy = -KOOPAS_SHELL_DEFLECT_SPEED;
+									this->vx = 0.04f * (-nx);
+								}
+					}
+					
+					{
+
 						
-					vx = -vx;
+					
+						if (state == KOOPAS_STATE_SPINNING)
+						{
+							if (question_brick->GetIsAlive())
+							{
+								question_brick->SetState(QUESTION_BRICK_STATE_USED, coObjects);
+								question_brick->SetIsUp(true);
+							}
+
+							vx = -vx;
+						}
+					}
+
+					/*}*/
+
 				}
-
-				/*}*/
-
-			}
-			else if (dynamic_cast<CKoopas *>(e->obj)) // if e->obj is Goomba 
-			{
-				CKoopas *koopas = dynamic_cast<CKoopas *>(e->obj);
-				if (nx != 0 && (this->state == KOOPAS_STATE_SPINNING || isHolding == true))
+				else if (dynamic_cast<CKoopas *>(e->obj)) // if e->obj is Goomba 
 				{
-					koopas->SetState(KOOPAS_STATE_DIE);
-					player->IncScore(100, x, y);
+					CKoopas *koopas = dynamic_cast<CKoopas *>(e->obj);
+					if (nx != 0 && (this->state == KOOPAS_STATE_SPINNING || isHolding == true))
+					{
+						koopas->SetState(KOOPAS_STATE_DIE);
+						player->IncScore(100, x, y);
+					}
+
 				}
-				
-			}
-			else if (dynamic_cast<CBreakableBrick *>(e->obj))
-			{
-				CBreakableBrick *brick = dynamic_cast<CBreakableBrick *>(e->obj);
-				if (e->nx != 0 /*&& ny == 0*/ && this->state == KOOPAS_STATE_SPINNING )
+				else if (dynamic_cast<CBreakableBrick *>(e->obj))
+				{
+					DebugOut(L"[INFO] Vô cục gạch bể\n");
+					CBreakableBrick *brick = dynamic_cast<CBreakableBrick *>(e->obj);
+					if (e->nx != 0 /*&& ny == 0*/ && this->state == KOOPAS_STATE_SPINNING)
+					{
+						this->vx = -this->vx;
+						brick->SetState(BREAKABLE_STATE_BROKEN);
+
+					}
+					if (e->ny < 0 && brick->GetIsBouncing())
+					{
+						this->state = KOOPAS_STATE_SHELL;
+						vy -= 0.1f;
+					}
+				}
+				else if (!dynamic_cast<CMario *>(e->obj))
+				{
+					if (e->nx != 0 && ny == 0)
+					{
+						this->vx = -this->vx;
+					}
+					/*	if (e->ny!=0) canTurn = true;
+						else canTurn = false;
+					}*/
+				}
+			/*	else if (nx != 0)
 				{
 					this->vx = -this->vx;
-					brick->SetState(BREAKABLE_STATE_BROKEN);
-
-				}
-				if (e->ny < 0 && brick->GetIsBouncing() )
-				{
-					this->state = KOOPAS_STATE_SHELL;
-					vy -= 0.1f;
-				}
-			}
-			else if (!dynamic_cast<CMario *>(e->obj))
-			{
-				if (e->nx != 0 && ny == 0)
-				{
-					this->vx = -this->vx;
-				}
-				/*	if (e->ny!=0) canTurn = true;
-					else canTurn = false;
 				}*/
 			}
-			else if (e->nx != 0)
-			{
-				this->vx = -this->vx;
-			}
 		}
+		
 	}
 	/*if (Type == KOOPAS_TYPE_RED_WALK)
 	{
@@ -362,6 +446,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (x <= 0)
 		if (vx < 0)
 			vx = -vx;
+	
 }
 
 void CKoopas::Render()
@@ -395,6 +480,8 @@ void CKoopas::Render()
 			ani = KOOPAS_ANI_RED_FLYING_LEFT;
 		}
 		break;
+		
+
 		}
 	}
 	else if (state == KOOPAS_STATE_SHELL)
@@ -480,10 +567,12 @@ void CKoopas::Render()
 		break;
 		}
 	}
-
+	else
+	{
+	ani = KOOPAS_ANI_RED_FLYING_LEFT_NICE;
+	}
 	animation_set->at(ani)->Render(x, y);
-
-
+	
 }
 
 void CKoopas::SetState(int state)

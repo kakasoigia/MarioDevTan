@@ -112,7 +112,7 @@ void CBoomerang::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		if (dynamic_cast<CBoomerangEnemy *>(obj))
 		{
 			CBoomerangEnemy *boomerang_enemy = dynamic_cast<CBoomerangEnemy *>(obj);
-			if (this->isAllowToThrowBoomerang && isAllowToSetPosition)
+			if (this->isThrow && isAllowToSetPosition)
 			{
 				SetPosition(boomerang_enemy->x - 8, boomerang_enemy->y - 5);
 				isAllowToSetPosition = false;
@@ -182,7 +182,7 @@ void CBoomerang::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			time_switch_state = 0;
 			SetPosition(33000, 33000);
 			isAllowToSetPosition = true;
-			isAllowToThrowBoomerang = false;
+			isThrow = false;
 			isAllowToColliWithBoomerangEnemy = false;
 			sub_time = 0;
 		}
@@ -194,8 +194,7 @@ void CBoomerang::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 
 
-	//DebugOut(L"gia tri thoi gian la: %d \n",GetTickCount()-time_switch_state);
-	//DebugOut(L"gia tri state 3 la %d \n",isInState_3);
+	
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
@@ -226,7 +225,7 @@ void CBoomerang::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			if (dynamic_cast<CBoomerangEnemy *>(e->obj))
 			{
 				CBoomerangEnemy *boomerang_enemy = dynamic_cast<CBoomerangEnemy *>(e->obj);
-				this->isAllowToThrowBoomerang = false;
+				this->isThrow = false;
 				SetPosition(33000, 33000);
 				isAllowToSetPosition = true;
 				isAllowToColliWithBoomerangEnemy = false;
@@ -276,4 +275,14 @@ void CBoomerang::GetBoundingBox(float &l, float &t, float &r, float &b)
 	t = y;
 	r = x + BOOMERANG_BBOX_WIDTH;
 	b = y + BOOMERANG_BBOX_HEIGHT;
+}
+void CBoomerang::InitiateBoom(int nx)
+{
+	if (nx > 0)
+		boomerangDirection = 1;
+	else
+		boomerangDirection = -1;
+	isThrow = true;
+	isInState_1 = 1;
+	StartTimeSwitchingState();
 }

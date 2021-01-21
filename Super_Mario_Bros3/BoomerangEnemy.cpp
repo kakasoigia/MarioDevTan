@@ -25,11 +25,14 @@ void CBoomerangEnemy::CalcPotentialCollisions(vector<LPGAMEOBJECT> *coObjects, v
 void CBoomerangEnemy::GetBoundingBox(float &l, float &t, float &r, float &b)
 {
 
-	l = x;
-	t = y;
-	r = x + BOOMERANG_ENEMY_BBOX_WIDTH;
-	b = y + BOOMERANG_ENEMY_BBOX_HEIGHT;
-
+	if (isAllowToHaveBBox)
+	{
+		l = x;
+		t = y;
+		r = x + BOOMERANG_ENEMY_BBOX_WIDTH;
+		b = y + BOOMERANG_ENEMY_BBOX_HEIGHT;
+	}
+	else return;
 
 }
 
@@ -48,7 +51,7 @@ void CBoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		}
 		else
 		{
-			sub_time = GetTickCount() - pre_get_tick_count;
+			time_conpensate = GetTickCount() - pre_get_tick_count;
 			pre_get_tick_count = GetTickCount();
 		}
 	}
@@ -88,10 +91,10 @@ void CBoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (isAlive)
 	{
 
-		if (GetTickCount() - time_rendering_throw_ani >= 300)
+		if (GetTickCount() - time_render_ani_thow >= 300)
 		{
-			isAllowToRenderThrowAni = false;
-			time_rendering_throw_ani = 0;
+			isAniThrow = false;
+			time_render_ani_thow = 0;
 		}
 
 
@@ -108,17 +111,12 @@ void CBoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					if (!boomerang->GetIsAllowToThrowBoomerang())
 					{
-						if (GetTickCount() - time_switch_state >= 900 + sub_time)
+						if (GetTickCount() - time_switch_state >= 900 + time_conpensate)
 						{
-							if (this->nx > 0)
-								boomerang->SetBoomerangDirection(1);
-							else
-								boomerang->SetBoomerangDirection(-1);
-							boomerang->SetIsAllowToThrowBoomerang(true);
-							boomerang->SetIsInState_1(true);
-							isAllowToRenderThrowAni = true;
+							boomerang->InitiateBoom(this->nx);
+							
+							isAniThrow = true;
 							StartTimeRenderingThrowAni();
-							boomerang->StartTimeSwitchingState();
 						}
 					}
 				}
@@ -126,45 +124,38 @@ void CBoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					if (!boomerang->GetIsAllowToThrowBoomerang())
 					{
-						if (GetTickCount() - time_switch_state >= 3300 + sub_time)
+						if (GetTickCount() - time_switch_state >= 3300 + time_conpensate)
 						{
-							if (this->nx > 0)
-								boomerang->SetBoomerangDirection(1);
-							else
-								boomerang->SetBoomerangDirection(-1);
-							boomerang->SetIsAllowToThrowBoomerang(true);
-							boomerang->SetIsInState_1(true);
-							isAllowToRenderThrowAni = true;
+							boomerang->InitiateBoom(this->nx);
+
+							isAniThrow = true;
 							StartTimeRenderingThrowAni();
-							boomerang->StartTimeSwitchingState();
 						}
 					}
-					//DebugOut(L"da vao day \n");
 				}
-
 			}
 		}
 
 
-		if (GetTickCount() - time_switch_state >= 700 + sub_time)
+		if (GetTickCount() - time_switch_state >= 700 + time_conpensate)
 		{
 			SetState(BOOMERANG_ENEMY_STATE_MOVE_FORWARD);
 		}
 
-		if (GetTickCount() - time_switch_state >= 2000 + sub_time)
+		if (GetTickCount() - time_switch_state >= 2000 + time_conpensate)
 		{
 			SetState(BOOMERANG_ENEMY_STATE_IDLE);
 		}
-		if (GetTickCount() - time_switch_state >= 2700 + sub_time)
+		if (GetTickCount() - time_switch_state >= 2700 + time_conpensate)
 		{
 			SetState(BOOMERANG_ENEMY_STATE_MOVE_BACKWARD);
 		}
 
-		if (GetTickCount() - time_switch_state >= 4000 + sub_time)
+		if (GetTickCount() - time_switch_state >= 4000 + time_conpensate)
 		{
 			SetState(BOOMERANG_ENEMY_STATE_IDLE);
 			time_switch_state = 0;
-			sub_time = 0;
+			time_conpensate = 0;
 		}
 
 
@@ -218,7 +209,7 @@ void CBoomerangEnemy::Render()
 
 	if (isAlive)
 	{
-		if (isAllowToRenderThrowAni)
+		if (isAniThrow)
 		{
 			if (nx > 0)
 				ani = BOOMERANG_ENEMY_ANI_THROW_BOOMERANG_RIGHT;

@@ -18,6 +18,8 @@
 #include "SpecialItem.h"
 #include "HudPanels.h"
 #include "PlayScence.h"
+#include "Boomerang.h"
+#include "BoomerangEnemy.h"
 #include "FloatingWood.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
@@ -67,7 +69,7 @@ void CMario::FilterCollision(vector<LPCOLLISIONEVENT> &coEvents, vector<LPCOLLIS
 			nx = 0;
 			ny = 0;
 		}
-		if (dynamic_cast<CMushRoom *>(c->obj) || dynamic_cast<CLeaf *>(c->obj) || dynamic_cast<CFlowerBullet *>(c->obj) || dynamic_cast<CKoopas *>(c->obj) || dynamic_cast<CGoomba *>(c->obj))
+		if (dynamic_cast<CMushRoom *>(c->obj) || dynamic_cast<CLeaf *>(c->obj) || dynamic_cast<CFlowerBullet *>(c->obj) || dynamic_cast<CKoopas *>(c->obj) || dynamic_cast<CGoomba *>(c->obj) || dynamic_cast<CBoomerang *>(c->obj))
 		{
 			ny = -0.0001f;
 		}
@@ -82,6 +84,11 @@ void CMario::FilterCollision(vector<LPCOLLISIONEVENT> &coEvents, vector<LPCOLLIS
 					ny = 0;
 				}
 			}
+		}
+		if (dynamic_cast<CFloatingWood *>(c->obj))
+		{
+			nx = -1.5f;
+
 		}
 	}
 
@@ -327,6 +334,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							koopas->SetState(KOOPAS_STATE_SHELL);
 						}
 						vy = -2 * MARIO_JUMP_DEFLECT_SPEED;
+					}
+					else if (koopas->GetType() == KOOPAS_TYPE_RED_FLY)
+					{
+						koopas->SetType(KOOPAS_TYPE_RED_WALK);
+						vy = -1.5f * MARIO_JUMP_DEFLECT_SPEED;
+						vx = 0.3f;
+						koopas->SetState(KOOPAS_STATE_WALKING);
 					}
 					else if (koopas->GetState() == KOOPAS_STATE_SHELL)
 					{
@@ -693,6 +707,55 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					}
 				}
 			}
+			else if (dynamic_cast<CBoomerang *>(e->obj))
+			{
+				if (untouchable == 0)
+				{
+					if (level > MARIO_LEVEL_SMALL)
+					{
+						SetTransformingDown();
+					}
+					else
+						SetState(MARIO_STATE_DIE);
+
+				}
+				else if (dynamic_cast<CBoomerangEnemy *>(e->obj))
+				{
+					CBoomerangEnemy* boomerang_enemy = dynamic_cast<CBoomerangEnemy *>(e->obj);
+					if (e->ny < 0)
+					{
+						if (boomerang_enemy->GetIsAlive())
+						{
+							boomerang_enemy->SetIsAlive(false);
+							vy = -1.5f * MARIO_JUMP_DEFLECT_SPEED;
+						}
+						
+						IncScore(1000, boomerang_enemy->x, boomerang_enemy->y);
+					}
+					else if (level == MARIO_LEVEL_TAIL && isTurning)
+					{
+						boomerang_enemy->SetIsAlive(false);
+						boomerang_enemy->SetState(BOOMERANG_ENEMY_STATE_DIE);
+						boomerang_enemy->SetIsAllowToHaveBBox(false);
+						boomerang_enemy->vy = -KOOPAS_SHELL_DEFLECT_SPEED;
+						IncScore(100, boomerang_enemy->x, boomerang_enemy->y);
+					}
+					else
+					{
+						if (untouchable == 0)
+						{
+							if (level > MARIO_LEVEL_SMALL)
+							{
+								SetTransformingDown();
+							}
+							else
+								SetState(MARIO_STATE_DIE);
+
+						}
+					}
+				}
+			}
+
 			// map 1-4
 
 
@@ -750,7 +813,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		if (x > (game->GetScreenWidth() / 2)) camX = cx;
 
 
-		if (x < 1870)
+		if (x < 1870) //
 			camX_update += 0.035f * dt;
 		else
 		{
@@ -761,6 +824,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		if (x < camX_update)
 		{
 			x = camX_update;
+			isCamPushed = true;
+		}
+		else
+		{
+			isCamPushed = false;
 		}
 		CGame::GetInstance()->SetCamPos((int)camX_update, (int)210);
 		if (x > (POS_X_EDGE_MAP_4 - game->GetScreenWidth()) && x < POS_X_EDGE_MAP_4 - 20)
@@ -1405,7 +1473,8 @@ void CMario::SetState(int state)
 		y -= 3;
 		vx = 0;
 		vy = -MARIO_DIE_DEFLECT_SPEED;
-		life_counter--;
+		if (life_counter >= 1)
+			life_counter--;
 		StartTimeBackToWorld();
 		break;
 	case MARIO_STATE_SPEEDING_DOWN:
@@ -1480,13 +1549,13 @@ void CMario::SetOnSpecialPosition(int place)
 		SetSpeed(0, 0);
 		break;
 	case 7: // nấm xanh
-		SetPosition(1183, 279);
+		SetPosition(1183, 200);
 		camX_update = 1018
 			;
 		SetSpeed(0, 0);
 		break;
 	case 9: // ống cống
-		SetPosition(2080, 332);
+		SetPosition(2220, 332);
 		camX_update = 1915
 			;
 		SetSpeed(0, 0);

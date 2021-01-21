@@ -25,21 +25,20 @@
 
 class CBoomerangEnemy : public CGameObject
 {
-
+	bool isAllowToHaveBBox = true;
 
 	DWORD time_switch_state = 0;
 
 	bool isAlive = true;
 
-	bool isAllowToRenderThrowAni = false;
+	bool isAniThrow = false;
 
-	DWORD time_rendering_throw_ani = 0;
+	DWORD time_render_ani_thow = 0;
 
-	bool isAllowToShowScore = false;
 	DWORD timing_score;
 
 	DWORD pre_get_tick_count = 0;
-	DWORD sub_time = 0;
+	DWORD time_conpensate = 0;
 public:
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
@@ -57,9 +56,9 @@ public:
 	}
 	void StartTimeRenderingThrowAni()
 	{
-		if (time_rendering_throw_ani == 0)
+		if (time_render_ani_thow == 0)
 		{
-			time_rendering_throw_ani = GetTickCount();
+			time_render_ani_thow = GetTickCount();
 		}
 	}
 	bool GetIsAlive()
@@ -70,23 +69,17 @@ public:
 	{
 		isAlive = isAliveBool;
 	}
-	bool GetIsAllowToShowScore()
-	{
-		if (this != NULL)
-			return isAllowToShowScore;
-		else
-		{
-			return false;
-		}
-	}
-	void SetIsAllowToShowScore(bool isAllowToShowScoreBool)
-	{
-		if (this != NULL)
-			isAllowToShowScore = isAllowToShowScoreBool;
-	}
+	
 	void StartTimingScore()
 	{
 		timing_score = GetTickCount();
 	}
-
+	bool GetIsAllowToHaveBBox()
+	{
+		return isAllowToHaveBBox;
+	}
+	void SetIsAllowToHaveBBox(bool isAllowToHaveBBoxBool)
+	{
+		isAllowToHaveBBox = isAllowToHaveBBoxBool;
+	}
 };

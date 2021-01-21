@@ -30,7 +30,7 @@ class CBoomerang : public CGameObject
 
 	DWORD time_switch_state = 0;
 
-	bool isAllowToThrowBoomerang = false;
+	bool isThrow = false;
 
 	bool isAllowToColliWithBoomerangEnemy = false;
 
@@ -92,11 +92,11 @@ public:
 	}
 	bool GetIsAllowToThrowBoomerang()
 	{
-		return isAllowToThrowBoomerang;
+		return isThrow;
 	}
 	void SetIsAllowToThrowBoomerang(bool isAllowToThrowBoomerangBool)
 	{
-		isAllowToThrowBoomerang = isAllowToThrowBoomerangBool;
+		isThrow = isAllowToThrowBoomerangBool;
 	}
 	int GetId()
 	{
@@ -119,5 +119,6 @@ public:
 	{
 		boomerangDirection = boomerangDirectionInt;
 	}
+	void InitiateBoom(int nx);
 	CBoomerang(int idInt);
 };

@@ -6,6 +6,7 @@
 #include "PlayScence.h"
 #define KOOPAS_WALKING_SPEED 0.03f
 #define KOOPAS_SPINNING_SPEED 0.3f
+#define	KOOPAS_SHELL_DEFLECT_SPEED 0.25f
 
 #define KOOPAS_TYPE_GREEN_WALK 1
 #define KOOPAS_TYPE_GREEN_FLY 2
@@ -17,6 +18,7 @@
 #define KOOPAS_STATE_DIE 200
 #define	KOOPAS_STATE_SHELL	300
 #define	KOOPAS_STATE_SPINNING 400
+#define KOOPAS_STATE_FLYING_UP_DOWN 500
 
 //#define KOOPAS_ANI_GREEN_WALK_WALKING_LEFT 0
 //#define KOOPAS_ANI_GREEN_WALK_WALKING_RIGHT 1
@@ -57,7 +59,7 @@
 #define KOOPAS_XANH_ANI_WALKING_RIGHT_FASTER	18
 #define KOOPAS_XANH_MAI_ANI_SPINNING_NGUA		19
 #define KOOPAS_RED_MAI_ANI_SPINNING_NGUA		20
-
+#define KOOPAS_ANI_RED_FLYING_LEFT_NICE	21
 #define KOOPAS_DIE_DEFLECT_SPEED 0.75f
 #define KOOPAS_FLY_DEFLECT_SPEED 0.4f
 #define KOOPAS_PERIODIC_TIME_FLY 1000
@@ -79,6 +81,9 @@ class CKoopas : public CGameObject
 	DWORD reviveStart= 0;
 	bool CanPullBack = false;
 	float CheckPosition_Y;
+	bool isDown = true;
+
+	DWORD switching_state_time = 0;
 
 public:
 	CKoopas(int type);
@@ -101,6 +106,21 @@ public:
 	void StartTimeRevive()
 	{
 		reviveStart = GetTickCount();
+	}
+	bool GetIsDown()
+	{
+		return isDown;
+	}
+	void SetIsDown(bool isDownBool)
+	{
+		isDown = isDownBool;
+	}
+	void StartSwitchingState()
+	{
+		if (switching_state_time == 0)
+		{
+			switching_state_time = GetTickCount();
+		}
 	}
 	void CalcPotentialCollisions(vector<LPGAMEOBJECT> *coObjects, vector<LPCOLLISIONEVENT> &coEvents);
 };

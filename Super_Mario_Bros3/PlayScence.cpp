@@ -427,19 +427,26 @@ void CPlayScene::Update(DWORD dt)
 	// TO-DO: This is a "dirty" way, need a more organized way 
 	bool isTransform = player->GetIsTransforming();
 	vector<LPGAMEOBJECT> coObjects;
+	CGame *game = CGame::GetInstance();
+	float rangeXleft = player->x - game->GetScreenHeight() / 2 - 100;
+	float rangeXright = player->x + game->GetScreenHeight() / 2 + 100;
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		if (!dynamic_cast<CNoCollisionObjects *>(objects[i]))
+		{
+			
+			if ((objects[i]->x > rangeXleft &&
+				objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<CFireBullet *>(objects[i]) || dynamic_cast<CFlowerBullet *>(objects[i]) || dynamic_cast<CBoomerang *>(objects[i]))
 			coObjects.push_back(objects[i]);
+		}
+			
 	}
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
-		CGame *game = CGame::GetInstance();
-		float rangeXleft = player->x - game->GetScreenHeight() / 2 - 100;
-		float rangeXright = player->x + game->GetScreenHeight() / 2 + 100;
+		
 		if ((objects[i]->x > rangeXleft &&
-			objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]))
+			objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<CFireBullet *>(objects[i]) || dynamic_cast<CFlowerBullet *>(objects[i]) || dynamic_cast<CBoomerang *>(objects[i]))
 		{
 			if (dynamic_cast<CMario*>(objects[i]))
 			{
@@ -468,11 +475,12 @@ void CPlayScene::Render()
 	{
 		this->map->Render();
 	}
+	CGame *game = CGame::GetInstance();
+	float rangeXleft = player->x - game->GetScreenHeight() - 200;
+	float rangeXright = player->x + game->GetScreenHeight() + 200;
 	for (unsigned int i = 1; i < objects.size(); i++)
 	{
-		CGame *game = CGame::GetInstance();
-		float rangeXleft = player->x - game->GetScreenHeight() - 200;
-		float rangeXright = player->x + game->GetScreenHeight() + 200;
+		
 		if ((objects[i]->x > rangeXleft &&
 			objects[i]->x < rangeXright))
 			objects[i]->Render();
