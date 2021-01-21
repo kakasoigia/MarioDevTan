@@ -323,10 +323,19 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					if (koopas->GetState() != KOOPAS_STATE_DIE && koopas->GetState() != KOOPAS_STATE_SHELL)
 					{
-						if (koopas->GetType() == KOOPAS_TYPE_GREEN_FLY || koopas->GetType() == KOOPAS_TYPE_RED_FLY)
+						if (koopas->GetType() == KOOPAS_TYPE_GREEN_FLY)
 						{
 							IncScore(100, koopas->x, koopas->y);
 							koopas->SetType(koopas->GetType() - 1); //subtract 1 type from fly to walk
+						}
+						else if (koopas->GetType() == KOOPAS_TYPE_RED_FLY)
+						{
+							koopas->SetType(KOOPAS_TYPE_RED_WALK);
+							koopas->SetState(KOOPAS_STATE_WALKING);
+							vy = -1.5f * MARIO_JUMP_DEFLECT_SPEED;
+							vx = 0.3f;
+
+
 						}
 						else
 						{
@@ -335,13 +344,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						}
 						vy = -2 * MARIO_JUMP_DEFLECT_SPEED;
 					}
-					else if (koopas->GetType() == KOOPAS_TYPE_RED_FLY)
-					{
-						koopas->SetType(KOOPAS_TYPE_RED_WALK);
-						vy = -1.5f * MARIO_JUMP_DEFLECT_SPEED;
-						vx = 0.3f;
-						koopas->SetState(KOOPAS_STATE_WALKING);
-					}
+
 					else if (koopas->GetState() == KOOPAS_STATE_SHELL)
 					{
 						koopas->SetState(KOOPAS_STATE_SPINNING);
@@ -416,7 +419,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					}
 					else
 					{
-						DebugOut(L" Chuẩn bị lỗi  \n");
+
 						if (untouchable == 0)
 						{
 							if (koopas->GetState() != KOOPAS_STATE_DIE)
@@ -461,6 +464,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else if (dynamic_cast<CQuestionBrick *>(e->obj))
 			{
+
 				CQuestionBrick *question_brick = dynamic_cast<CQuestionBrick *>(e->obj);
 				if (e->ny > 0)
 				{
@@ -719,150 +723,153 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						SetState(MARIO_STATE_DIE);
 
 				}
-				else if (dynamic_cast<CBoomerangEnemy *>(e->obj))
+			}
+			else if (dynamic_cast<CBoomerangEnemy *>(e->obj))
+			{
+				CBoomerangEnemy* boomerang_enemy = dynamic_cast<CBoomerangEnemy *>(e->obj);
+				if (e->ny < 0)
 				{
-					CBoomerangEnemy* boomerang_enemy = dynamic_cast<CBoomerangEnemy *>(e->obj);
-					if (e->ny < 0)
-					{
-						if (boomerang_enemy->GetIsAlive())
-						{
-							boomerang_enemy->SetIsAlive(false);
-							vy = -1.5f * MARIO_JUMP_DEFLECT_SPEED;
-						}
-						
-						IncScore(1000, boomerang_enemy->x, boomerang_enemy->y);
-					}
-					else if (level == MARIO_LEVEL_TAIL && isTurning)
+					if (boomerang_enemy->GetIsAlive())
 					{
 						boomerang_enemy->SetIsAlive(false);
 						boomerang_enemy->SetState(BOOMERANG_ENEMY_STATE_DIE);
 						boomerang_enemy->SetIsAllowToHaveBBox(false);
-						boomerang_enemy->vy = -KOOPAS_SHELL_DEFLECT_SPEED;
-						IncScore(100, boomerang_enemy->x, boomerang_enemy->y);
+						vy = -1.5f * MARIO_JUMP_DEFLECT_SPEED;
 					}
-					else
-					{
-						if (untouchable == 0)
-						{
-							if (level > MARIO_LEVEL_SMALL)
-							{
-								SetTransformingDown();
-							}
-							else
-								SetState(MARIO_STATE_DIE);
 
+					IncScore(1000, boomerang_enemy->x, boomerang_enemy->y);
+				}
+				else if (level == MARIO_LEVEL_TAIL && isTurning)
+				{
+					boomerang_enemy->SetIsAlive(false);
+					boomerang_enemy->SetState(BOOMERANG_ENEMY_STATE_DIE);
+					boomerang_enemy->SetIsAllowToHaveBBox(false);
+					boomerang_enemy->vy = -KOOPAS_SHELL_DEFLECT_SPEED;
+					IncScore(100, boomerang_enemy->x, boomerang_enemy->y);
+				}
+				else
+				{
+					if (untouchable == 0)
+					{
+						if (level > MARIO_LEVEL_SMALL)
+						{
+							SetTransformingDown();
 						}
+						else
+							SetState(MARIO_STATE_DIE);
+
 					}
 				}
 			}
 
-			// map 1-4
+		
+
+		// map 1-4
 
 
 
-			DebugOut(L" update xong   \n");
+		/*DebugOut(L" update xong   \n");*/
+	}
+
+}
+
+
+// clean up collision events
+for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+// Update camera to follow mario
+float cx = this->x, cy = this->y;
+/*player->GetPosition(cx, cy);*/
+
+CGame *game = CGame::GetInstance();
+cx -= game->GetScreenWidth() / 2;
+cy -= game->GetScreenHeight() / 2;
+
+float camX = 0;
+float camY = 0;
+bool camcanmove = (CPlayScene*)CGame::GetInstance()->GetCurrentScene()->GetCamCanMove();
+if (!camcanmove)
+{
+	if (x > (game->GetScreenWidth() / 2)) camX = cx;
+	if (GetState() == MARIO_STATE_FLY /*|| GetState() == MARIO_STATE_FALL_DOWN*/ || GetIsLanding() == true
+		|| y < -100 || GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || GetState() == MARIO_STATE_PIPE_SLIDE_UP)
+	{
+		/*if (y <= (game->GetScreenHeight() / 2))*/ camY = cy + 20;
+	}
+	if (state != MARIO_STATE_DIE)
+	{
+		if (x > 2649) camX = 2484;
+		CGame::GetInstance()->SetCamPos((int)camX, (int)camY - 70);
+		/*if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);*/
+		if (isAtTunnel)
+		{
+			CGame::GetInstance()->SetCamPos(1300, 980);
 		}
-
+		if (isAutoWalk)
+		{
+			CGame::GetInstance()->SetCamPos(2500, -62);
+		}
 	}
 
 
-	// clean up collision events
-	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-	// Update camera to follow mario
-	float cx = this->x, cy = this->y;
-	/*player->GetPosition(cx, cy);*/
+	/*	else if (x >)
+		{
 
-	CGame *game = CGame::GetInstance();
-	cx -= game->GetScreenWidth() / 2;
-	cy -= game->GetScreenHeight() / 2;
+		}*/
+}
+else
+{
+	if (x > (game->GetScreenWidth() / 2)) camX = cx;
 
-	float camX = 0;
-	float camY = 0;
-	bool camcanmove = (CPlayScene*)CGame::GetInstance()->GetCurrentScene()->GetCamCanMove();
-	if (!camcanmove)
+
+	if (x < 1870) //
+		camX_update += 0.035f * dt;
+	else
 	{
-		if (x > (game->GetScreenWidth() / 2)) camX = cx;
-		if (GetState() == MARIO_STATE_FLY /*|| GetState() == MARIO_STATE_FALL_DOWN*/ || GetIsLanding() == true
-			|| y < -100 || GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || GetState() == MARIO_STATE_PIPE_SLIDE_UP)
-		{
-			/*if (y <= (game->GetScreenHeight() / 2))*/ camY = cy + 20;
-		}
-		if (state != MARIO_STATE_DIE)
-		{
-			if (x > 2649) camX = 2484;
-			CGame::GetInstance()->SetCamPos((int)camX, (int)camY - 70);
-			/*if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);*/
-			if (isAtTunnel)
-			{
-				CGame::GetInstance()->SetCamPos(1300, 980);
-			}
-			if (isAutoWalk)
-			{
-				CGame::GetInstance()->SetCamPos(2500, -62);
-			}
-		}
+		camX_update = camX;
+	}
 
 
-		/*	else if (x >)
-			{
-
-			}*/
+	if (x < camX_update)
+	{
+		x = camX_update;
+		isCamPushed = true;
 	}
 	else
 	{
-		if (x > (game->GetScreenWidth() / 2)) camX = cx;
-
-
-		if (x < 1870) //
-			camX_update += 0.035f * dt;
-		else
-		{
-			camX_update = camX;
-		}
-
-
-		if (x < camX_update)
-		{
-			x = camX_update;
-			isCamPushed = true;
-		}
-		else
-		{
-			isCamPushed = false;
-		}
-		CGame::GetInstance()->SetCamPos((int)camX_update, (int)210);
-		if (x > (POS_X_EDGE_MAP_4 - game->GetScreenWidth()) && x < POS_X_EDGE_MAP_4 - 20)
-		{
-			CGame::GetInstance()->SetCamPos((int)POS_X_EDGE_MAP_4 - game->GetScreenWidth() - 7, (int)210);
-		}
-		else if (x > (POS_X_EDGE_MAP_4) && x < (POS_X_EDGE_MAP_4 + game->GetScreenWidth() / 2))
-		{
-			CGame::GetInstance()->SetCamPos((int)POS_X_EDGE_MAP_4 + 8, (int)210);
-		}
-		else if (x > 2408)
-		{
-			CGame::GetInstance()->SetCamPos((int)2243, (int)210);
-		}
-
-		/*if (isAtTunnel)
-		{
-			CGame::GetInstance()->SetCamPos(1300, 980);
-		}*/
-		if (isAutoWalk)
-		{
-			CGame::GetInstance()->SetCamPos(2243, 200);
-		}
-
+		isCamPushed = false;
+	}
+	CGame::GetInstance()->SetCamPos((int)camX_update, (int)210);
+	if (x > (POS_X_EDGE_MAP_4 - game->GetScreenWidth()) && x < POS_X_EDGE_MAP_4 - 20)
+	{
+		CGame::GetInstance()->SetCamPos((int)POS_X_EDGE_MAP_4 - game->GetScreenWidth() - 7, (int)210);
+	}
+	else if (x > (POS_X_EDGE_MAP_4) && x < (POS_X_EDGE_MAP_4 + game->GetScreenWidth() / 2))
+	{
+		CGame::GetInstance()->SetCamPos((int)POS_X_EDGE_MAP_4 + 8, (int)210);
+	}
+	else if (x > 2408)
+	{
+		CGame::GetInstance()->SetCamPos((int)2243, (int)210);
 	}
 
+	/*if (isAtTunnel)
+	{
+		CGame::GetInstance()->SetCamPos(1300, 980);
+	}*/
+	if (isAutoWalk)
+	{
+		CGame::GetInstance()->SetCamPos(2243, 200);
+	}
 
-	DebugOut(L" ra tới đây end  \n");
+}
+
+
 }
 
 void CMario::Render()
 {
-	DebugOut(L" level la %d,", level);
-	DebugOut(L" state %d,", state);
+	/*DebugOut(L" level la %d,", level);
+	DebugOut(L" state %d,", state);*/
 	int ani = -1;
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
@@ -1385,9 +1392,9 @@ void CMario::Render()
 
 	int alpha = 255;
 	if (untouchable) alpha = 128;
-	DebugOut(L" ani %d,\n", ani);
+	/*DebugOut(L" ani %d,\n", ani);*/
 	animation_set->at(ani)->Render(x, y, alpha);
-	DebugOut(L" Render đk Mario nhé,\n", ani);
+
 
 	/*RenderBoundingBox();*/
 }
@@ -1579,7 +1586,7 @@ void CMario::SetOnSpecialPosition(int place)
 
 void CMario::SetLevel(int l)
 {
-	DebugOut(L"[INFO] Vô Setlevl r %d\n", l);
+
 
 	int oldlevel = this->level;
 	this->level = l;
@@ -1667,7 +1674,7 @@ void CMario::IncScore(int score, float pos_x, float pos_y)
 
 	if (score != SCORE_TYPE_1LIFE)
 		Score += score;
-	DebugOut(L"[INFO] tính coin %d \n", Score);
+
 	if (score == 10) return;
 	vector<LPGAMEOBJECT> objects = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->Get_score_list();
 	for (unsigned i = 0; i < objects.size(); i++) // find score free

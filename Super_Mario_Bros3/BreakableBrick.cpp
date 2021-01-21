@@ -25,7 +25,7 @@ void CBreakableBrick::Render()
 	}
 
 	animation_set->at(ani)->Render(x, y);
-	DebugOut(L" render được cục gạch nha \n");
+	
 	//RenderBoundingBox();
 }
 

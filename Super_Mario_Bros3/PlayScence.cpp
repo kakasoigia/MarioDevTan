@@ -264,12 +264,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	break;
 	case OBJECT_TYPE_SCORE_AND_1LV: obj = new CScoreUp(); break;
-	case OBJECT_TYPE_CAMERA:
+	/*case OBJECT_TYPE_CAMERA:
 	{
 		camera = new CCamera(x, y, ani_set_id);
 		cameras.push_back(camera);
 		break;
-	}
+	}*/
 	case OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP:
 		obj = new CBreakableBrickAnimation(BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP);
 		break;

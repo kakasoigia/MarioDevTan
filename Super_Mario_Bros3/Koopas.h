@@ -82,7 +82,7 @@ class CKoopas : public CGameObject
 	bool CanPullBack = false;
 	float CheckPosition_Y;
 	bool isDown = true;
-
+	bool isRedFlyAtBirth = false;
 	DWORD switching_state_time = 0;
 
 public:

@@ -244,6 +244,7 @@ void CBoomerang::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 void CBoomerang::Render()
 {
+	if (x < POS_X_EDGE_MAP_4) return;
 	//CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	int ani = -1;
 

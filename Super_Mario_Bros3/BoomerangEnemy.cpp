@@ -24,7 +24,13 @@ void CBoomerangEnemy::CalcPotentialCollisions(vector<LPGAMEOBJECT> *coObjects, v
 }
 void CBoomerangEnemy::GetBoundingBox(float &l, float &t, float &r, float &b)
 {
-
+	/*if (isAlive ==false || state == BOOMERANG_ENEMY_STATE_DIE)
+	{
+		
+			l = b = t = r = 0;
+			return;
+	
+	}*/
 	if (isAllowToHaveBBox)
 	{
 		l = x;
@@ -32,7 +38,10 @@ void CBoomerangEnemy::GetBoundingBox(float &l, float &t, float &r, float &b)
 		r = x + BOOMERANG_ENEMY_BBOX_WIDTH;
 		b = y + BOOMERANG_ENEMY_BBOX_HEIGHT;
 	}
-	else return;
+	else
+	{
+		l = b = t = r = 0;
+	};
 
 }
 
