@@ -34,7 +34,7 @@ CStartScene::CStartScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
 {
 	key_handler = new CStartSceneKeyHandler(this);
-	CGame::GetInstance()->SetCamPos(70, -20);
+	CGame::GetInstance()->SetCamPos(0,-50);
 }
 
 
@@ -227,8 +227,10 @@ void CStartScene::Update(DWORD dt)
 {
 	StartTimeCount();
 	
+	CGame::GetInstance()->SetCamPos(0, -50);
 
 	vector<LPGAMEOBJECT> coObjects;
+
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);

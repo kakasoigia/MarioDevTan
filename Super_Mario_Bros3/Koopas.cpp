@@ -407,7 +407,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				}
 				else if (dynamic_cast<CBreakableBrick *>(e->obj))
 				{
-					DebugOut(L"[INFO] Vô cục gạch bể\n");
+					
 					CBreakableBrick *brick = dynamic_cast<CBreakableBrick *>(e->obj);
 					if (e->nx != 0 /*&& ny == 0*/ && this->state == KOOPAS_STATE_SPINNING)
 					{
@@ -578,7 +578,7 @@ void CKoopas::Render()
 	{
 		ani = KOOPAS_ANI_RED_FLYING_LEFT_NICE;
 	}
-	DebugOut(L" ani con Koopas là :%d,\n", ani);
+	
 	animation_set->at(ani)->Render(x, y);
 	
 }

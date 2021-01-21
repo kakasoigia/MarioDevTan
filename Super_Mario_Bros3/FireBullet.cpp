@@ -68,6 +68,8 @@ void CFireBullet::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					koopas->SetState(KOOPAS_STATE_DIE);
 					SetState(BULLET_STATE_DISAPPEARING);
+					CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+					mario->IncScore(100, koopas->x, koopas->y);
 				}
 				
 			}
@@ -78,6 +80,8 @@ void CFireBullet::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
 					SetState(BULLET_STATE_DISAPPEARING);
+					CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+					mario->IncScore(100, goomba->x, goomba->y);
 				}
 
 			}

@@ -818,6 +818,11 @@ if (!camcanmove)
 }
 else
 {
+	int id = CGame::GetInstance()->GetCurrentScene()->GetId();
+	if (id == 1) // map 1
+	{
+		CGame::GetInstance()->SetCamPos(0, -50);
+	}
 	if (x > (game->GetScreenWidth() / 2)) camX = cx;
 
 
@@ -868,8 +873,8 @@ else
 
 void CMario::Render()
 {
-	/*DebugOut(L" level la %d,", level);
-	DebugOut(L" state %d,", state);*/
+	DebugOut(L" level la %d,", level);
+	DebugOut(L" state %d,", state);
 	int ani = -1;
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
@@ -882,6 +887,41 @@ void CMario::Render()
 			if (nx > 0) ani = MARIO_ANI_TAIL_FLYING_RIGHT;
 			else ani = MARIO_ANI_TAIL_FLYING_LEFT;
 		}
+		if (level == MARIO_LEVEL_BIG)
+		{
+			if (nx > 0)
+			{
+				ani = MARIO_ANI_BIG_JUMP_MAX_POWER_RIGHT;
+			}
+			else
+			{
+				ani = MARIO_ANI_BIG_JUMP_MAX_POWER_LEFT;
+			}
+		}
+		else if (level == MARIO_LEVEL_SMALL)
+		{
+			if (nx > 0)
+			{
+				ani = MARIO_ANI_SMALL_JUMP_MAX_POWER_RIGHT;
+			}
+			else
+			{
+				ani = MARIO_ANI_SMALL_JUMP_MAX_POWER_LEFT;
+			}
+		}
+	
+		else if (level == MARIO_LEVEL_FIRE)
+		{
+			if (nx > 0)
+			{
+				ani = MARIO_ANI_FIRE_JUMP_MAX_POWER_RIGHT;
+			}
+			else
+			{
+				ani = MARIO_ANI_FIRE_JUMP_MAX_POWER_LEFT;
+			}
+		}
+		
 
 	}
 	else if (state == MARIO_STATE_PIPE_SLIDE_UP || state == MARIO_STATE_PIPE_SLIDE_DOWN)
@@ -1392,7 +1432,7 @@ void CMario::Render()
 
 	int alpha = 255;
 	if (untouchable) alpha = 128;
-	/*DebugOut(L" ani %d,\n", ani);*/
+	DebugOut(L" ani %d,\n", ani);
 	animation_set->at(ani)->Render(x, y, alpha);
 
 
@@ -1704,6 +1744,9 @@ void CMario::SetTransformingDown()
 		transformUpLevel = false;
 		StartTransforming();
 		isFiring = false;
+		isFlying = false;
+		isLanding = true;
+		isHolding = false;
 		StartUntouchable();
 	}
 	else
@@ -1715,6 +1758,9 @@ void CMario::SetTransformingUp(int type)
 	StartTransforming();
 	transformUpLevel = true;
 	isFiring = false;
+	isFlying = false;
+	isLanding = true;
+	isHolding = false;
 	if (type == 1) // big
 		SetLevel(MARIO_LEVEL_BIG);
 	else if (type == 2) // tail

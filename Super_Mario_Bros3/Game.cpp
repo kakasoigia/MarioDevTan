@@ -343,7 +343,7 @@ void CGame::_ParseSection_SCENES(string line)
 	if (id == 1)
 	{
 		scene = new CStartScene(id, path);
-		SetCamPos(0,-50);
+		SetCamPos(0,-25);
 	}
 		
 	else if (id == 2)
