@@ -791,7 +791,9 @@ cy -= game->GetScreenHeight() / 2;
 float camX = 0;
 float camY = 0;
 bool camcanmove = (CPlayScene*)CGame::GetInstance()->GetCurrentScene()->GetCamCanMove();
-if (!camcanmove)
+int id = CGame::GetInstance()->GetCurrentScene()->GetId();
+if (id == 3) // map 1
+//if (!camcanmove)
 {
 	if (x > (game->GetScreenWidth() / 2)) camX = cx;
 	if (GetState() == MARIO_STATE_FLY /*|| GetState() == MARIO_STATE_FALL_DOWN*/ /*|| GetIsLanding() == true*/
@@ -822,7 +824,7 @@ if (!camcanmove)
 }
 else
 {
-	int id = CGame::GetInstance()->GetCurrentScene()->GetId();
+	
 	if (id == 1) // map 1
 	{
 		CGame::GetInstance()->SetCamPos((int)0, -50);

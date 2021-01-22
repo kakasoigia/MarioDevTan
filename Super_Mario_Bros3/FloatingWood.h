@@ -14,7 +14,7 @@
 #define   FLOATING_WOOD_STATE_DOWN			100
 
 #define	  FLOATING_WOOD_STATE_NORMAL_SPEED   -0.03f
-#define   FLOATING_WOOD_STATE_DOWN_SPEED	   0.05f
+#define   FLOATING_WOOD_STATE_DOWN_SPEED	   0.06f
 
 
 
@@ -23,14 +23,14 @@ class CFloatingWood : public CGameObject
 	bool isAppear = false;
 	DWORD upping_start = 0;
 
-	int id;
+	int id=0;
 
 public:
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
 	virtual void Render();
 	void CalcPotentialCollisions(vector<LPGAMEOBJECT> *coObjects, vector<LPCOLLISIONEVENT> &coEvents);
-	CFloatingWood(int moving_horizontal_rectangle_id);
+	CFloatingWood();
 	virtual void SetState(int state);
 	int GetId()
 	{

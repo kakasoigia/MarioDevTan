@@ -1,8 +1,8 @@
 #include "FloatingWood.h"
 
-CFloatingWood::CFloatingWood(int moving_horizontal_rectangle_id)
+CFloatingWood::CFloatingWood()
 {
-	this->id = moving_horizontal_rectangle_id;
+	
 	SetState(FLOATING_WOOD_STATE_NORMAL);
 }
 

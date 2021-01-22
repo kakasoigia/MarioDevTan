@@ -97,8 +97,8 @@ void CGrid::_ParseSection_OBJECTS(string line)
 	int x = atoi(tokens[1].c_str());
 	int y = atoi(tokens[2].c_str());
 
-	int cellX = (x / cellWidth);
-	int cellY = (y / cellHeight);
+	int cellX = atoi(tokens[4].c_str());
+	int cellY = atoi(tokens[5].c_str());
 
 	int type = atoi(tokens[0].c_str());
 
@@ -171,8 +171,8 @@ void CGrid::_ParseSection_OBJECTS(string line)
 		break;
 	case OBJECT_TYPE_FLOATING_WOOD:
 	{
-		int floating_wood_id = atof(tokens[4].c_str());
-		obj = new CFloatingWood(floating_wood_id);
+		
+		obj = new CFloatingWood();
 	}
 	break;
 	case OBJECT_TYPE_BOOMERANG_ENEMY:
@@ -310,19 +310,8 @@ void CGrid::GetObjects(vector<LPGAMEOBJECT>& listObject, int CamX, int CamY)
 					{
 						if (!cells[i][j].GetListObjects().at(k)->Actived)
 						{
-							float Ox, Oy;
-							cells[i][j].GetListObjects().at(k)->GetOriginLocation(Ox, Oy);
-
+							
 							listObject.push_back(cells[i][j].GetListObjects().at(k));
-
-							if (!((CPlayScene*)(CGame::GetInstance()->GetCurrentScene()))->IsInUseArea(Ox, Oy))// && cells[i][j].GetListObjects().at(k)->GetState() > 10)
-							{
-								cells[i][j].GetListObjects().at(k)->reset();
-							}
-
-
-
-
 
 							cells[i][j].GetListObjects().at(k)->SetActive(true);
 						}
@@ -348,3 +337,9 @@ void CGrid::Unload()
 			cells = NULL;
 		}
 }
+/*float Ox, Oy;
+							cells[i][j].GetListObjects().at(k)->GetOriginLocation(Ox, Oy);*/
+							//if (!((CPlayScene*)(CGame::GetInstance()->GetCurrentScene()))->IsInUseArea(Ox, Oy))// && cells[i][j].GetListObjects().at(k)->GetState() > 10)
+													//{
+													//	cells[i][j].GetListObjects().at(k)->reset();
+													//}

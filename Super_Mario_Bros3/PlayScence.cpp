@@ -8,7 +8,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	if (id == 4)
 	{
 		CamCanMove = true;
-		CGame::GetInstance()->SetCamPos(0, 220);
+		/*CGame::GetInstance()->SetCamPos(0, 220);*/
 	}
 }
 
@@ -275,8 +275,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	case OBJECT_TYPE_FLOATING_WOOD:
 	{
-		int floating_wood_id = atof(tokens[4].c_str());
-		obj = new CFloatingWood(floating_wood_id);
+		obj = new CFloatingWood();
 	}
 	break;
 	case OBJECT_TYPE_BOOMERANG_ENEMY:
