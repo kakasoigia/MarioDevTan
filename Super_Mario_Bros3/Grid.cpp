@@ -1,5 +1,4 @@
 #include "PlayScence.h"
-#include "Utils.h"
 
 
 #define SCENE_SECTION_UNKNOWN -1
@@ -52,17 +51,16 @@
 #define OBJECT_TYPE_FLOATING_WOOD		49
 #define OBJECT_TYPE_BOOMERANG											50
 #define OBJECT_TYPE_BOOMERANG_ENEMY										51
+#define OBJECT_TYPE_HIT_EFFECT_FIRE_BULLET 52
+#define	OBJECT_TYPE_HIT_EFFECT_TURN_TAIL 53
 #define OBJECT_TYPE_PORTAL	100
 
 #define MAX_SCENE_LINE 1024
 #define MAX_POWER_SPEED_UP 7
 #define	TIME_PER_LEVEL_SPEED_UP 200
 
-//GRID
 
-#define IN_USE_WIDTH 330
-#define IN_USE_HEIGHT 300
-#define CAM_X_BONUS 20
+
 CGrid::CGrid(LPCWSTR filePath)
 {
 	Load(filePath);
@@ -138,18 +136,24 @@ void CGrid::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BREAKABLE_BRICK_NORMAL: obj = new CBreakableBrick(BREAKABLE_BRICK_NORMAL); break;
 	case OBJECT_TYPE_BREAKABLE_BRICK_BELL: obj = new CBreakableBrick(BREAKABLE_BRICK_BELL); break;
 	case OBJECT_TYPE_BELL: obj = new CBell(); break;
+	case OBJECT_TYPE_HIT_EFFECT_TURN_TAIL:
+		obj = new CHitEffect(HIT_EFFECT_TURN_TAIL);
+		break;
+	case OBJECT_TYPE_HIT_EFFECT_FIRE_BULLET:
+		obj = new CHitEffect(HIT_EFFECT_FIRE_BULLET);
+		break;
 	case OBJECT_TYPE_SPECIAL_ITEM:
 	{
 		obj = new CSpecialItem();
 	}
 	break;
 	case OBJECT_TYPE_SCORE_AND_1LV: obj = new CScoreUp(); break;
-	/*case OBJECT_TYPE_CAMERA:
-	{
-		camera = new CCamera(x, y, ani_set_id);
-		cameras.push_back(camera);
-		break;
-	}*/
+		/*case OBJECT_TYPE_CAMERA:
+		{
+			camera = new CCamera(x, y, ani_set_id);
+			cameras.push_back(camera);
+			break;
+		}*/
 	case OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP:
 		obj = new CBreakableBrickAnimation(BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP);
 		break;
@@ -186,7 +190,6 @@ void CGrid::_ParseSection_OBJECTS(string line)
 		if (obj != NULL)
 		{
 			obj = new HudPanel();
-			/*objects.push_back(obj);*/
 			return;
 		}
 
@@ -207,6 +210,7 @@ void CGrid::_ParseSection_OBJECTS(string line)
 	}
 	// General object setup
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+
 	if (obj != NULL)
 	{
 		int add = 0;
@@ -214,6 +218,7 @@ void CGrid::_ParseSection_OBJECTS(string line)
 		obj->SetAnimationSet(ani_set);
 		obj->SetOrigin(x, y, obj->GetState());
 		cells[cellX][cellY].Add(obj);
+		obj->SetisOriginObj(false);
 	}
 
 }
@@ -298,21 +303,31 @@ void CGrid::GetObjects(vector<LPGAMEOBJECT>& listObject, int CamX, int CamY)
 	{
 		for (j = top; j < bottom; j++)
 		{
-			if (!cells[i][j].GetListObjects().empty())
-			{
-				for (k = 0; k < cells[i][j].GetListObjects().size(); k++)
+			if (cells)
+				if (cells[i][j].GetListObjects().size() > 0)
 				{
-					if (!cells[i][j].GetListObjects().at(k)->Actived)
+					for (k = 0; k < cells[i][j].GetListObjects().size(); k++)
 					{
-						float Ox, Oy;
-						cells[i][j].GetListObjects().at(k)->GetOriginLocation(Ox, Oy);
-						if (!((CPlayScene*)(CGame::GetInstance()->GetCurrentScene()))->IsInUseArea(Ox, Oy) && cells[i][j].GetListObjects().at(k)->GetState() > 10)
-							cells[i][j].GetListObjects().at(k)->reset();
-						listObject.push_back(cells[i][j].GetListObjects().at(k));
-						cells[i][j].GetListObjects().at(k)->SetActive(true);
+						if (!cells[i][j].GetListObjects().at(k)->Actived)
+						{
+							float Ox, Oy;
+							cells[i][j].GetListObjects().at(k)->GetOriginLocation(Ox, Oy);
+
+							listObject.push_back(cells[i][j].GetListObjects().at(k));
+
+							if (!((CPlayScene*)(CGame::GetInstance()->GetCurrentScene()))->IsInUseArea(Ox, Oy))// && cells[i][j].GetListObjects().at(k)->GetState() > 10)
+							{
+								cells[i][j].GetListObjects().at(k)->reset();
+							}
+
+
+
+
+
+							cells[i][j].GetListObjects().at(k)->SetActive(true);
+						}
 					}
 				}
-			}
 		}
 	}
 }

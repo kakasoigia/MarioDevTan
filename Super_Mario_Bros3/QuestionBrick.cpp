@@ -1,5 +1,5 @@
 #include "QuestionBrick.h"
-
+#include "Koopas.h"
 CQuestionBrick::CQuestionBrick(int ctype)
 {
 	type = ctype;
@@ -124,12 +124,19 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	//	for (UINT i = 0; i < coEventsResult.size(); i++)
 	//	{
 	//		LPCOLLISIONEVENT e = coEventsResult[i];
+	//		if (dynamic_cast<CKoopas *>(e->obj))
+	//		{
 
+	//			CKoopas *koopas = dynamic_cast<CKoopas *>(e->obj);
 
+	//		
+	//				if (koopas->GetState() == KOOPAS_STATE_WALKING && isAllowQuestionBrickSlide)
+	//					koopas->SetState(KOOPAS_STATE_SHELL);
+
+	//		}
 	//	}
+
 	//}
-
-
 
 
 	// clean up collision events

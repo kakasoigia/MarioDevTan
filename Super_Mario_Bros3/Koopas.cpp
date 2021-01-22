@@ -184,7 +184,29 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		CalcPotentialCollisions(coObjects, coEvents);
 	}
 	// block 
+	for (UINT i = 0; i < coObjects->size(); i++)
+	{
+		LPGAMEOBJECT obj = coObjects->at(i);
+		if(dynamic_cast<CQuestionBrick *>(obj))
+		{
+			CQuestionBrick *question_brick = dynamic_cast<CQuestionBrick *>(obj);
+			int id = CGame::GetInstance()->GetCurrentScene()->GetId();
+			if (id == 4) // map 4
+			{
+				CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+				if (this->x >= question_brick->x && this->x <= question_brick->x + QUESTION_BRICK_BBOX_WIDTH && question_brick->GetIsUp())
+				{
+					this->SetState(KOOPAS_STATE_SHELL);
 
+					this->vy = -KOOPAS_SHELL_DEFLECT_SPEED/3;
+
+					this->vx = 0.04f * (-nx);
+
+				}
+			}
+		}
+		
+	}
 	if (isHolding == true)
 	{
 		if (!mario->GetIsHolding())
@@ -361,21 +383,6 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 					
 					CQuestionBrick *question_brick = dynamic_cast<CQuestionBrick *>(e->obj);
-					int id = CGame::GetInstance()->GetCurrentScene()->GetId();
-					if (id == 4) // map 4
-					{
-						CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-						if (this->x >= question_brick->x && this->x <= question_brick->x + QUESTION_BRICK_BBOX_WIDTH && question_brick->GetIsUp())
-						{
-							
-							this->SetState(KOOPAS_STATE_SHELL);
-							
-							this->vy = -KOOPAS_SHELL_DEFLECT_SPEED;
-							
-							this->vx = 0.04f * (-nx);
-						
-						}
-					}
 					
 					{
 
@@ -387,8 +394,8 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 								question_brick->SetState(QUESTION_BRICK_STATE_USED, coObjects);
 								question_brick->SetIsUp(true);
 							}
-
-							vx = -vx;
+						/*	if(e->nx!=0 && ny==0)
+							vx = -vx;*/
 						}
 					}
 

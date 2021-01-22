@@ -4,6 +4,8 @@
 #include "Game.h"
 
 
+
+
 #define GRID_SECTION_SETTINGS	1
 #define GRID_SECTION_OBJECTS	2
 #define MAX_GRID_LINE 1024
@@ -20,8 +22,7 @@ class CGrid
 public:
 	CGrid() {}
 	CGrid(LPCWSTR filePath);
-	void GetObjects(vector<LPGAMEOBJECT>& listObject, int playerX, int playerY);
+	void GetObjects(vector<LPGAMEOBJECT>& listObject, int camX, int camY);
 	void Load(LPCWSTR filePath);
 	void Unload();
 };
-

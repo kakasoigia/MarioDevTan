@@ -79,7 +79,7 @@ void CMario::FilterCollision(vector<LPCOLLISIONEVENT> &coEvents, vector<LPCOLLIS
 			CBreakableBrick *breakable_brick = dynamic_cast<CBreakableBrick *> (c->obj);
 			if (breakable_brick->GetState() == BREAKABLE_STATE_COIN)
 			{
-				if (isJumping)
+				if (isJumping);
 				{
 					nx = 0;
 					ny = 0;
@@ -794,7 +794,7 @@ bool camcanmove = (CPlayScene*)CGame::GetInstance()->GetCurrentScene()->GetCamCa
 if (!camcanmove)
 {
 	if (x > (game->GetScreenWidth() / 2)) camX = cx;
-	if (GetState() == MARIO_STATE_FLY /*|| GetState() == MARIO_STATE_FALL_DOWN*/ || GetIsLanding() == true
+	if (GetState() == MARIO_STATE_FLY /*|| GetState() == MARIO_STATE_FALL_DOWN*/ /*|| GetIsLanding() == true*/
 		|| y < -100 || GetState() == MARIO_STATE_PIPE_SLIDE_DOWN || GetState() == MARIO_STATE_PIPE_SLIDE_UP)
 	{
 		/*if (y <= (game->GetScreenHeight() / 2))*/ camY = cy + 20;
@@ -825,7 +825,7 @@ else
 	int id = CGame::GetInstance()->GetCurrentScene()->GetId();
 	if (id == 1) // map 1
 	{
-		CGame::GetInstance()->SetCamPos(0, -50);
+		CGame::GetInstance()->SetCamPos((int)0, -50);
 	}
 	if (x > (game->GetScreenWidth() / 2)) camX = cx;
 
@@ -879,7 +879,7 @@ void CMario::Render()
 {
 	DebugOut(L" level la %d,", level);
 	DebugOut(L" state %d,", state);
-	int ani = -1;
+	int ani = MARIO_STATE_WALKING_RIGHT;
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
 
@@ -891,7 +891,7 @@ void CMario::Render()
 			if (nx > 0) ani = MARIO_ANI_TAIL_FLYING_RIGHT;
 			else ani = MARIO_ANI_TAIL_FLYING_LEFT;
 		}
-		if (level == MARIO_LEVEL_BIG)
+		else if (level == MARIO_LEVEL_BIG)
 		{
 			if (nx > 0)
 			{
@@ -954,6 +954,40 @@ void CMario::Render()
 		{
 			if (nx > 0) ani = MARIO_ANI_FALLING_RIGHT;
 			else ani = MARIO_ANI_FALLING_LEFT;
+		}
+		else if (level == MARIO_LEVEL_BIG)
+		{
+			if (nx > 0)
+			{
+				ani = MARIO_ANI_BIG_JUMP_MAX_POWER_RIGHT;
+			}
+			else
+			{
+				ani = MARIO_ANI_BIG_JUMP_MAX_POWER_LEFT;
+			}
+		}
+		else if (level == MARIO_LEVEL_SMALL)
+		{
+			if (nx > 0)
+			{
+				ani = MARIO_ANI_SMALL_JUMP_MAX_POWER_RIGHT;
+			}
+			else
+			{
+				ani = MARIO_ANI_SMALL_JUMP_MAX_POWER_LEFT;
+			}
+		}
+
+		else if (level == MARIO_LEVEL_FIRE)
+		{
+			if (nx > 0)
+			{
+				ani = MARIO_ANI_FIRE_JUMP_MAX_POWER_RIGHT;
+			}
+			else
+			{
+				ani = MARIO_ANI_FIRE_JUMP_MAX_POWER_LEFT;
+			}
 		}
 	}
 	else if (isTurning)

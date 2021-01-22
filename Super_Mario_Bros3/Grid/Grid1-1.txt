@@ -1,0 +1,7 @@
+[SETTINGS]
+#cell_size(width)	cell_size(height)	num_col_cells	num_row_cells
+50	50	60	40
+#Obj_type	index_col	index_row	ani_set
+
+
+[OBJECTS]

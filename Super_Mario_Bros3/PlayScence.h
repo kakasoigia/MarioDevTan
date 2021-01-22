@@ -16,7 +16,59 @@
 #include "FireBullet.h"
 #include "Flower.h"
 #include "FlowerBullet.h"
+#include "Cell.h"
+#include <iostream>
+#include <fstream>
+
+#include "PlayScence.h"
+#include "Utils.h"
+#include "Textures.h"
+#include "Sprites.h"
+#include "Portal.h"
+#include "Coin.h"
+#include "BreakableBrick.h"
+#include "Bell.h"
+#include "Leaf.h"
+#include "MushRoom.h"
+#include "HudPanels.h"
+#include "HudSubPanels.h"
+#include "SpecialItem.h"
+#include "ScoreUp.h"
+#include "BreakableBrickAnimation.h"
+#include "Camera.h"
+#include "FloatingWood.h"
+#include "Boomerang.h"
+#include "BoomerangEnemy.h"
+#include "HitEffect.h"
 #define MOVE_CAM_X_VX		0.1f
+
+#define IN_USE_WIDTH		330
+#define IN_USE_HEIGHT		300
+
+
+#define GRID_SECTION_SETTINGS	1
+#define GRID_SECTION_OBJECTS	2
+
+#define GRID_SECTION_SETTINGS	1
+#define GRID_SECTION_OBJECTS	2
+#define MAX_GRID_LINE 1024
+class CGrid
+{
+	int numRow, numCol;
+	int cellWidth;
+	int  cellHeight;
+	Cell** cells;
+
+	void _ParseSection_SETTINGS(string line);
+	void _ParseSection_OBJECTS(string line);
+public:
+	CGrid() {}
+	CGrid(LPCWSTR filePath);
+	void GetObjects(vector<LPGAMEOBJECT>& listObject, int playerX, int playerY);
+	void Load(LPCWSTR filePath);
+	void Unload();
+};
+
 class CPlayScene : public CScene
 {
 private:
@@ -30,6 +82,7 @@ protected:
 	vector<LPGAMEOBJECT> score_list;
 	vector<LPGAMEOBJECT> hit_effect_list;
 	vector<CCamera*> cameras;
+	CGrid* grid;
 	Map* map;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -37,12 +90,14 @@ protected:
 	void _ParseSection_ANIMATION_SETS(string line);
 	void _ParseSection_OBJECTS(string line);
 	void _ParseSection_MAP(string line);
+	void _ParseSection_GRID(string line);
+
 	CCamera* camera = NULL;
 	int cam_state = 0;
 
 public:
 	CPlayScene(int id, LPCWSTR filePath);
-
+	bool IsInUseArea(float x, float y);
 	virtual void Load();
 	virtual void Update(DWORD dt);
 	virtual void Render();

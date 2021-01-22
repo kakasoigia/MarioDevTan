@@ -1,26 +1,4 @@
-﻿#include <iostream>
-#include <fstream>
-
-#include "PlayScence.h"
-#include "Utils.h"
-#include "Textures.h"
-#include "Sprites.h"
-#include "Portal.h"
-#include "Coin.h"
-#include "BreakableBrick.h"
-#include "Bell.h"
-#include "Leaf.h"
-#include "MushRoom.h"
-#include "HudPanels.h"
-#include "HudSubPanels.h"
-#include "SpecialItem.h"
-#include "ScoreUp.h"
-#include "BreakableBrickAnimation.h"
-#include "Camera.h"
-#include "FloatingWood.h"
-#include "Boomerang.h"
-#include "BoomerangEnemy.h"
-#include "HitEffect.h"
+﻿#include "PlayScence.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
@@ -46,6 +24,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define SCENE_SECTION_ANIMATION_SETS	5
 #define SCENE_SECTION_OBJECTS	6
 #define SCENE_SECTION_MAP	7
+#define SCENE_SECTION_GRID	8
 
 #define OBJECT_TYPE_MARIO	0
 #define OBJECT_TYPE_BRICK	1
@@ -273,12 +252,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	break;
 	case OBJECT_TYPE_SCORE_AND_1LV: obj = new CScoreUp(); break;
-	/*case OBJECT_TYPE_CAMERA:
-	{
-		camera = new CCamera(x, y, ani_set_id);
-		cameras.push_back(camera);
-		break;
-	}*/
+		/*case OBJECT_TYPE_CAMERA:
+		{
+			camera = new CCamera(x, y, ani_set_id);
+			cameras.push_back(camera);
+			break;
+		}*/
 	case OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP:
 		obj = new CBreakableBrickAnimation(BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP);
 		break;
@@ -314,7 +293,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = HudPanel::GetInstance();
 		if (obj != NULL)
 		{
+			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 			obj = new HudPanel();
+			obj->SetPosition(x, y);
+			obj->SetAnimationSet(ani_set);
+			obj->SetOrigin(x, y, obj->GetState());
+			obj->SetisOriginObj(true);
 			objects.push_back(obj);
 			return;
 		}
@@ -337,15 +321,20 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	// General object setup
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-	if (!dynamic_cast<CCamera*>(obj))
+	
+
+	if (obj != NULL)
 	{
-		obj->SetPosition(x, y);
-		obj->SetAnimationSet(ani_set);
+		if (obj != NULL)
+		{
+			obj->SetPosition(x, y);
+			obj->SetAnimationSet(ani_set);
+			obj->SetOrigin(x, y, obj->GetState());
+			obj->SetisOriginObj(true);
+			objects.push_back(obj);
+		}
 	}
-
-
-
-	objects.push_back(obj);
+	
 	//// add 1 cartridge_clip
 	if (dynamic_cast<CFireBullet *>(obj))
 	{
@@ -411,7 +400,11 @@ void CPlayScene::Load()
 		if (line == "[OBJECTS]") {
 			section = SCENE_SECTION_OBJECTS; continue;
 		}
+		if (line == "[GRID]") {
+			section = SCENE_SECTION_GRID; continue;
+		}
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
+
 
 		//
 		// data section
@@ -424,6 +417,7 @@ void CPlayScene::Load()
 		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
 		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
 		case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
+		case SCENE_SECTION_GRID: _ParseSection_GRID(line); break;
 		}
 	}
 
@@ -441,43 +435,83 @@ void CPlayScene::Update(DWORD dt)
 	bool isTransform = player->GetIsTransforming();
 	vector<LPGAMEOBJECT> coObjects;
 	CGame *game = CGame::GetInstance();
-	float rangeXleft = player->x - game->GetScreenHeight() / 2 - 100;
-	float rangeXright = player->x + game->GetScreenHeight() / 2 + 100;
-	for (size_t i = 0; i < objects.size(); i++)
+	int id = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetId();
+	if (id != 4)
 	{
-		if (!dynamic_cast<CNoCollisionObjects *>(objects[i]))
+		float rangeXleft = player->x - game->GetScreenHeight() / 2 - 100;
+		float rangeXright = player->x + game->GetScreenHeight() / 2 + 100;
+		for (size_t i = 0; i < objects.size(); i++)
 		{
-			
+			if (!dynamic_cast<CNoCollisionObjects *>(objects[i]))
+			{
+
+				if ((objects[i]->x > rangeXleft &&
+					objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<CFireBullet *>(objects[i]) || dynamic_cast<CFlowerBullet *>(objects[i]) || dynamic_cast<CBoomerang *>(objects[i]) || dynamic_cast<CHitEffect *>(objects[i]))
+					coObjects.push_back(objects[i]);
+			}
+
+		}
+
+		for (size_t i = 0; i < objects.size(); i++)
+		{
+
 			if ((objects[i]->x > rangeXleft &&
-				objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<CFireBullet *>(objects[i]) || dynamic_cast<CFlowerBullet *>(objects[i]) || dynamic_cast<CBoomerang *>(objects[i]) || dynamic_cast<CHitEffect *>(objects[i]))
-			coObjects.push_back(objects[i]);
-		}
-			
-	}
+				objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<CFireBullet *>(objects[i]) || dynamic_cast<CFlowerBullet *>(objects[i]) || dynamic_cast<CBoomerang *>(objects[i]) || dynamic_cast<CHitEffect *>(objects[i]))
+			{
+				if (dynamic_cast<CMario*>(objects[i]))
+				{
+					objects[i]->Update(dt, &coObjects);
+				}
+				else if (!isTransform)
+				{
+					objects[i]->Update(dt, &coObjects);
+				}
+			}
 
-	for (size_t i = 0; i < objects.size(); i++)
+		}
+	}
+	else
 	{
-		
-		if ((objects[i]->x > rangeXleft &&
-			objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<CFireBullet *>(objects[i]) || dynamic_cast<CFlowerBullet *>(objects[i]) || dynamic_cast<CBoomerang *>(objects[i]) || dynamic_cast<CHitEffect *>(objects[i]))
+
+		float cx = game->GetCamPosX();
+
+		float cy = game->GetCamPosY();
+
+		for (size_t i = 0; i < objects.size(); i++)
 		{
-			if (dynamic_cast<CMario*>(objects[i]))
+			float Ox, Oy;
+			objects[i]->GetPosition(Ox, Oy);
+			if (!IsInUseArea(Ox, Oy) && !objects[i]->GetisOriginObj())
 			{
-				objects[i]->Update(dt, &coObjects);
+				objects[i]->SetActive(false);
+				objects.erase(objects.begin() + i);
 			}
-			else if (!isTransform)
+		}
+		/*player->GetPosition(cx, cy);*/
+		grid->GetObjects(objects, cx, cy);
+		for (size_t i = 0; i < objects.size(); i++)
+		{
+
+			if (!player->GetIsTransforming())
 			{
-				objects[i]->Update(dt, &coObjects);
+				/*if (!dynamic_cast<CNoCollisionObjects*>(objects[i]))*/
+					objects[i]->Update(dt, &objects);
+			}
+			else
+			{
+				if (dynamic_cast<CMario*>(objects[i]) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<CFireBullet *>(objects[i]) || dynamic_cast<CFlowerBullet *>(objects[i]) || dynamic_cast<CBoomerang *>(objects[i]) || dynamic_cast<CHitEffect *>(objects[i])|| dynamic_cast<CHitEffect *>(objects[i])|| dynamic_cast<CSpecialItem *>(objects[i]))
+					objects[i]->Update(dt, &objects);
 			}
 		}
 
+		// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
+		if (player == NULL) return;
+		// chống đi lùi màn hình
+		if (player->x < 0) player->x = 0;
+		//// Update camera to follow mario
+
 	}
 
-	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
-	if (player == NULL) return;
-	// chống đi lùi màn hình
-	if (player->x < 0) player->x = 0;
-	//// Update camera to follow mario
 
 
 }
@@ -493,7 +527,7 @@ void CPlayScene::Render()
 	float rangeXright = player->x + game->GetScreenHeight() + 200;
 	for (unsigned int i = 1; i < objects.size(); i++)
 	{
-		
+
 		if ((objects[i]->x > rangeXleft &&
 			objects[i]->x < rangeXright))
 			objects[i]->Render();
@@ -504,6 +538,18 @@ void CPlayScene::Render()
 /*
 	Unload current scene
 */
+void CPlayScene::_ParseSection_GRID(string line)
+{
+	vector<string> tokens = split(line);
+
+	if (tokens.size() < 1) return;
+
+	wstring file_path = ToWSTR(tokens[0]);
+
+	if (grid == NULL)
+		grid = new CGrid(file_path.c_str());
+}
+
 void CPlayScene::Unload()
 {
 	DebugOut(L"[INFO] Vô undload nè\n");
@@ -538,7 +584,25 @@ void CPlayScene::Unload()
 	hit_effect_list.clear();
 	player = NULL;
 
+	grid->Unload();
+
+	grid = nullptr;
+
+	delete grid;
+
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
+}
+bool CPlayScene::IsInUseArea(float Ox, float Oy)
+{
+	float CamX, CamY;
+
+	CamX = CGame::GetInstance()->GetCamPosX();
+
+	CamY = CGame::GetInstance()->GetCamPosY();
+
+	if (((CamX < Ox + 50) && (Ox < CamX + IN_USE_WIDTH)) && ((CamY < Oy) && (Oy < CamY + IN_USE_HEIGHT)))
+		return true;
+	return false;
 }
 
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
