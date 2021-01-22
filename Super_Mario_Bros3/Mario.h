@@ -272,6 +272,7 @@ public:
 	void SetTransformingDown();
 	void SetTransformingUp(int type);
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
+	void CallHitEffect(int type,int nx, float pos_x, float pos_y);
 	int GetIsHolding()
 	{
 		return isHolding;

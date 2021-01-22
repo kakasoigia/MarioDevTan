@@ -19,6 +19,7 @@
 #include "HudPanels.h"
 #include "PlayScence.h"
 #include "Boomerang.h"
+#include "HitEffect.h"
 #include "BoomerangEnemy.h"
 #include "FloatingWood.h"
 CMario::CMario(float x, float y) : CGameObject()
@@ -302,6 +303,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						{
 							goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
 							IncScore(100, goomba->x, goomba->y);
+							CallHitEffect(HIT_EFFECT_TURN_TAIL,this->nx,this->x,this->y);
 						}
 
 					}
@@ -376,6 +378,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							koopas->SetState(KOOPAS_STATE_SHELL);
 						koopas->vy = -0.2f;
 						koopas->vx = 0.1f * (-nx);
+						CallHitEffect(HIT_EFFECT_TURN_TAIL, this->nx,this->x, this->y);
 
 					}
 					else if (koopas->GetState() == KOOPAS_STATE_SHELL)
@@ -746,6 +749,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					boomerang_enemy->SetIsAllowToHaveBBox(false);
 					boomerang_enemy->vy = -KOOPAS_SHELL_DEFLECT_SPEED;
 					IncScore(100, boomerang_enemy->x, boomerang_enemy->y);
+					CallHitEffect(HIT_EFFECT_TURN_TAIL, this->nx,this->x, this->y);
 				}
 				else
 				{
@@ -1767,5 +1771,28 @@ void CMario::SetTransformingUp(int type)
 		SetLevel(MARIO_LEVEL_TAIL);
 }
 
+void CMario::CallHitEffect(int type,int nx, float pos_x, float pos_y)
+{	vector<LPGAMEOBJECT> objects = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->Get_hit_effect_list();
+	for (unsigned i = 0; i < objects.size(); i++) // find free hit
+	{
+		CHitEffect *hit_effect = dynamic_cast<CHitEffect *>(objects[i]);
+		if (!hit_effect->GetIsUsed() && hit_effect->GetType() == type)
+		{
+			/*hit_effect->nx = this->nx;*/
+			hit_effect->SetIsUsed(true);
+			if (nx < 0)
+			{
+				hit_effect->SetPosition(pos_x, pos_y - 5);
+			}
+			else
+			{
+				hit_effect->SetPosition(pos_x +8, pos_y - 5);
+			}
+			//hit_effect->SetState(SCORE_STATE_UP);
+			hit_effect->StartTiming();
+			return;
+		}
+	}
 
+}
 

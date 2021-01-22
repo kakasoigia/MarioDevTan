@@ -20,6 +20,7 @@
 #include "FloatingWood.h"
 #include "Boomerang.h"
 #include "BoomerangEnemy.h"
+#include "HitEffect.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
@@ -87,6 +88,8 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_FLOATING_WOOD		49
 #define OBJECT_TYPE_BOOMERANG											50
 #define OBJECT_TYPE_BOOMERANG_ENEMY										51
+#define OBJECT_TYPE_HIT_EFFECT_FIRE_BULLET 52
+#define	OBJECT_TYPE_HIT_EFFECT_TURN_TAIL 53
 #define OBJECT_TYPE_PORTAL	100
 
 #define MAX_SCENE_LINE 1024
@@ -258,6 +261,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BREAKABLE_BRICK_NORMAL: obj = new CBreakableBrick(BREAKABLE_BRICK_NORMAL); break;
 	case OBJECT_TYPE_BREAKABLE_BRICK_BELL: obj = new CBreakableBrick(BREAKABLE_BRICK_BELL); break;
 	case OBJECT_TYPE_BELL: obj = new CBell(); break;
+	case OBJECT_TYPE_HIT_EFFECT_TURN_TAIL:
+		obj = new CHitEffect(HIT_EFFECT_TURN_TAIL);
+		break;
+	case OBJECT_TYPE_HIT_EFFECT_FIRE_BULLET:
+		obj = new CHitEffect(HIT_EFFECT_FIRE_BULLET);
+		break;
 	case OBJECT_TYPE_SPECIAL_ITEM:
 	{
 		obj = new CSpecialItem();
@@ -345,6 +354,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	if (dynamic_cast<CScoreUp *>(obj))
 	{
 		score_list.push_back(obj);
+	}
+	if (dynamic_cast<CHitEffect *>(obj))
+	{
+		hit_effect_list.push_back(obj);
 	}
 
 }
@@ -436,7 +449,7 @@ void CPlayScene::Update(DWORD dt)
 		{
 			
 			if ((objects[i]->x > rangeXleft &&
-				objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<CFireBullet *>(objects[i]) || dynamic_cast<CFlowerBullet *>(objects[i]) || dynamic_cast<CBoomerang *>(objects[i]))
+				objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<CFireBullet *>(objects[i]) || dynamic_cast<CFlowerBullet *>(objects[i]) || dynamic_cast<CBoomerang *>(objects[i]) || dynamic_cast<CHitEffect *>(objects[i]))
 			coObjects.push_back(objects[i]);
 		}
 			
@@ -446,7 +459,7 @@ void CPlayScene::Update(DWORD dt)
 	{
 		
 		if ((objects[i]->x > rangeXleft &&
-			objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<CFireBullet *>(objects[i]) || dynamic_cast<CFlowerBullet *>(objects[i]) || dynamic_cast<CBoomerang *>(objects[i]))
+			objects[i]->x < rangeXright) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<HudPanel *>(objects[i]) || dynamic_cast<CFireBullet *>(objects[i]) || dynamic_cast<CFlowerBullet *>(objects[i]) || dynamic_cast<CBoomerang *>(objects[i]) || dynamic_cast<CHitEffect *>(objects[i]))
 		{
 			if (dynamic_cast<CMario*>(objects[i]))
 			{
@@ -522,6 +535,7 @@ void CPlayScene::Unload()
 	objects.clear();
 	cartridge_clip.clear();
 	score_list.clear();
+	hit_effect_list.clear();
 	player = NULL;
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);

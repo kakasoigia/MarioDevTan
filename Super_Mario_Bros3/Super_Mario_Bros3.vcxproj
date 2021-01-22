@@ -159,6 +159,7 @@
     <ClInclude Include="FloatingWood.h" />
     <ClInclude Include="Flower.h" />
     <ClInclude Include="FlowerBullet.h" />
+    <ClInclude Include="HitEffect.h" />
     <ClInclude Include="HudPanels.h" />
     <ClInclude Include="Leaf.h" />
     <ClInclude Include="Map.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="Flower.cpp" />
     <ClCompile Include="FlowerBullet.cpp" />
     <ClCompile Include="Goomba.cpp" />
+    <ClCompile Include="HitEffect.cpp" />
     <ClCompile Include="HudPanels.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="Leaf.cpp" />

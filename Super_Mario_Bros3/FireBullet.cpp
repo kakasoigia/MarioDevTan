@@ -1,4 +1,6 @@
 #include "FireBullet.h"
+#include "HitEffect.h"
+#include "BoomerangEnemy.h"
  CFireBullet::CFireBullet() 
 {
 	isUsed = false;
@@ -60,16 +62,19 @@ void CFireBullet::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
+			CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (dynamic_cast<CKoopas *>(e->obj)) // if e->obj is Goomba 
 			{
 				CKoopas *koopas = dynamic_cast<CKoopas *>(e->obj);
 				if (nx != 0 )
 				{
+					mario->IncScore(100, koopas->x, koopas->y);
+					mario->CallHitEffect(HIT_EFFECT_FIRE_BULLET, this->nx, this->x, this->y);
 					koopas->SetState(KOOPAS_STATE_DIE);
 					SetState(BULLET_STATE_DISAPPEARING);
-					CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-					mario->IncScore(100, koopas->x, koopas->y);
+					
+					
 				}
 				
 			}
@@ -78,10 +83,27 @@ void CFireBullet::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
 				if (nx != 0)
 				{
+					mario->IncScore(100, goomba->x, goomba->y);
+					mario->CallHitEffect(HIT_EFFECT_FIRE_BULLET, this->nx, this->x, this->y);
 					goomba->SetState(GOOMBA_STATE_DIE_BY_KICK);
 					SetState(BULLET_STATE_DISAPPEARING);
-					CMario* mario = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-					mario->IncScore(100, goomba->x, goomba->y);
+				
+					
+				}
+
+			}
+			else if (dynamic_cast<CBoomerangEnemy*>(e->obj)) // if e->obj is Goomba 
+			{
+				CBoomerangEnemy *boomerangEnemy = dynamic_cast<CBoomerangEnemy *>(e->obj);
+				if (nx != 0)
+				{
+					mario->CallHitEffect(HIT_EFFECT_FIRE_BULLET, 1, this->x, this->y);
+					boomerangEnemy->SetState(BOOMERANG_ENEMY_STATE_DIE);
+					mario->IncScore(100, boomerangEnemy->x, boomerangEnemy->y);
+
+					SetState(BULLET_STATE_DISAPPEARING);
+					
+					
 				}
 
 			}
@@ -89,12 +111,14 @@ void CFireBullet::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				if (e->nx != 0 && ny == 0)
 				{
+					mario->CallHitEffect(HIT_EFFECT_FIRE_BULLET, 1, this->x, this->y);
 					SetState(BULLET_STATE_DISAPPEARING);
+					
 				}
 			}
 			else 
 			{
-				
+				mario->CallHitEffect(HIT_EFFECT_FIRE_BULLET, 1, this->x, this->y);
 					SetState(BULLET_STATE_DISAPPEARING);
 			}
 			

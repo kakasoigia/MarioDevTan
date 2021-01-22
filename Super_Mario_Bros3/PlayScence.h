@@ -28,6 +28,7 @@ protected:
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> cartridge_clip;
 	vector<LPGAMEOBJECT> score_list;
+	vector<LPGAMEOBJECT> hit_effect_list;
 	vector<CCamera*> cameras;
 	Map* map;
 	void _ParseSection_TEXTURES(string line);
@@ -51,6 +52,7 @@ public:
 	vector<LPGAMEOBJECT> Get_cartridge_clip() { return cartridge_clip; };
 	vector<LPGAMEOBJECT> Get_objects() { return objects; };
 	vector<LPGAMEOBJECT> Get_score_list() { return score_list; };
+	vector<LPGAMEOBJECT> Get_hit_effect_list() { return hit_effect_list; };
 	void StartTimeCamMove()
 	{
 		if (time_cam_move == 0)
