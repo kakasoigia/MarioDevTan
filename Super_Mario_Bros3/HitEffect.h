@@ -4,23 +4,7 @@
 #include "algorithm"
 #include "Mario.h"
 #include "PlayScence.h"
-
-
-
-#define HIT_EFFECT_STATE_IDLE	0
-
-
-
-
-#define HIT_EFFECT_TURN_TAIL			100
-#define HIT_EFFECT_FIRE_BULLET			200	
-
-
-
-
-#define HIT_EFFECT_TURN_TAIL_ANI_RIGHT			0
-#define HIT_EFFECT_TURN_TAIL_ANI_LEFT			1
-#define HIT_EFFECT_ANI_FIRE_BULLET				2
+#include "define.h"
 
 
 class CHitEffect : public CGameObject

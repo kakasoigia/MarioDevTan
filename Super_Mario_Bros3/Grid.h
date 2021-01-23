@@ -2,13 +2,9 @@
 #include "Cell.h"
 #include "Utils.h"
 #include "Game.h"
+#include "define.h"
 
 
-
-
-#define GRID_SECTION_SETTINGS	1
-#define GRID_SECTION_OBJECTS	2
-#define MAX_GRID_LINE 1024
 
 class CGrid
 {

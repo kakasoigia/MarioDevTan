@@ -19,9 +19,11 @@
 #include "HudPanels.h"
 #include "PlayScence.h"
 #include "Boomerang.h"
+#include "PlayScence.h" 
 #include "HitEffect.h"
 #include "BoomerangEnemy.h"
 #include "FloatingWood.h"
+
 CMario::CMario(float x, float y) : CGameObject()
 {
 	CGame *game = CGame::GetInstance();
@@ -792,7 +794,7 @@ float camX = 0;
 float camY = 0;
 bool camcanmove = (CPlayScene*)CGame::GetInstance()->GetCurrentScene()->GetCamCanMove();
 int id = CGame::GetInstance()->GetCurrentScene()->GetId();
-if (id == 3) // map 1
+if (id == ID_MAP_1) // map 1
 //if (!camcanmove)
 {
 	if (x > (game->GetScreenWidth() / 2)) camX = cx;
@@ -803,16 +805,16 @@ if (id == 3) // map 1
 	}
 	if (state != MARIO_STATE_DIE)
 	{
-		if (x > 2649) camX = 2484;
+		if (x > LIMIT_X_MAP_1) camX = LIMIT_X_MAP_1- (game->GetScreenWidth() / 2);
 		CGame::GetInstance()->SetCamPos((int)camX, (int)camY - 70);
 		/*if (isAutoWalk) CGame::GetInstance()->SetCamPos(2450, -50);*/
 		if (isAtTunnel)
 		{
-			CGame::GetInstance()->SetCamPos(1300, 980);
+			CGame::GetInstance()->SetCamPos(POS_X_TUNNEL, POS_Y_TUNNEL);
 		}
 		if (isAutoWalk)
 		{
-			CGame::GetInstance()->SetCamPos(2500, -62);
+			CGame::GetInstance()->SetCamPos(POS_X_AUTOWALK_CAM_END, POS_Y_AUTOWALK_CAM_END);
 		}
 	}
 
@@ -825,15 +827,15 @@ if (id == 3) // map 1
 else
 {
 	
-	if (id == 1) // map 1
+	if (id == ID_INTRO_SCENE) 
 	{
 		CGame::GetInstance()->SetCamPos((int)0, -50);
 	}
 	if (x > (game->GetScreenWidth() / 2)) camX = cx;
 
 
-	if (x < 1870) //
-		camX_update += 0.035f * dt;
+	if (x < POS_X_CAM_STOP_MOVE) //
+		camX_update += V_CAM_MOVE * dt;
 	else
 	{
 		camX_update = camX;
@@ -849,18 +851,18 @@ else
 	{
 		isCamPushed = false;
 	}
-	CGame::GetInstance()->SetCamPos((int)camX_update, (int)210);
+	CGame::GetInstance()->SetCamPos((int)camX_update, (int)POS_Y_MAP_4);
 	if (x > (POS_X_EDGE_MAP_4 - game->GetScreenWidth()) && x < POS_X_EDGE_MAP_4 - 20)
 	{
-		CGame::GetInstance()->SetCamPos((int)POS_X_EDGE_MAP_4 - game->GetScreenWidth() - 7, (int)210);
+		CGame::GetInstance()->SetCamPos((int)POS_X_EDGE_MAP_4 - game->GetScreenWidth() - 7, (int)POS_Y_MAP_4);
 	}
 	else if (x > (POS_X_EDGE_MAP_4) && x < (POS_X_EDGE_MAP_4 + game->GetScreenWidth() / 2))
 	{
-		CGame::GetInstance()->SetCamPos((int)POS_X_EDGE_MAP_4 + 8, (int)210);
+		CGame::GetInstance()->SetCamPos((int)POS_X_EDGE_MAP_4 + 8, (int)POS_Y_MAP_4);
 	}
-	else if (x > 2408)
+	else if (x > LIMIT_X_MAP_1)
 	{
-		CGame::GetInstance()->SetCamPos((int)2243, (int)210);
+		CGame::GetInstance()->SetCamPos((int)LIMIT_X_MAP_1- (game->GetScreenWidth() / 2), (int)POS_Y_MAP_4);
 	}
 
 	/*if (isAtTunnel)
@@ -869,7 +871,7 @@ else
 	}*/
 	if (isAutoWalk)
 	{
-		CGame::GetInstance()->SetCamPos(2243, 200);
+		CGame::GetInstance()->SetCamPos(POS_X_AUTOWALK_CAM_END_2, POS_Y_MAP_4);
 	}
 
 }

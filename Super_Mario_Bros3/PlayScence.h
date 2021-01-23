@@ -40,18 +40,8 @@
 #include "Boomerang.h"
 #include "BoomerangEnemy.h"
 #include "HitEffect.h"
-#define MOVE_CAM_X_VX		0.1f
 
-#define IN_USE_WIDTH		330
-#define IN_USE_HEIGHT		300
-
-
-#define GRID_SECTION_SETTINGS	1
-#define GRID_SECTION_OBJECTS	2
-
-#define GRID_SECTION_SETTINGS	1
-#define GRID_SECTION_OBJECTS	2
-#define MAX_GRID_LINE 1024
+#include "define.h"
 class CGrid
 {
 	int numRow, numCol;

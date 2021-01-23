@@ -1,16 +1,8 @@
 #pragma once
 #include "GameObject.h"
+#include "define.h"
 
-#define BELL_BBOX_WIDTH  16
-#define BELL_BBOX_HEIGHT 16
-#define BELL_BBOX_HEIGHT_PRESSED 7
 
-#define BELL_STATE_DISAPPEAR 100
-#define BELL_STATE_SHOW 200
-#define BELL_STATE_PRESSED 300
-
-#define BELL_ANI_SHOW 0
-#define BELL_ANI_PRESSED 1
 
 class CBell : public CGameObject
 {

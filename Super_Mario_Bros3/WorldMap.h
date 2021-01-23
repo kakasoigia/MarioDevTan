@@ -7,6 +7,7 @@
 #include "WorldMapObjects.h"
 #include "Node.h"
 #include <vector>
+#include "define.h"
 using namespace std;
 
 class CWorldMap : public  CScene

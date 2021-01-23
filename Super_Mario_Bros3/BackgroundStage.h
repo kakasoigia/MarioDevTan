@@ -3,7 +3,7 @@
 #include "algorithm"
 #include "Mario.h"
 #include "PlayScence.h"
-
+#include "define.h"
 
 #define BACKGROUND_STAGE_STATE_IDLE		0
 #define BACKGROUND_STAGE_STATE_DOWN		100

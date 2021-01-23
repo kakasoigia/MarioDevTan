@@ -9,6 +9,7 @@
 #include "BackGroundStage.h"
 #include "Star.h"
 #include "MenuGame.h"
+#include "define.h"
 class CStartScene : public CScene
 {
 	bool showmenugame = false;

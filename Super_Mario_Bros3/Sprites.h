@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <d3dx9.h>
 #include <unordered_map>
-
+#include "define.h"
 using namespace std;
 
 class CSprite

@@ -156,6 +156,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="Coin.h" />
+    <ClInclude Include="define.h" />
     <ClInclude Include="FireBullet.h" />
     <ClInclude Include="FloatingWood.h" />
     <ClInclude Include="Flower.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="QuestionBrick.h" />
     <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ScoreUp.h" />
     <ClInclude Include="ScrollingStage.h" />
     <ClInclude Include="SpecialItem.h" />
@@ -202,6 +204,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="Coin.cpp" />
+    <ClCompile Include="define.cpp" />
     <ClCompile Include="FireBullet.cpp" />
     <ClCompile Include="FloatingWood.cpp" />
     <ClCompile Include="Flower.cpp" />
@@ -237,6 +240,9 @@
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="WorldMap.cpp" />
     <ClCompile Include="WorldMapObjects.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Super_Mario_Bros3.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

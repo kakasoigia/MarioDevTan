@@ -1,8 +1,6 @@
 #pragma once
 #include "GameObject.h"
-
-#define RECTANGLE_BBOX_WIDTH  16
-#define RECTANGLE_BBOX_HEIGHT 16
+#include "define.h"
 
 class CRectangle : public CGameObject
 {

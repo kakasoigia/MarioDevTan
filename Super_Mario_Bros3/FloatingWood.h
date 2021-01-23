@@ -3,18 +3,7 @@
 #include "algorithm"
 #include "Mario.h"
 #include "PlayScence.h"
-
-
-#define FLOATING_WOOD_BBOX_WIDTH		48
-#define  FLOATING_WOOD_BBOX_HEIGHT		16
-
-
-
-#define   FLOATING_WOOD_STATE_NORMAL		0
-#define   FLOATING_WOOD_STATE_DOWN			100
-
-#define	  FLOATING_WOOD_STATE_NORMAL_SPEED   -0.03f
-#define   FLOATING_WOOD_STATE_DOWN_SPEED	   0.06f
+#include "define.h"
 
 
 

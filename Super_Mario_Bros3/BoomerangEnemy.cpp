@@ -101,7 +101,7 @@ void CBoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (isAlive)
 	{
 
-		if (GetTickCount() - time_render_ani_thow >= 300)
+		if (GetTickCount() - time_render_ani_thow >= TIME_RENDER_ANI_THROW)
 		{
 			isAniThrow = false;
 			time_render_ani_thow = 0;
@@ -121,7 +121,7 @@ void CBoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					if (!boomerang->GetIsAllowToThrowBoomerang())
 					{
-						if (GetTickCount() - time_switch_state >= 900 + time_conpensate)
+						if (GetTickCount() - time_switch_state >= TIME_TO_THROW_BOOM_1 + time_conpensate)
 						{
 							boomerang->InitiateBoom(this->nx);
 							
@@ -134,7 +134,7 @@ void CBoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					if (!boomerang->GetIsAllowToThrowBoomerang())
 					{
-						if (GetTickCount() - time_switch_state >= 3300 + time_conpensate)
+						if (GetTickCount() - time_switch_state >= TIME_TO_THROW_BOOM_2 + time_conpensate)
 						{
 							boomerang->InitiateBoom(this->nx);
 
@@ -147,21 +147,21 @@ void CBoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		}
 
 
-		if (GetTickCount() - time_switch_state >= 700 + time_conpensate)
+		if (GetTickCount() - time_switch_state >= TIME_SWITCH_STATE_1 + time_conpensate)
 		{
 			SetState(BOOMERANG_ENEMY_STATE_MOVE_FORWARD);
 		}
 
-		if (GetTickCount() - time_switch_state >= 2000 + time_conpensate)
+		if (GetTickCount() - time_switch_state >= TIME_SWITCH_STATE_2 + time_conpensate)
 		{
 			SetState(BOOMERANG_ENEMY_STATE_IDLE);
 		}
-		if (GetTickCount() - time_switch_state >= 2700 + time_conpensate)
+		if (GetTickCount() - time_switch_state >= TIME_SWITCH_STATE_3 + time_conpensate)
 		{
 			SetState(BOOMERANG_ENEMY_STATE_MOVE_BACKWARD);
 		}
 
-		if (GetTickCount() - time_switch_state >= 4000 + time_conpensate)
+		if (GetTickCount() - time_switch_state >= TIME_SWITCH_STATE_4 + time_conpensate)
 		{
 			SetState(BOOMERANG_ENEMY_STATE_IDLE);
 			time_switch_state = 0;
@@ -262,11 +262,11 @@ void CBoomerangEnemy::SetState(int state)
 		vx = vy = 0;
 		break;
 	case  BOOMERANG_ENEMY_STATE_MOVE_FORWARD:
-		vx = 0.03f;
+		vx = BOOMERANG_ENEMY_VX;
 		vy = 0;
 		break;
 	case  BOOMERANG_ENEMY_STATE_MOVE_BACKWARD:
-		vx = -0.03f;
+		vx = -BOOMERANG_ENEMY_VX;
 		vy = 0;
 		break;
 	case BOOMERANG_ENEMY_STATE_DIE:

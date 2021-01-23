@@ -3,17 +3,7 @@
 #include "PlayScence.h"
 #include "Mario.h"
 #include "BreakableBrick.h"
-#define BULLET_BBOX_WIDTH	9
-#define BULLET_BBOX_HEIGHT 9
 
-#define BULLET_GRAVITY 0.0009f
-#define BULLET_FLYING_SPEED 0.2f
-
-#define BULLET_STATE_FLYING 100
-#define BULLET_STATE_DISAPPEARING 200
-
-#define BULLET_ANI_FLYING_RIGHT 0
-#define BULLET_ANI_FLYING_LEFT 1
 class CFireBullet : public CGameObject
 {
 	bool isUsed = false;

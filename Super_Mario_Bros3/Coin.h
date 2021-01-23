@@ -2,20 +2,7 @@
 #include "GameObject.h"
 #include "PlayScence.h"
 #include "QuestionBrick.h"
-
-#define COIN_BBOX_WIDTH  10
-#define COIN_BBOX_HEIGHT 14
-
-
-#define COIN_STATE_IDLE		0
-#define COIN_STATE_UP		100
-#define COIN_STATE_DOWN		200
-
-#define COIN_NORMAL			222
-#define COIN_CAN_TOSS		333
-
-#define TIME_COIN_ON_AIR 250
-
+#include "define.h"
 class CCoin : public CGameObject
 {
 	bool disappear = false;

@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-
+#include "define.h"
 
 
 #define NoCollisionObjects_TYPE_NORMAL	1

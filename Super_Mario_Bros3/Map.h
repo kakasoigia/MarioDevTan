@@ -4,9 +4,7 @@
 #include <d3d9.h>
 #include <vector>
 #include "Sprites.h"
-
-#define TILE_WIDTH 32
-#define TILE_HEIGHT 32
+#include "define.h"
 
 class Map
 {

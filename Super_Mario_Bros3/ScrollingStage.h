@@ -3,10 +3,7 @@
 #include "algorithm"
 #include "Mario.h"
 #include "PlayScence.h"
-
-
-#define SCROLLING_STAGE_STATE_IDLE		0
-#define SCROLLING_STAGE_STATE_UP		100
+#include "define.h"
 
 
 class CScrollingStage : public CGameObject

@@ -6,20 +6,7 @@
 #include "Leaf.h"
 #include "MushRoom.h"
 #include "Coin.h"
-
-#define QUESTION_BRICK_BBOX_WIDTH  16
-#define QUESTION_BRICK_BBOX_HEIGHT 16
-
-#define QUESTION_BRICK_STATE_USED 100
-
-#define QUESTION_BRICK_ANI_ALIVE	0
-#define QUESTION_BRICK_ANI_DEAD		1
-#define QUESTION_BRICK_ANI_NEW_TYPE	2
-
-#define QUESTION_BRICK_NORMAL				666
-#define QUESTION_BRICK_HAVE_LEAF			777
-#define QUESTION_BRICK_JUST_HAVE_MUSHROOM	888
-#define QUESTION_BRICK_HAVE_MULTI_COIN	999
+#include "define.h"
 
 
 class CQuestionBrick : public CGameObject

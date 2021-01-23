@@ -5,7 +5,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
 {
 	key_handler = new CPlayScenceKeyHandler(this);
-	if (id == 4)
+	if (id == ID_MAP_4)
 	{
 		CamCanMove = true;
 		/*CGame::GetInstance()->SetCamPos(0, 220);*/
@@ -16,64 +16,6 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	Load scene resources from scene file (textures, sprites, animations and objects)
 	See scene1.txt, scene2.txt for detail format specification
 */
-
-#define SCENE_SECTION_UNKNOWN -1
-#define SCENE_SECTION_TEXTURES 2
-#define SCENE_SECTION_SPRITES 3
-#define SCENE_SECTION_ANIMATIONS 4
-#define SCENE_SECTION_ANIMATION_SETS	5
-#define SCENE_SECTION_OBJECTS	6
-#define SCENE_SECTION_MAP	7
-#define SCENE_SECTION_GRID	8
-
-#define OBJECT_TYPE_MARIO	0
-#define OBJECT_TYPE_BRICK	1
-#define OBJECT_TYPE_GOOMBA	2
-#define OBJECT_TYPE_KOOPAS_GREEN_WALK	3
-#define OBJECT_TYPE_RECTANGLE	5
-#define OBJECT_TYPE_NO_COLLISION_OBJECTS 4
-#define OBJECT_TYPE_PIPE_NORMAL 6
-#define OBJECT_TYPE_KOOPAS_GREEN_FLY	7
-#define OBJECT_TYPE_KOOPAS_RED_WALK	8
-#define OBJECT_TYPE_KOOPAS_RED_FLY	9
-#define OBJECT_TYPE_COIN_NORMAL	10
-#define OBJECT_TYPE_GOOMBA_RED_FLY	11
-#define OBJECT_TYPE_FIRE_BULLET	12
-#define OBJECT_TYPE_FLOWER_RED		13
-#define OBJECT_TYPE_FLOWER_BULLET	14
-#define OBJECT_TYPE_QUESTION_BRICK_NORMAL	15
-#define OBJECT_TYPE_LEAF	16
-#define OBJECT_TYPE_MUSHROOM_RED		17
-#define OBJECT_TYPE_QUESTION_BRICK_HAVE_LEAF	18
-#define OBJECT_TYPE_MUSHROOM_GREEN		19
-#define OBJECT_TYPE_QUESTION_BRICK_JUST_HAVE_MUSHROOM	20
-#define OBJECT_TYPE_FLOWER_GREEN				21
-#define OBJECT_TYPE_FLOWER_GREEN_CAN_SHOOT		22
-#define OBJECT_TYPE_BREAKABLE_BRICK_NORMAL	23
-#define OBJECT_TYPE_BREAKABLE_BRICK_BELL	25
-#define OBJECT_TYPE_BELL	24
-#define OBJECT_TYPE_COIN_CAN_TOSS	26
-#define OBJECT_TYPE_HUD	27
-#define OBJECT_TYPE_SPECIAL_ITEM	28
-#define OBJECT_TYPE_PIPE_CAN_SLIDE_DOWN 29
-#define OBJECT_TYPE_PIPE_CAN_SLIDE_UP 30
-#define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_TOP				31
-#define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_RIGHT_TOP			32
-#define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_RIGHT_BOTTOM			33
-#define OBJECT_TYPE_BREAKABLE_BRICK_ANIMATION_TYPE_LEFT_BOTTOM			34
-#define OBJECT_TYPE_SCORE_AND_1LV		35
-#define OBJECT_TYPE_CAMERA		36
-#define OBJECT_TYPE_QUESTION_BRICK_MULTI_COIN		48
-#define OBJECT_TYPE_FLOATING_WOOD		49
-#define OBJECT_TYPE_BOOMERANG											50
-#define OBJECT_TYPE_BOOMERANG_ENEMY										51
-#define OBJECT_TYPE_HIT_EFFECT_FIRE_BULLET 52
-#define	OBJECT_TYPE_HIT_EFFECT_TURN_TAIL 53
-#define OBJECT_TYPE_PORTAL	100
-
-#define MAX_SCENE_LINE 1024
-#define MAX_POWER_SPEED_UP 7
-#define	TIME_PER_LEVEL_SPEED_UP 200
 
 
 void CPlayScene::_ParseSection_TEXTURES(string line)
@@ -435,7 +377,7 @@ void CPlayScene::Update(DWORD dt)
 	vector<LPGAMEOBJECT> coObjects;
 	CGame *game = CGame::GetInstance();
 	int id = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetId();
-	if (id != 4)
+	if (id != ID_MAP_4)
 	{
 		float rangeXleft = player->x - game->GetScreenHeight() / 2 - 100;
 		float rangeXright = player->x + game->GetScreenHeight() / 2 + 100;
